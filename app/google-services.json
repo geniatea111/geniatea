@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "170886531589",
+    "project_id": "geniatea-57277",
+    "storage_bucket": "geniatea-57277.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170886531589:android:3769dfba8f53d5e8022a6c",
+        "android_client_info": {
+          "package_name": "com.example.compose.geniatea"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "170886531589-i5rbrabpsi91n9s95e16h24uslu08tbp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.compose.geniatea",
+            "certificate_hash": "6763ab717b421cc278414de2f18eaeb22d3abc6d"
+          }
+        },
+        {
+          "client_id": "170886531589-k4b37g8edjdunl00v5ph8pd182n3dsab.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx12VufPqg5TRE7PLc1jqzREf1fq3_I_I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170886531589-k4b37g8edjdunl00v5ph8pd182n3dsab.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

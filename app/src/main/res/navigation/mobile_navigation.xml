@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2020 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_splash_screen">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.example.compose.geniatea.presentation.home.HomeFragment"
+        android:label="Conversation" >
+        <action
+            android:id="@+id/action_nav_home_to_nav_settings"
+            app:destination="@id/nav_settings" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.settings.SettingsFragment"
+        android:label="Conversation" >
+        <action
+            android:id="@+id/action_nav_settings_to_nav_about"
+            app:destination="@id/nav_about" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_privacy2"
+            app:destination="@id/nav_privacy" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_location"
+            app:destination="@id/nav_location" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_ai_settings"
+            app:destination="@id/nav_ai_settings" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_account"
+            app:destination="@id/nav_account" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_prelogin"
+        android:name="com.example.compose.geniatea.presentation.userManagementSection.prelogin.PreloginFragment"
+        android:label="Conversation" >
+        <action
+            android:id="@+id/action_nav_prelogin_to_nav_login"
+            app:destination="@id/nav_login" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_login"
+        android:name="com.example.compose.geniatea.presentation.userManagementSection.login.LoginFragment"
+        android:label="Conversation" >
+        <action
+            android:id="@+id/action_nav_login_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_login_to_nav_register"
+            app:destination="@id/nav_register" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_register"
+        android:name="com.example.compose.geniatea.presentation.userManagementSection.register.RegisterFragment"
+        android:label="Conversation" />
+
+    <fragment
+        android:id="@+id/nav_about"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.about.AboutFragment"
+        android:label="About" />
+
+    <fragment
+        android:id="@+id/nav_privacy"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.privacyPolicy.PrivacyFragment"
+        android:label="Privacy Policy" />
+
+    <fragment
+        android:id="@+id/nav_location"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.locationSettings.LocationFragment"
+        android:label="Location Settings"/>
+
+    <fragment
+        android:id="@+id/nav_preferences"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.preferencesSettings.PreferencesFragment"
+        android:label="Preferencias" />
+
+
+    <fragment
+        android:id="@+id/nav_ai_settings"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.aiSettings.AISettingsFragment"
+        android:label="AI Settings" />
+
+    <fragment
+        android:id="@+id/nav_account"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.accountSettings.AccountFragment"
+        android:label="AI Settings" >
+        <action
+            android:id="@+id/action_nav_account_to_nav_changepass"
+            app:destination="@id/nav_changepass" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_changepass"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.changePass.ChangePassFragment"
+        android:label="Change Password" />
+
+    <fragment
+        android:id="@+id/nav_chat"
+        android:name="com.example.compose.geniatea.presentation.funcionalidades.chat.ChatFragment"
+        android:label="Chat" />
+
+    <fragment
+        android:id="@+id/nav_judge"
+        android:name="com.example.compose.geniatea.presentation.funcionalidades.judge.JudgeFragment"
+        android:label="Juez" />
+
+    <fragment
+        android:id="@+id/nav_formalizer"
+        android:name="com.example.compose.geniatea.presentation.funcionalidades.formalizer.FormalizerFragment"
+        android:label="Formalizador" />
+
+    <fragment
+        android:id="@+id/nav_resources"
+        android:name="com.example.compose.geniatea.presentation.funcionalidades.resourcestea.ResourcesFragment"
+        android:label="Recursos" />
+
+    <fragment
+        android:id="@+id/nav_onboarding"
+        android:name="com.example.compose.geniatea.presentation.userManagementSection.onboarding.OnboardingFragment"
+        android:label="Onboarding" />
+
+    <fragment
+        android:id="@+id/nav_tasklist"
+        android:name="com.example.compose.geniatea.presentation.funcionalidades.tasklist.TaskListFragment"
+        android:label="Onboarding" />
+
+    <fragment
+        android:id="@+id/nav_preregister"
+        android:name="com.example.compose.geniatea.presentation.userManagementSection.preregister.PreRegisterFragment"
+        android:label="Preregistro" />
+
+    <fragment
+        android:id="@+id/nav_splash_screen"
+        android:name="com.example.compose.geniatea.presentation.splashScreen.SplashScreenFragment"
+        android:label="Splash Screen" >
+        <action
+            android:id="@+id/action_nav_splash_screen_to_nav_home"
+            app:destination="@id/nav_home" />
+        <action
+            android:id="@+id/action_nav_splash_screen_to_nav_prelogin"
+            app:destination="@id/nav_prelogin" />
+    </fragment>
+
+</navigation>
