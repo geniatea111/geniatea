@@ -46,7 +46,6 @@ class PreRegisterFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     PreRegisterRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -54,7 +53,7 @@ class PreRegisterFragment : Fragment() {
                         }
                     )
                 }
-            }
+
         }
         return rootView
     }

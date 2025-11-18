@@ -45,7 +45,6 @@ class FormalizerFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     FormalizerRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -53,7 +52,6 @@ class FormalizerFragment : Fragment() {
                         },
                     )
                 }
-            }
         }
         return rootView
     }

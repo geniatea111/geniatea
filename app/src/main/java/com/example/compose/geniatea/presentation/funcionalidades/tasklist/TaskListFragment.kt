@@ -36,7 +36,6 @@ class TaskListFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     ResourcesRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -44,7 +43,7 @@ class TaskListFragment : Fragment() {
                         },
                     )
                 }
-            }
+
         }
         return rootView
     }

@@ -83,14 +83,13 @@ class LoginFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     LoginRoot(
                         viewModel = viewModel,
                         onBackPressed = {
                             activity?.onBackPressedDispatcher?.onBackPressed()
                         }
                     )
-                }
+
             }
         }
         return rootView

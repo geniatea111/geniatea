@@ -29,7 +29,6 @@ class PrivacyFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     PrivacyRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -37,7 +36,7 @@ class PrivacyFragment : Fragment() {
                         }
                     )
                 }
-            }
+
         }
         return rootView
     }

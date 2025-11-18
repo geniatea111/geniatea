@@ -29,7 +29,6 @@ class AISettingsFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     AISettingsRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -37,7 +36,7 @@ class AISettingsFragment : Fragment() {
                         }
                     )
                 }
-            }
+
         }
         return rootView
     }

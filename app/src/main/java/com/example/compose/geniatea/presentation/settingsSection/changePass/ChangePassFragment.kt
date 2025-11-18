@@ -60,7 +60,6 @@ class ChangePassFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     ChangePassRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -68,7 +67,7 @@ class ChangePassFragment : Fragment() {
                         }
                     )
                 }
-            }
+
         }
         return rootView
     }

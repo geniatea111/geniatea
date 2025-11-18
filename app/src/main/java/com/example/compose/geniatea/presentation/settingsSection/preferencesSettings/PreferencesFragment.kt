@@ -59,14 +59,13 @@ class PreferencesFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     PreferencesRoot(
                         viewModel = viewModel,
                         onBackPressed = {
                             activity?.onBackPressedDispatcher?.onBackPressed()
                         }
                     )
-                }
+
             }
         }
         return rootView

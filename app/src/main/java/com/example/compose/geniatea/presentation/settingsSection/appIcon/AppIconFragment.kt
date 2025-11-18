@@ -29,7 +29,6 @@ class AppIconFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     AppIconRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -38,7 +37,7 @@ class AppIconFragment : Fragment() {
                     )
                 }
             }
-        }
+
         return rootView
     }
 

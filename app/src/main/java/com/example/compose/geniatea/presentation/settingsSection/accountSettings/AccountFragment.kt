@@ -78,7 +78,6 @@ class AccountFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     AccountRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -86,7 +85,6 @@ class AccountFragment : Fragment() {
                         }
                     )
                 }
-            }
         }
         return rootView
     }

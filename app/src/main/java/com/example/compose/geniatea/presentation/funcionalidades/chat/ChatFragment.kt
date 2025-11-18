@@ -141,16 +141,15 @@ class ChatFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
-                    ChatRoot(
-                        viewModel = viewModel,
-                        onBackPressed = {
-                            activity?.onBackPressedDispatcher?.onBackPressed()
-                        },
-                    )
-                }
+                ChatRoot(
+                    viewModel = viewModel,
+                    onBackPressed = {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    },
+                )
             }
         }
+
         return rootView
     }
 

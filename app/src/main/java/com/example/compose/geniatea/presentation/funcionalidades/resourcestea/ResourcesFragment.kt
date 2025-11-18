@@ -36,7 +36,6 @@ class ResourcesFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     ResourcesRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -44,7 +43,6 @@ class ResourcesFragment : Fragment() {
                         },
                     )
                 }
-            }
         }
         return rootView
     }

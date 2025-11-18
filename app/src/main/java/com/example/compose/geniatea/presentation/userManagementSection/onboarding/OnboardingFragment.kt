@@ -50,7 +50,6 @@ class OnboardingFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     OnboardingRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -59,7 +58,7 @@ class OnboardingFragment : Fragment() {
                     )
                 }
             }
-        }
+
         return rootView
     }
 

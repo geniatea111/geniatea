@@ -36,14 +36,13 @@ class LocationFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     LocationRoot(
                         viewModel = viewModel,
                         onBackPressed = {
                             activity?.onBackPressedDispatcher?.onBackPressed()
                         }
                     )
-                }
+
             }
         }
         return rootView

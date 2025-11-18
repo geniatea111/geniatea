@@ -28,14 +28,13 @@ class AboutFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
-                    AboutRoot(
-                        viewModel = viewModel,
-                        onBackPressed = {
-                            activity?.onBackPressedDispatcher?.onBackPressed()
-                        }
-                    )
-                }
+                AboutRoot(
+                    viewModel = viewModel,
+                    onBackPressed = {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                )
+
             }
         }
         return rootView
