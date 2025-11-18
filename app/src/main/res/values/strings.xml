@@ -197,6 +197,12 @@
     <string name="continue_google">Continuar con Google</string>
     <string name="already_account1">¿Ya tienes una cuenta?</string>
     <string name="already_account2">Inicia sesión</string>
+    <string name="personalization">Personalización</string>
+    <string name="application">Aplicación</string>
+    <string name="show_pictograms">Mostrar pictogramas</string>
+    <string name="color_app">Color de la aplicación</string>
+    <string name="icon_app">Icono de la aplicación</string>
+    <string name="animations">Animaciones</string>
 
 
 </resources>

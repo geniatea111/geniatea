@@ -1,19 +1,24 @@
 package com.example.compose.geniatea.presentation.settingsSection.settings
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.compose.geniatea.R
+import com.example.compose.geniatea.presentation.settingsSection.preferencesSettings.PreferencesAction
 import com.example.compose.geniatea.theme.GenIATEATheme
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.getValue
 
 
@@ -52,9 +57,43 @@ class SettingsFragment : Fragment() {
                         is SettingsAction.OnAccountPressed -> {
                             findNavController().navigate(R.id.nav_account)
                         }
-                        is SettingsAction.OnPreferencesPressed -> {
-                            findNavController().navigate(R.id.nav_preferences)
+
+                        is SettingsAction.OnNotificationPress -> {
+                            val intent = Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(android.provider.Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+                            }
+                            startActivity(intent)
                         }
+
+                        is SettingsAction.OnLanguagePress -> {
+                            AppCompatDelegate.setApplicationLocales(LocaleListCompat.create(Locale.forLanguageTag(languagesTag(action.language))))
+                        }
+
+                        is SettingsAction.OnDarkModeToggle -> {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                viewModel.setDarkMode(action.isChecked, requireContext())
+                            }
+                        }
+
+                        is SettingsAction.OnAnimationsToggle -> {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                viewModel.setAnimationsEnabled(action.isChecked, requireContext())
+                            }
+                        }
+
+                        is SettingsAction.OnPictogramsToggle -> {
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                viewModel.setPictogramsEnabled(action.isChecked, requireContext())
+                            }
+                        }
+
+                        is SettingsAction.OnAppIconPressed -> {
+                            findNavController().navigate(R.id.nav_app_icon)
+                        }
+                        is SettingsAction.OnAppColorPressed -> {
+                            findNavController().navigate(R.id.nav_app_color)
+                        }
+
                         else -> {
                             // Handle other actions if needed
                         }
@@ -77,5 +116,15 @@ class SettingsFragment : Fragment() {
             }
         }
         return rootView
+    }
+
+
+    fun languagesTag(language: String): String {
+        return when (language) {
+            "Español" -> "es"
+            "English" -> "en"
+            "Français" -> "fr"
+            else -> "es"
+        }
     }
 }

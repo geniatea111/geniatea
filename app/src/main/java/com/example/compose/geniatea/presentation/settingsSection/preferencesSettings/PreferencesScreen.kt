@@ -130,7 +130,7 @@ fun AboutScreen(
                             onConfirmation = {
                                 showDialog = false
                             },
-                            onAction = onAction
+                            //onAction = onAction
                         )
                     }
                 }

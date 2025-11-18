@@ -32,7 +32,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
- val lightScheme = lightColorScheme(
+ val lightSchemeDefault = lightColorScheme(
     primary = primaryLight,
     onPrimary = onPrimaryLight,
     primaryContainer = primaryContainerLight,
@@ -70,7 +70,7 @@ import androidx.compose.ui.platform.LocalContext
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
 
-val darkScheme = darkColorScheme(
+val darkSchemeDefault = darkColorScheme(
     primary = primaryDark,
     onPrimary = onPrimaryDark,
     primaryContainer = primaryContainerDark,
@@ -108,6 +108,83 @@ val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
+val lightSchemePink = lightColorScheme(
+    primary = primaryLightPink,
+    onPrimary = onPrimaryLightPink,
+    primaryContainer = primaryContainerLightPink,
+    onPrimaryContainer = onPrimaryContainerLightPink,
+    secondary = secondaryLightPink,
+    onSecondary = onSecondaryLightPink,
+    secondaryContainer = secondaryContainerLightPink,
+    onSecondaryContainer = onSecondaryContainerLightPink,
+    tertiary = tertiaryLight,
+    onTertiary = onTertiaryLight,
+    tertiaryContainer = tertiaryContainerLight,
+    onTertiaryContainer = onTertiaryContainerLight,
+    error = errorLight,
+    onError = onErrorLight,
+    errorContainer = errorContainerLight,
+    onErrorContainer = onErrorContainerLight,
+    background = backgroundLight,
+    onBackground = onBackgroundLight,
+    surface = surfaceLight,
+    onSurface = onSurfaceLight,
+    surfaceVariant = surfaceVariantLight,
+    onSurfaceVariant = onSurfaceVariantLight,
+    outline = outlineLight,
+    outlineVariant = outlineVariantLight,
+    scrim = scrimLight,
+    inverseSurface = inverseSurfaceLight,
+    inverseOnSurface = inverseOnSurfaceLight,
+    inversePrimary = inversePrimaryLightPink,
+    surfaceDim = surfaceDimLight,
+    surfaceBright = surfaceBrightLight,
+    surfaceContainerLowest = surfaceContainerLowestLight,
+    surfaceContainerLow = surfaceContainerLowLight,
+    surfaceContainer = surfaceContainerLight,
+    surfaceContainerHigh = surfaceContainerHighLight,
+    surfaceContainerHighest = surfaceContainerHighestLight,
+)
+
+val darkSchemePink = darkColorScheme(
+    primary = primaryDarkPink,
+    onPrimary = onPrimaryDarkPink,
+    primaryContainer = primaryContainerDarkPink,
+    onPrimaryContainer = onPrimaryContainerDarkPink,
+    secondary = secondaryDarkPink,
+    onSecondary = onSecondaryDarkPink,
+    secondaryContainer = secondaryContainerDarkPink,
+    onSecondaryContainer = onSecondaryContainerDarkPink,
+    tertiary = tertiaryDark,
+    onTertiary = onTertiaryDark,
+    tertiaryContainer = tertiaryContainerDark,
+    onTertiaryContainer = onTertiaryContainerDark,
+    error = errorDark,
+    onError = onErrorDark,
+    errorContainer = errorContainerDark,
+    onErrorContainer = onErrorContainerDark,
+    background = backgroundDark,
+    onBackground = onBackgroundDark,
+    surface = surfaceDark,
+    onSurface = onSurfaceDark,
+    surfaceVariant = surfaceVariantDark,
+    onSurfaceVariant = onSurfaceVariantDark,
+    outline = outlineDark,
+    outlineVariant = outlineVariantDark,
+    scrim = scrimDark,
+    inverseSurface = inverseSurfaceDark,
+    inverseOnSurface = inverseOnSurfaceDark,
+    inversePrimary = inversePrimaryDarkPink,
+    surfaceDim = surfaceDimDark,
+    surfaceBright = surfaceBrightDark,
+    surfaceContainerLowest = surfaceContainerLowestDark,
+    surfaceContainerLow = surfaceContainerLowDark,
+    surfaceContainer = surfaceContainerDark,
+    surfaceContainerHigh = surfaceContainerHighDark,
+    surfaceContainerHighest = surfaceContainerHighestDark,
+)
+
+
 val LocalExtraColors = staticCompositionLocalOf {
     ExtraColors(
         extraBlue = colorExtraBlueLight,
@@ -115,27 +192,30 @@ val LocalExtraColors = staticCompositionLocalOf {
     )
 }
 
-val MaterialTheme.extraColors: ExtraColors
+val MaterialTheme: ExtraColors
     @Composable
     @ReadOnlyComposable
     get() = LocalExtraColors.current
 
-
+enum class AppColorVariant {
+    BLUE, PINK
+}
 
 @SuppressLint("NewApi")
 @Composable
-fun GenIATEATheme(isDarkTheme: Boolean = isSystemInDarkTheme(), dynamicColor: Boolean = false, content: @Composable () -> Unit) {
+fun GenIATEATheme(themeVariant: AppColorVariant = AppColorVariant.BLUE, isDarkTheme: Boolean = isSystemInDarkTheme(), dynamicColor: Boolean = false, content: @Composable () -> Unit) {
     val myColorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (isDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        isDarkTheme -> darkScheme
-        else -> lightScheme
+        themeVariant == AppColorVariant.PINK && isDarkTheme -> darkSchemePink
+        themeVariant == AppColorVariant.PINK && !isDarkTheme -> lightSchemePink
+        themeVariant == AppColorVariant.BLUE && isDarkTheme -> darkSchemeDefault
+        else -> lightSchemeDefault
+
     }
-
-
 
     val extraColors = if (isDarkTheme) {
         ExtraColors(

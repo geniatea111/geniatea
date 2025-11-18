@@ -449,7 +449,7 @@ fun TaskNodeItem(
                         enabled = visibleTrash > 0f,
                         colors = IconButtonColors(
                             containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                             disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
                             disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
                         ),
@@ -470,7 +470,7 @@ fun TaskNodeItem(
                             painter = painterResource(R.drawable.chevron_down),
                             contentDescription = stringResource(id = R.string.delete_account),
                             modifier = Modifier.rotate(arrowRotation),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                 }

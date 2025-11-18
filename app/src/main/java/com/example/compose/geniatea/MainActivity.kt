@@ -17,11 +17,14 @@
 package com.example.compose.geniatea
 
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.view.ViewCompat
@@ -31,46 +34,57 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.compose.geniatea.data.StoreDataUser
 import com.example.compose.geniatea.databinding.ContentMainBinding
 import kotlinx.coroutines.launch
-import android.util.Log
 import com.example.compose.geniatea.data.backendConection.BackendAPI
-import com.example.compose.geniatea.presentation.settingsSection.preferencesSettings.PreferencesViewModel
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
+import com.example.compose.geniatea.theme.GenIATEATheme
+import androidx.compose.runtime.getValue
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
 
 /**
  * Main activity for the app.
  */
 
 class MainActivity : AppCompatActivity() {
-    val preferencesViewModel : PreferencesViewModel by viewModels()
+
+    private val settingsViewModel: SettingsViewModel by viewModels()
+    private val appColorViewModel : AppColorViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { _, insets -> insets }
-
         BackendAPI.init(this)
 
-        setContentView(
-            ComposeView(this).apply {
-                consumeWindowInsets = false
-                setContent {
+        // Load saved theme and dark mode before setting content
+        lifecycleScope.launch {
+            val isDarkMode = StoreDataUser().getDarkMode(this@MainActivity)
+            val themeVariant = StoreDataUser().getThemeVariant(this@MainActivity)
+
+            // Save values into ViewModel
+            settingsViewModel.setDarkMode(isDarkMode)
+            appColorViewModel.setThemeVariant(themeVariant)
+
+            // Apply system dark mode
+            AppCompatDelegate.setDefaultNightMode(
+                if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+
+            setContent {
+                val isDark by settingsViewModel.darkMode.collectAsState()
+                val theme by appColorViewModel.themeVariant.collectAsState()
+
+                Log.d("MainActivity", "Applying theme: $theme, Dark mode: $isDark")
+
+                GenIATEATheme(
+                    themeVariant = theme,
+                    isDarkTheme = isDark
+                ) {
+                    // Inflate your XML layout with Compose support
                     AndroidViewBinding(ContentMainBinding::inflate)
                 }
-            },
-        )
-
-        lifecycleScope.launch {
-            val isDarkMode =  StoreDataUser().getDarkMode(this@MainActivity)
-            preferencesViewModel.setDarkMode(isDarkMode, this@MainActivity)
-
-            Log.i("NavActivityTag", "DataStore initialized: $isDarkMode")
-
-            if (isDarkMode) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             }
-
         }
     }
 
@@ -78,11 +92,9 @@ class MainActivity : AppCompatActivity() {
         return findNavController().navigateUp() || super.onSupportNavigateUp()
     }
 
-    /**
-     * See https://issuetracker.google.com/142847973
-     */
     private fun findNavController(): NavController {
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         return navHostFragment.navController
     }
 }

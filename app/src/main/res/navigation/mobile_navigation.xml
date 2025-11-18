@@ -27,6 +27,18 @@
         <action
             android:id="@+id/action_nav_home_to_nav_settings"
             app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_tasklist"
+            app:destination="@id/nav_tasklist" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_chat"
+            app:destination="@id/nav_chat" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_formalizer"
+            app:destination="@id/nav_formalizer" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_judge"
+            app:destination="@id/nav_judge" />
     </fragment>
 
     <fragment
@@ -48,6 +60,15 @@
         <action
             android:id="@+id/action_nav_settings_to_nav_account"
             app:destination="@id/nav_account" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_app_icon"
+            app:destination="@id/nav_app_icon" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_app_icon2"
+            app:destination="@id/nav_app_icon" />
+        <action
+            android:id="@+id/action_nav_settings_to_nav_app_color"
+            app:destination="@id/nav_app_color" />
     </fragment>
 
     <fragment
@@ -57,6 +78,9 @@
         <action
             android:id="@+id/action_nav_prelogin_to_nav_login"
             app:destination="@id/nav_login" />
+        <action
+            android:id="@+id/action_nav_prelogin_to_nav_preregister"
+            app:destination="@id/nav_preregister" />
     </fragment>
 
     <fragment
@@ -67,13 +91,17 @@
             android:id="@+id/action_nav_login_to_nav_home"
             app:destination="@id/nav_home" />
         <action
-            android:id="@+id/action_nav_login_to_nav_register"
-            app:destination="@id/nav_register" />
+            android:id="@+id/action_nav_login_to_nav_preregister"
+            app:destination="@id/nav_preregister" />
     </fragment>
     <fragment
         android:id="@+id/nav_register"
         android:name="com.example.compose.geniatea.presentation.userManagementSection.register.RegisterFragment"
-        android:label="Conversation" />
+        android:label="Conversation" >
+        <action
+            android:id="@+id/action_nav_register_to_nav_onboarding"
+            app:destination="@id/nav_onboarding" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_about"
@@ -138,7 +166,11 @@
     <fragment
         android:id="@+id/nav_onboarding"
         android:name="com.example.compose.geniatea.presentation.userManagementSection.onboarding.OnboardingFragment"
-        android:label="Onboarding" />
+        android:label="Onboarding" >
+        <action
+            android:id="@+id/action_nav_onboarding_to_nav_home"
+            app:destination="@id/nav_home" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_tasklist"
@@ -148,7 +180,21 @@
     <fragment
         android:id="@+id/nav_preregister"
         android:name="com.example.compose.geniatea.presentation.userManagementSection.preregister.PreRegisterFragment"
-        android:label="Preregistro" />
+        android:label="Preregistro" >
+        <action
+            android:id="@+id/action_nav_preregister_to_nav_register"
+            app:destination="@id/nav_register" />
+    </fragment>
+
+    <fragment android:id="@+id/nav_app_icon"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.appIcon.AppIconFragment"
+        android:label="App Icon">
+    </fragment>
+
+    <fragment android:id="@+id/nav_app_color"
+        android:name="com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorFragment"
+        android:label="App Color">
+    </fragment>
 
     <fragment
         android:id="@+id/nav_splash_screen"

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.material3.Snackbar
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,13 +14,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.compose.geniatea.R
-import com.example.compose.geniatea.theme.GenIATEATheme
-import com.google.android.material.snackbar.Snackbar
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
+
 class HomeFragment : Fragment() {
     private val viewModel: HomeViewModel by viewModels()
+    private val appColorViewModel : AppColorViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
@@ -49,14 +52,12 @@ class HomeFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                GenIATEATheme {
                     HomeRoot(
                         viewModel = viewModel,
                         onBackPressed = {
                             activity?.onBackPressedDispatcher?.onBackPressed()
                         }
                     )
-                }
             }
         }
         return rootView

@@ -151,4 +151,10 @@
     <string name="continue_google" >Continue with Google</string>
     <string name="already_account1">>Already have an account?</string>
     <string name="already_account2"> Sign in here</string>
+    <string name="personalization">Personalization</string>
+    <string name="application">App</string>
+    <string name="show_pictograms">Show pictograms</string>
+    <string name="color_app">App color</string>
+    <string name="icon_app">App icon</string>
+    <string name="animations">Animations</string>
 </resources>

@@ -18,7 +18,6 @@ package com.example.compose.geniatea.theme
 
 import androidx.compose.ui.graphics.Color
 
-
 val primaryLight = Color(0xFF83B7F9)
 val onPrimaryLight = Color(0xFF1B2735)
 val primaryContainerLight = Color(0xFFDEEAFE)
@@ -107,3 +106,25 @@ val colorExtraBlueDark = Color(0xFF3E5A80)
 
 val colorExtraGrayN98 = Color(0xFFF6F6F6)
 val colorExtraGrayN7 = Color(0xFF16171B)
+
+
+//PINK PALETTE
+val primaryLightPink = Color(0xFFFD9AA7)
+val onPrimaryLightPink = Color(0xFF70202A)
+val primaryContainerLightPink = Color(0xFFFBD3D9)
+val onPrimaryContainerLightPink = Color(0xFFA84350)
+val secondaryLightPink = Color(0xFFFD9AA7)
+val onSecondaryLightPink = Color(0xFF70202A)
+val secondaryContainerLightPink = Color(0xFFFBD3D9)
+val onSecondaryContainerLightPink = Color(0xFFA84350)
+val inversePrimaryLightPink = Color(0xFFFEA3B2)
+
+val primaryDarkPink = Color(0xFFFFB2BA)
+val onPrimaryDarkPink = Color(0xFF561D27)
+val primaryContainerDarkPink = Color(0xFFFFD9DC)
+val onPrimaryContainerDarkPink = Color(0xFF72333C)
+val secondaryDarkPink = Color(0xFFFFB2BA)
+val onSecondaryDarkPink = Color(0xFF561D27)
+val secondaryContainerDarkPink = Color(0xFFFFD9DC)
+val onSecondaryContainerDarkPink = Color(0xFF72333C)
+val inversePrimaryDarkPink = Color(0xFF8F394F)

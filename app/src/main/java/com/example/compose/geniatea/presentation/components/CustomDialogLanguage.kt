@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.settingsSection.preferencesSettings.PreferencesAction
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsAction
 import java.util.Locale
 
 
@@ -40,7 +41,7 @@ import java.util.Locale
 fun CustomDialogLanguage(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit,
-    onAction: (PreferencesAction) -> Unit = {},
+    onAction: (SettingsAction) -> Unit = {},
 ) {
     Dialog(
         onDismissRequest = {
@@ -103,7 +104,7 @@ fun CustomDialogLanguage(
 
 @Composable
 fun ListLanguages(
-    onAction: (PreferencesAction) -> Unit = {}
+    onAction: (SettingsAction) -> Unit = {}
 ) {
     Column(
         modifier = Modifier
@@ -127,7 +128,7 @@ fun ListLanguages(
 
 
 @Composable
-fun listItemLanguage(text: String, icon: Painter, isChoosen: Boolean = false, onAction: (PreferencesAction) -> Unit = {},){
+fun listItemLanguage(text: String, icon: Painter, isChoosen: Boolean = false, onAction: (SettingsAction) -> Unit = {},){
 
     val backgroundColor = if (isChoosen) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface
 
@@ -140,7 +141,7 @@ fun listItemLanguage(text: String, icon: Painter, isChoosen: Boolean = false, on
                 contentColor = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onAction(PreferencesAction.OnLanguagePress(text)) },
+            onClick = { onAction(SettingsAction.OnLanguagePress(text)) },
         ) {
             Image(
                 painter = icon,

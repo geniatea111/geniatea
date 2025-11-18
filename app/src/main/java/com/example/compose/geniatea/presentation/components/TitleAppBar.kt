@@ -42,13 +42,15 @@ fun TitleAppBar(
     iconButton: Int = R.drawable.svg_preferences,
 ) {
     TopAppBar(
+        //transparent
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f)
         ),
         actions = {
             if (optionalButton) {
                 IconButton(
                     onClick = onOptionalButtonPressed,
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Icon(
                         painter = painterResource(id = iconButton),

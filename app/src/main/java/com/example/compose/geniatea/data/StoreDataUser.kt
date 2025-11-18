@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.compose.geniatea.domain.User
+import com.example.compose.geniatea.theme.AppColorVariant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -29,6 +30,9 @@ class StoreDataUser() {
         val DARK_MODE_KEY = booleanPreferencesKey("is_dark_mode")
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
         val USER_ROL_KEY = stringPreferencesKey("user_rol")
+        val ANIMATIONS_ENABLED_KEY = booleanPreferencesKey("animations_enabled")
+        val PICTOGRAMS_ENABLED_KEY = booleanPreferencesKey("pictograms_enabled")
+        val THEME_VARIANT_KEY = stringPreferencesKey("theme_variant")
     }
 
      suspend fun saveUser(context: Context, user: User) {
@@ -130,10 +134,52 @@ class StoreDataUser() {
         }.first()
     }
 
+    suspend fun getThemeVariant(context: Context): AppColorVariant {
+        return context.dataStore.data
+            .map { preferences ->
+                val value = preferences[THEME_VARIANT_KEY] ?: AppColorVariant.BLUE.name
+                AppColorVariant.valueOf(value)
+            }
+            .first()
+    }
+
+    suspend fun setThemeVariant(context: Context, variant: AppColorVariant){
+        context.dataStore.edit { preferences ->
+            preferences[THEME_VARIANT_KEY] = variant.name
+        }
+    }
+
     suspend fun saveDarkMode(context: Context, isDarkMode: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[DARK_MODE_KEY] = isDarkMode
         }
     }
+
+    suspend fun getAnimationsEnabled(context: Context): Boolean {
+        return context.dataStore.data.map { preferences ->
+            preferences[ANIMATIONS_ENABLED_KEY] ?: true
+        }.first()
+    }
+
+    suspend fun saveAnimationsEnabled(context: Context, isEnabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[ANIMATIONS_ENABLED_KEY] = isEnabled
+        }
+    }
+
+    suspend fun getPictogramsEnabled(context: Context): Boolean {
+        return context.dataStore.data.map { preferences ->
+            preferences[PICTOGRAMS_ENABLED_KEY] ?: true
+        }.first()
+    }
+
+    suspend fun savePictogramsEnabled(context: Context, isEnabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[PICTOGRAMS_ENABLED_KEY] = isEnabled
+        }
+    }
+
+
+
 
 }
