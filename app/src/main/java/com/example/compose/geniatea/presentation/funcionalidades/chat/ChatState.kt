@@ -2,26 +2,13 @@ package com.example.compose.geniatea.presentation.funcionalidades.chat
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.text.input.TextFieldValue
 
-
-class ChatState(initialMessages: List<Message>) {
-    var currentMessage by mutableStateOf(TextFieldValue(""))
-
-    private val _messages: MutableList<Message> = initialMessages.toMutableStateList()
-    val messages: List<Message> = _messages
-
-    fun addMessage(msg: Message) {
-        _messages.add(msg) // Add to the beginning of the list
-    }
-
-    val selectedImage = mutableStateOf<Uri?>(null)
-}
-
+data class ChatState(
+    val messages: List<Message> = emptyList(),
+    val currentMessage: TextFieldValue = TextFieldValue(""),
+    val selectedImage: Uri? = null
+)
 
 @Immutable
 data class Message(

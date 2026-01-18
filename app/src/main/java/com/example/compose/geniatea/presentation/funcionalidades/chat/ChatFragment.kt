@@ -21,6 +21,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,7 +47,7 @@ class ChatFragment : Fragment() {
 
     private val imagePicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         uri?.let {
-            viewModel.state.value.selectedImage.value = it
+            // TODO: Handle image selection
         }
     }
 
@@ -66,7 +67,6 @@ class ChatFragment : Fragment() {
                     when (action) {
                         is ChatAction.OnBackPressed -> activity?.onBackPressedDispatcher?.onBackPressed()
                         is ChatAction.OnAccountPressed -> findNavController().navigate(R.id.nav_settings)
-                        is ChatAction.OnChatPressed -> findNavController().navigate(R.id.nav_chat)
                         is ChatAction.OnImageSelection -> {
                             Log.i("ChatFragment", "Image selection action triggered")
                             imagePicker.launch(
@@ -115,7 +115,7 @@ class ChatFragment : Fragment() {
 
                             try{
                                 lifecycleScope.launch {
-                                    viewModel.sendMessage(requireContext())
+                                    viewModel.sendMessage(requireContext(), action.message)
                                 }
                             }catch (e: Exception) {
                                 e.printStackTrace()
@@ -193,7 +193,7 @@ class ChatFragment : Fragment() {
                     if (matches != null)
                         if (matches.isNotEmpty()) {
                             val recognizedText = matches[0]
-                            viewModel.state.value.currentMessage = viewModel.state.value.currentMessage.copy(text = recognizedText)
+                            viewModel.onAction(ChatAction.OnMessageChange(TextFieldValue(recognizedText)))
 
                             Log.i("ChatFragment", "Speech recognition result: ${viewModel.state.value.currentMessage.text}")
 

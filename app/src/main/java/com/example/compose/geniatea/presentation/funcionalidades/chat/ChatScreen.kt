@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
@@ -36,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,7 +66,6 @@ import com.example.compose.geniatea.presentation.components.UserInput
 import com.example.compose.geniatea.presentation.components.JumpToBottom
 import com.example.compose.geniatea.theme.GenIATEATheme
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -77,13 +78,7 @@ fun ChatRoot(
 
     ChatScreen(
         uiState = state,
-        onAction =  { action ->
-            when (action) {
-                is ChatAction.OnBackPressed -> onBackPressed()
-                else -> { Unit }
-            }
-            viewModel.onAction(action)
-        },
+        onAction = viewModel::onAction,
         onNavIconPressed = onBackPressed,
     )
 }
@@ -97,14 +92,18 @@ fun ChatScreen(
     onNavIconPressed: () -> Unit = { },
 ) {
 
-    val authorMe = stringResource(R.string.author_me)
-
     val scrollState = rememberLazyListState()
     val topBarState = rememberTopAppBarState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
     val scope = rememberCoroutineScope()
     val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
+
+    LaunchedEffect(uiState.messages.size) {
+        if (uiState.messages.isNotEmpty()) {
+            scrollState.animateScrollToItem(uiState.messages.size - 1)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -179,15 +178,11 @@ fun ChatScreen(
             UserInput(
                 state = uiState,
                 onAction = onAction,
-                onMessageSent = { content, image ->
-                    val time = LocalDateTime.now().format(dateFormatter)
-                    uiState.addMessage(
-                        Message(authorMe, content, time, image),
-                    )
-                } ,
                 resetScroll = {
                     scope.launch {
-                        scrollState.scrollToItem(uiState.messages.size)
+                        if (uiState.messages.isNotEmpty()) {
+                            scrollState.scrollToItem(uiState.messages.size - 1)
+                        }
                     }
                 },
                 modifier = Modifier.imePadding().padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = bottomPaddingInput),
@@ -198,7 +193,6 @@ fun ChatScreen(
 
 const val ConversationTestTag = "ConversationTestTag"
 val dateFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault())
-//val dayFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.getDefault())
 
 @Composable
 fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit) {
@@ -206,52 +200,21 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
     Box(modifier = modifier) {
 
         LazyColumn(
-            reverseLayout = false,
             state = scrollState,
             modifier = Modifier
                 .testTag(ConversationTestTag)
                 .fillMaxSize(),
         ) {
-            for (index in messages.indices) {
-                val content = messages[index]
-               /* val currentDate = LocalDateTime.parse(content.timestamp, dateFormatter).toLocalDate()
-                val nextDate = if (index < messages.lastIndex) {
-                    LocalDateTime.parse(messages[index + 1].timestamp, dateFormatter).toLocalDate()
-                } else null*/
-
-                item {
-                    Message(
-                        msg = content,
-                        isUserMe = content.author != "Geni",
-                        onAction
-                    )
-                }
-
-             /*   if (nextDate == null || nextDate != currentDate) {
-                    val label = when (currentDate) {
-                        LocalDate.now() -> "Hoy"
-                        LocalDate.now().minusDays(1) -> "Ayer"
-                        else -> currentDate.format(dayFormatter)
-                    }
-                    item { DayHeader(label) }
-                }*/
+            items(messages) { content ->
+                Message(
+                    msg = content,
+                    isUserMe = content.author != "Geni",
+                    onAction
+                )
             }
         }
-        // Jump to bottom button shows up when user scrolls past a threshold.
-        // Convert to pixels:
-        val jumpThreshold = with(LocalDensity.current) {
-            JumpToBottomThreshold.toPx()
-        }
-
-        // Show the button if the first visible item is not the first one or if the offset is
-        // greater than the threshold.
         val jumpToBottomButtonEnabled by remember {
             derivedStateOf {
-            /*
-                scrollState.firstVisibleItemIndex != 0 ||
-                        scrollState.firstVisibleItemScrollOffset > jumpThreshold
-            }*/
-
                 val lastIndex = messages.lastIndex
                 if (lastIndex < 0) return@derivedStateOf false
 
@@ -261,11 +224,12 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
         }
 
         JumpToBottom(
-            // Only show if the scroller is not at the bottom
             enabled = jumpToBottomButtonEnabled,
             onClicked = {
                 scope.launch {
-                    scrollState.animateScrollToItem(messages.lastIndex)
+                    if (messages.isNotEmpty()) {
+                        scrollState.animateScrollToItem(messages.size - 1)
+                    }
                 }
             },
             modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp),
@@ -346,7 +310,7 @@ private fun RowScope.DayHeaderLine() {
 @Composable
 fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -> Unit = {}) {
 
-    val ChatBubbleShape = if (isUserMe) {
+    val chatBubbleShape = if (isUserMe) {
         ChatBubbleShapeMe
     } else {
         ChatBubbleShapeGeni
@@ -419,7 +383,7 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
             val painter = rememberAsyncImagePainter(model = uri)
             Surface(
                 color = backgroundBubbleColor,
-                shape = ChatBubbleShape,
+                shape = chatBubbleShape,
                 modifier = Modifier.align(Alignment.End)
             ) {
                 Image(
@@ -434,7 +398,7 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
 
         Surface(
             color = backgroundBubbleColor,
-            shape = ChatBubbleShape,
+            shape = chatBubbleShape,
             modifier = Modifier
                 .align(if (isUserMe) Alignment.End else Alignment.Start)
                 .padding(start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp)
@@ -453,27 +417,11 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
 fun ClickableMessage(message: Message, isUserMe: Boolean) {
     val uriHandler = LocalUriHandler.current
 
-  /*  val styledMessage = messageFormatter(
-        text = message.content,
-        primary = isUserMe,
-    )*/
-
     Text(
         text = message.content,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.padding(16.dp),
-       /* onClick = {
-            styledMessage
-                .getStringAnnotations(start = it, end = it)
-                .firstOrNull()
-                ?.let { annotation ->
-                    when (annotation.tag) {
-                        SymbolAnnotationType.LINK.name -> uriHandler.openUri(annotation.item)
-                        else -> Unit
-                    }
-                }
-        },*/
     )
 }
 
@@ -484,7 +432,7 @@ fun Preview() {
     GenIATEATheme {
         ChatScreen(
             uiState = ChatState(
-                initialMessages = listOf(
+                messages = listOf(
                     Message(
                         author = "Geni",
                         content = "Hola, ¿cómo puedo ayudarte hoy?",
@@ -530,7 +478,7 @@ fun PreviewDark() {
     GenIATEATheme(isDarkTheme = true) {
         ChatScreen(
             uiState = ChatState(
-                initialMessages = listOf(
+                messages = listOf(
                     Message(
                         author = "Geni",
                         content = "Hola, ¿cómo puedo ayudarte hoy?",
@@ -575,7 +523,7 @@ fun PreviewNoMessage() {
     GenIATEATheme(isDarkTheme = false) {
         ChatScreen(
             uiState = ChatState(
-                initialMessages = listOf(),
+                messages = listOf(),
             ),
             onAction = { },
         )
@@ -589,7 +537,7 @@ fun PreviewNoMessageDark() {
     GenIATEATheme(isDarkTheme = true) {
         ChatScreen(
             uiState = ChatState(
-                initialMessages = listOf(),
+                messages = listOf(),
             ),
             onAction = { },
         )

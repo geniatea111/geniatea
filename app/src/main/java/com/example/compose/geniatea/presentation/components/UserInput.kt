@@ -67,6 +67,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose.geniatea.R
@@ -85,9 +86,7 @@ import com.example.compose.geniatea.presentation.funcionalidades.chat.ChatState
 fun UserInput(
     state: ChatState,
     onAction: (ChatAction) -> Unit = {},
-    onMessageSent: (String, Uri?) -> Unit,
     modifier: Modifier = Modifier,
-    hideKeyboard: () -> Unit = {},
     resetScroll: () -> Unit = {}) {
 
     var selectedImage by remember {
@@ -101,11 +100,6 @@ fun UserInput(
         }
     )
 
-   /* var textState by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }*/
-
-    // Used to decide if the keyboard should be shown
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     Surface {
@@ -126,8 +120,7 @@ fun UserInput(
 
                 UserInputText(
                     textFieldValue = state.currentMessage,
-                    onTextChanged = { state.currentMessage= it },
-                    // Close extended selector if text field receives focus
+                    onTextChanged = { onAction(ChatAction.OnMessageChange(it)) },
                     onTextFieldFocused = { focused ->
                         if (focused) {
                             resetScroll()
@@ -136,59 +129,18 @@ fun UserInput(
                     },
                     sendMessageEnabled = state.currentMessage.text.isNotBlank(),
                     onMessageSent = {
-                        onMessageSent(state.currentMessage.text, selectedImage)
-                        // Reset text field and close keyboard
-                        hideKeyboard()
-                        resetScroll()
+                        onAction(ChatAction.OnMessageSend(state.currentMessage.text, selectedImage))
                         selectedImage = null
                         textFieldFocusState = false
-                        state.currentMessage = TextFieldValue()
-                        //hide the keyboard
-                        onAction(ChatAction.OnMessageSend(state.currentMessage.text, selectedImage))
-                        true
                     },
                     onAction = onAction,
                     selectedImage = selectedImage,
                     onRemoveImage = { selectedImage = null },
                 )
-
-//            UserInputSelector(
-//                onAction = onAction,
-//                photoLauncher = photoPickerLauncher,
-//            )
             }
         }
 }
 
-
-//
-//@Composable
-//private fun UserInputSelector(
-//    onAction: (ChatAction) -> Unit,
-//    photoLauncher: ManagedActivityResultLauncher<PickVisualMediaRequest, Uri?>?,
-//    modifier: Modifier = Modifier,
-//) {
-//    Row(
-//        modifier = modifier
-//            .fillMaxWidth()
-//            .height(48.dp)
-//            .padding(start = 15.dp, end = 15.dp)
-//            .wrapContentHeight(),
-//        verticalAlignment = Alignment.CenterVertically,
-//    ) {
-//
-//
-//
-//
-//        Spacer(
-//            modifier = Modifier
-//                .fillMaxHeight()
-//                .width(8.dp)
-//        )
-//
-//
-//    }
-//}
 
 @Composable
 private fun InputSelectorButton(
@@ -254,7 +206,7 @@ private fun UserInputText(
                 shape = RoundedCornerShape(25.dp)
             )
             .wrapContentHeight(),
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
             if(selectedImage != null){
@@ -324,9 +276,11 @@ private fun UserInputText(
                                 textFieldValue,
                                 onTextChanged,
                                 keyboardType,
-                                Modifier.fillMaxWidth().semantics {
-                                    contentDescription = a11ylabel
-                                },
+                                Modifier
+                                    .fillMaxWidth()
+                                    .semantics {
+                                        contentDescription = a11ylabel
+                                    },
                             )
                         }
                     }
@@ -412,7 +366,6 @@ private fun BoxScope.UserInputTextField(
     keyboardType: KeyboardType,
     modifier: Modifier = Modifier,
 ) {
-   // var lastFocusState by remember { mutableStateOf(false) }
 
     val focusRequester = remember { FocusRequester() }
 
@@ -426,13 +379,7 @@ private fun BoxScope.UserInputTextField(
         modifier = modifier
             .focusRequester(focusRequester)
             .padding(start = 20.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
-            .align(Alignment.Center)
-            /*.onFocusChanged { state ->
-                if (lastFocusState != state.isFocused) {
-                    onTextFieldFocused(state.isFocused)
-                }
-                lastFocusState = state.isFocused
-            }*/
+            .align(Alignment.CenterStart)
             .wrapContentHeight(), // Permite que el campo crezca verticalmente
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
@@ -440,7 +387,11 @@ private fun BoxScope.UserInputTextField(
             capitalization = KeyboardCapitalization.Sentences,
         ),
         cursorBrush = SolidColor(LocalContentColor.current),
-        textStyle = LocalTextStyle.current.copy(color = LocalContentColor.current),
+        textStyle = LocalTextStyle.current.copy(
+            color = LocalContentColor.current,
+            textAlign = TextAlign.Start,
+            textDirection = TextDirection.Ltr
+        ),
     )
 
     val disableContentColor = MaterialTheme.colorScheme.onSurfaceVariant
@@ -499,10 +450,8 @@ private fun RecordingIndicator() {
 @Preview
 @Composable
 fun UserInputPreview() {
-    UserInput(onMessageSent = { _, _ -> },
-        state = ChatState(
-            initialMessages = listOf()
-        ),
+    UserInput(
+        state = ChatState(),
         resetScroll = { /* No-op */ }
     )
 }
