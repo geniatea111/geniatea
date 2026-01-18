@@ -33,7 +33,7 @@ class PreferencesFragment : Fragment() {
                             activity?.onBackPressedDispatcher?.onBackPressed()
                         is PreferencesAction.OnDarkModeToggle -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                viewModel.setDarkMode(action.isChecked, requireContext())
+                                viewModel.setDarkMode(action.isChecked)
                             }
                         }
 

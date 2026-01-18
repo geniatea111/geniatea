@@ -40,7 +40,7 @@ class ChangePassViewModel: ViewModel() {
 
     suspend fun changePassword(context: Context){
         val response = BackendAPI.retrofitService.updatePassword(
-            token = "Bearer ${StoreDataUser().getToken(context)}",
+            token = "Bearer ${StoreDataUser(context).getToken()}",
             ApiService.UpdatePasswordRequest(
                 currentPassword = state.value.currentPassword,
                 newPassword = state.value.newPassword

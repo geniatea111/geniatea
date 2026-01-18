@@ -28,8 +28,8 @@ class AppColorFragment : Fragment() {
                 event.getContentIfNotHandled()?.let { action ->
                     when(action){
                         AppColorAction.OnBackPressed -> activity?.onBackPressedDispatcher?.onBackPressed()
-                        AppColorAction.OnBluePressed -> viewModel.updateThemeVariant(AppColorVariant.BLUE, requireContext())
-                        AppColorAction.OnPinkPressed -> viewModel.updateThemeVariant(AppColorVariant.PINK, requireContext())
+                        AppColorAction.OnBluePressed -> viewModel.updateThemeVariant(AppColorVariant.BLUE)
+                        AppColorAction.OnPinkPressed -> viewModel.updateThemeVariant(AppColorVariant.PINK)
                     }
                 }
             }

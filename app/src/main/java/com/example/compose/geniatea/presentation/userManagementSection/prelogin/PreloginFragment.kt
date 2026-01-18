@@ -26,8 +26,7 @@ class PreloginFragment : Fragment() {
                     when (action) {
                         is PreloginAction.OnBackPressed -> activity?.onBackPressedDispatcher?.onBackPressed()
                         is PreloginAction.OnLoginPressed -> findNavController().navigate(R.id.nav_login)
-                        is PreloginAction.OnRegisterPressed -> //findNavController().navigate(R.id.nav_register)
-                            findNavController().navigate(R.id.nav_preregister)
+                        is PreloginAction.OnRegisterPressed -> findNavController().navigate(R.id.nav_preregister)
                         is PreloginAction.OnTermsOfServiceClicked -> {
                            /* val url = "https://geniatea.com/terms"
                             val intent = android.content.Intent(android.content.Intent.ACTION_VIEW)

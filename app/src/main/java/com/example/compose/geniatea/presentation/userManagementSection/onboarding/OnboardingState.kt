@@ -1,9 +1,11 @@
 package com.example.compose.geniatea.presentation.userManagementSection.onboarding
 
-import android.net.Uri
-
-
-data class OnboardingScreenState(
-    val selectedOption: String = "",
-    val selectedImage: Uri? = null
+data class OnboardingState(
+    val name: String = "",
+    val pronoun: String = "",
+    val birthDate: String = "",
+    val description: String = "",
+    val showPictograms: Boolean = true,
+    val isLoading: Boolean = false,
+    val error: String? = null
 )

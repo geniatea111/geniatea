@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.example.compose.geniatea.data.backendConection.ApiService.LoginResponse
 import com.example.compose.geniatea.data.StoreDataUser
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -12,15 +13,14 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class AuthInterceptor(
-    private val context: Context,
-    private val store: StoreDataUser
-) : Interceptor {
+class AuthInterceptor(private val context: Context) : Interceptor {
+    private val store = StoreDataUser(context)
+
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
 
         // Add access token
-        val token = runBlocking { store.getToken(context) }
+        val token = runBlocking { store.getToken() }
         if (!token.isNullOrBlank()) {
             request = request.newBuilder()
                 .addHeader("Authorization", "Bearer $token")
@@ -34,7 +34,7 @@ class AuthInterceptor(
 
             response.close()
 
-            val refreshToken = runBlocking { store.getRefreshToken(context) }
+            val refreshToken = runBlocking { store.getRefreshToken() }
             Log.w("AuthInterceptor", "Stored refreshToken = $refreshToken")
 
             if (!refreshToken.isNullOrBlank()) {
@@ -50,7 +50,7 @@ class AuthInterceptor(
                         Log.w("AuthInterceptor", "New tokens received ✅")
 
                         runBlocking {
-                            store.refreshTokens(context, newAccessToken, newRefreshToken)
+                            store.refreshTokens(newAccessToken, newRefreshToken)
                         }
 
                         val newRequest = request.newBuilder()
@@ -82,59 +82,6 @@ class AuthInterceptor(
 
         return response
     }
-
-/* ESTE METODO TAMBIEN FUNCIONA PERO NO DA TANTA INFO EN LOGS
-    override fun interceptOLD(chain: Interceptor.Chain): Response {
-        var request = chain.request()
-
-        // Add access token
-        val token = runBlocking { store.getToken(context) }
-        if (!token.isNullOrBlank()) {
-            request = request.newBuilder()
-                .addHeader("Authorization", "Bearer $token")
-                .build()
-        }
-
-        val response = chain.proceed(request)
-
-        // If unauthorized → try refresh
-        if (response.code == 401) {
-            response.close()
-
-            val refreshToken = runBlocking { store.getRefreshToken(context) }
-            if (!refreshToken.isNullOrBlank()) {
-                val refreshResponse = refreshTokenRequest(refreshToken)
-
-                if (refreshResponse?.isSuccessful == true) {
-                    val tokenResponse = refreshResponse.body()
-                    val newAccessToken = tokenResponse?.accessToken.orEmpty()
-                    val newRefreshToken = tokenResponse?.refreshToken.orEmpty()
-
-                    runBlocking {
-                        store.refreshTokens(context, newAccessToken, newRefreshToken)
-                    }
-
-                    // Retry with new token
-                    val newRequest = request.newBuilder()
-                        .removeHeader("Authorization")
-                        .addHeader("Authorization", "Bearer $newAccessToken")
-                        .build()
-
-                    return chain.proceed(newRequest) // ✅ only return this
-                }else{
-                    Log.e("AuthInterceptor", "Error refreshing token: ${refreshResponse?.errorBody()?.string()}")
-                }
-            }
-
-            // important: if refresh fails, return a new response not the closed one
-            return response.newBuilder()
-                .body("".toResponseBody(null))
-                .build()
-        }
-
-        return response // original response, untouched
-    }
-*/
 
     private fun refreshTokenRequest(refreshToken: String): retrofit2.Response<LoginResponse>? {
         val client = OkHttpClient.Builder().build()

@@ -24,7 +24,7 @@ class AccountFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.toolbar_compose_view).apply {
 
-            val storeDataUser = StoreDataUser()
+            val storeDataUser = StoreDataUser(context)
 
             viewModel.actionEvent.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.let { action ->
@@ -64,7 +64,7 @@ class AccountFragment : Fragment() {
                         }
                         is AccountAction.OnRefreshTokenSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                storeDataUser.refreshTokens(requireContext(), action.accessToken, action.refreshToken)
+                                storeDataUser.refreshTokens(action.accessToken, action.refreshToken)
                             }
                         }
                         else -> {

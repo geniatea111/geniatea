@@ -38,7 +38,7 @@ class SettingsFragment : Fragment() {
                         is SettingsAction.OnBackPressed -> activity?.onBackPressedDispatcher?.onBackPressed()
                         is SettingsAction.OnLogoutPressed -> {
                             lifecycleScope.launch {
-                                viewModel.logoutUser(requireContext())
+                                viewModel.logoutUser()
                             }
                             findNavController().navigate(R.id.nav_prelogin)
                         }
@@ -71,19 +71,19 @@ class SettingsFragment : Fragment() {
 
                         is SettingsAction.OnDarkModeToggle -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                viewModel.setDarkMode(action.isChecked, requireContext())
+                                viewModel.setDarkModeState(action.isChecked)
                             }
                         }
 
                         is SettingsAction.OnAnimationsToggle -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                viewModel.setAnimationsEnabled(action.isChecked, requireContext())
+                                viewModel.setAnimationsEnabled(action.isChecked)
                             }
                         }
 
                         is SettingsAction.OnPictogramsToggle -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                viewModel.setPictogramsEnabled(action.isChecked, requireContext())
+                                viewModel.setPictogramsEnabled(action.isChecked)
                             }
                         }
 

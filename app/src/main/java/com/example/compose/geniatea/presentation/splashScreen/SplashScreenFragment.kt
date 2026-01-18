@@ -15,7 +15,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.data.StoreDataUser
-import com.example.compose.geniatea.data.StoreDataUser.Companion.dataStore
 import com.example.compose.geniatea.theme.GenIATEATheme
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -29,26 +28,30 @@ class SplashScreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate XML layout containing ComposeView
         val rootView = inflater.inflate(R.layout.fragment_profile, container, false)
 
-        // Compose splash screen
         rootView.findViewById<ComposeView>(R.id.compose_view)?.setContent {
             GenIATEATheme {
-                SplashScreen() // your composable logo / animation
+                SplashScreen()
             }
         }
-
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            val isLogged = requireContext().dataStore.data
-                .map { it[StoreDataUser.IS_LOGGED_IN] ?: false }
-                .first()
+        // Usamos lifecycleScope.launch.
+        // Nota: launchWhenStarted está deprecado en versiones nuevas, es mejor launch normal o repeatOnLifecycle,
+        // pero para un splash screen simple, launch está bien.
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            // 1. Instanciamos tu clase administradora (ella sí tiene acceso al dataStore privado)
+            val storeData = StoreDataUser(requireContext())
+
+            // 2. Leemos el valor usando la variable que creamos en el Paso 1
+            // Usamos .first() porque solo queremos el valor actual una vez, no quedarnos escuchando cambios
+            val isLogged = storeData.isUserLoggedIn.first()
 
             val navHostFragment = requireActivity()
                 .supportFragmentManager
@@ -56,11 +59,16 @@ class SplashScreenFragment : Fragment() {
 
             val navController = navHostFragment.navController
             val graph = navController.navInflater.inflate(R.navigation.mobile_navigation)
-            //graph.setStartDestination(if (isLogged) R.id.nav_home else R.id.nav_prelogin)
-            graph.setStartDestination(R.id.nav_home)
+
+            // 3. Decidimos el destino
+            if (isLogged) {
+                graph.setStartDestination(R.id.nav_home)
+            } else {
+                // Asumiendo que tienes un id para el login, cámbialo por el correcto
+                graph.setStartDestination(R.id.nav_prelogin)
+            }
+
             navController.graph = graph
         }
-
-
     }
 }

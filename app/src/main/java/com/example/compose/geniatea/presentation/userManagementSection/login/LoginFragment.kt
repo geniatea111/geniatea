@@ -31,7 +31,7 @@ class LoginFragment : Fragment() {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
         val token = getString(R.string.google_client_id)
 
-        val storeDataUser = StoreDataUser()
+        val storeDataUser = StoreDataUser(requireContext())
 
         googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             lifecycleScope.launch {
@@ -63,7 +63,7 @@ class LoginFragment : Fragment() {
                         is LoginAction.OnRegisterClicked -> findNavController().navigate(R.id.nav_preregister)
                         is LoginAction.OnLoginSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                storeDataUser.saveUser(requireContext(), action.user)
+                                storeDataUser.saveUser(action.user)
                                 findNavController().navigate(R.id.nav_home)
                             }
                         }

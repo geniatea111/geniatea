@@ -102,7 +102,7 @@ class ChatViewModel: ViewModel() {
         try{
             val response = BackendAPI.retrofitService.requestChat(
                 ApiService.MessageRequest(
-                    userId = StoreDataUser().getId(context).toString(),
+                    userId = StoreDataUser(context).getId().toString(),
                     message = state.value.currentMessage.text,
                     image = null
                 )

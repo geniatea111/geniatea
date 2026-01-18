@@ -39,6 +39,7 @@ import com.example.compose.geniatea.presentation.settingsSection.settings.Settin
 import com.example.compose.geniatea.theme.GenIATEATheme
 import androidx.compose.runtime.getValue
 import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+import kotlinx.coroutines.flow.first
 
 /**
  * Main activity for the app.
@@ -58,11 +59,12 @@ class MainActivity : AppCompatActivity() {
 
         // Load saved theme and dark mode before setting content
         lifecycleScope.launch {
-            val isDarkMode = StoreDataUser().getDarkMode(this@MainActivity)
-            val themeVariant = StoreDataUser().getThemeVariant(this@MainActivity)
+            val dataStore = StoreDataUser(this@MainActivity)
+            val isDarkMode = dataStore.getDarkMode().first()
+            val themeVariant = dataStore.getThemeVariant().first()
 
             // Save values into ViewModel
-            settingsViewModel.setDarkMode(isDarkMode)
+            settingsViewModel.setDarkModeState(isDarkMode)
             appColorViewModel.setThemeVariant(themeVariant)
 
             // Apply system dark mode

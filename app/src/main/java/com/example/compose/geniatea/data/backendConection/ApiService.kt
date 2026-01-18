@@ -26,19 +26,17 @@ interface ApiService {
     )
 
     data class RegisterRequest(
-      //  val name: String,
         val username: String,
         val email: String,
-        //val birthdate: String,
-        //val gender: String,
-        val password: String,
-        val roles: List<String>
+        val password: String
     )
 
     data class UpdateUserRequest(
-        val name: String? = null,
-        val birthdate: String? = null,
-        val gender: String? = null,
+        val name: String,
+        val gender: String,
+        val birthdate: String,
+        val roles: Set<String>? = null,
+        val showPictograms: Boolean? = null
     )
 
     data class UpdatePasswordRequest(
@@ -106,7 +104,6 @@ interface ApiService {
         @Body loginRequest: LoginGoogleRequest
     ): Response<LoginResponse>
 
-    //with variable id
     @POST("users")
     suspend fun register(
         @Body registerRequest: RegisterRequest

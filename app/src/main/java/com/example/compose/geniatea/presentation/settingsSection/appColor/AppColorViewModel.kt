@@ -1,7 +1,9 @@
 package com.example.compose.geniatea.presentation.settingsSection.appColor
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,11 +14,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class  AppColorViewModel: ViewModel() {
+class AppColorViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _actionEvent = MutableLiveData<Event< AppColorAction>>()
+    private val _actionEvent = MutableLiveData<Event<AppColorAction>>()
     val actionEvent: LiveData<Event<AppColorAction>> = _actionEvent
-    private val storeData = StoreDataUser()
+
+    // 2. Usamos 'getApplication<Application>().applicationContext'
+    private val storeData = StoreDataUser(getApplication<Application>().applicationContext)
+
     private val _state = MutableStateFlow(AppColorState())
     val state = _state
 
@@ -27,10 +32,11 @@ class  AppColorViewModel: ViewModel() {
         _themeVariant.value = theme
     }
 
-    fun updateThemeVariant(variant: AppColorVariant, context: Context) {
+    // 3. Ya no necesitas pasar 'context' aquí si storeData ya está inicializado arriba
+    fun updateThemeVariant(variant: AppColorVariant) {
         Log.i("MainActivity", "Updating theme variant to $variant")
         viewModelScope.launch {
-            storeData.setThemeVariant(context, variant)
+            storeData.setThemeVariant(variant)
             _themeVariant.value = variant
         }
     }

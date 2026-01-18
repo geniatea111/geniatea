@@ -12,11 +12,13 @@ import com.example.compose.geniatea.data.backendConection.ApiService
 import com.example.compose.geniatea.data.backendConection.ApiService.GetUserResponse
 import com.example.compose.geniatea.data.StoreDataUser
 import com.example.compose.geniatea.domain.User
+import com.example.compose.geniatea.utils.Event
 import com.example.compose.geniatea.utils.Formats.Companion.formatDate
 import com.example.compose.geniatea.utils.Formats.Companion.formatDateToBack
 import com.example.compose.geniatea.utils.Formats.Companion.formatGender
 import com.example.compose.geniatea.utils.Formats.Companion.formatGenderToBack
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 
 
 class AccountViewModel: ViewModel() {
@@ -54,8 +56,8 @@ class AccountViewModel: ViewModel() {
     }
 
     suspend fun setData(context: Context) {
-        val store = StoreDataUser()
-        val id = store.getId(context) ?: return
+        val store = StoreDataUser(context)
+        val id = store.getId() ?: return
 
         try{
             val response = BackendAPI.retrofitService.getUserById(id)
@@ -90,22 +92,21 @@ class AccountViewModel: ViewModel() {
 
     suspend fun updateData(context: Context) {
         if(checkDataValidity()) {
-            val user = User(
-                name = _state.value.name,
-                email = _state.value.email,
-                username = _state.value.username,
-                birthdate = _state.value.birthDate,
-                gender = _state.value.gender
-            )
+            val store = StoreDataUser(context)
+            val id = store.getId() ?: 0L
+            val token = store.getToken() ?: ""
+            val refreshToken = store.getRefreshToken() ?: ""
+            val user = User(id, token, refreshToken, _state.value.name, _state.value.email, _state.value.username, _state.value.birthDate, _state.value.gender, "USER", false)
 
             try{
                 val response = BackendAPI.retrofitService.updateUser(
-                    token = "Bearer ${StoreDataUser().getToken(context)}",
-                    userId = StoreDataUser().getId(context).toString(),
-                    ApiService.UpdateUserRequest(
+                    token = "Bearer $token",
+                    userId = id.toString(),
+                    updaterRequest = ApiService.UpdateUserRequest(
                         name = _state.value.name,
                         birthdate = formatDateToBack(_state.value.birthDate),
-                        gender = formatGenderToBack(_state.value.gender)
+                        gender = formatGenderToBack(_state.value.gender),
+                        showPictograms = null
                     )
                 )
 
@@ -113,7 +114,7 @@ class AccountViewModel: ViewModel() {
                     val message = response.body()?.string()
                     Log.i("AccountViewModel", "Server said: $message")
                     if (message?.contains("User updated successfully") == true) {
-                        StoreDataUser().updateUser(context, user)
+                        store.updateUser(user)
                         _actionEvent.value = Event(AccountAction.OnUpdateSuccess)
                     }else{
                         Log.e("AccountViewModel", "Error updating user: $message")
@@ -165,8 +166,9 @@ class AccountViewModel: ViewModel() {
     }
 
     suspend fun deleteAccount(context: Context) {
-        val id = StoreDataUser().getId(context)!!
-        val token = StoreDataUser().getToken(context) ?: ""
+        val store = StoreDataUser(context)
+        val id = store.getId()!!
+        val token = store.getToken() ?: ""
 
         try {
             val response = BackendAPI.retrofitService.deleteUser(
@@ -181,7 +183,7 @@ class AccountViewModel: ViewModel() {
                     if (bodyString != null && bodyString.contains("User deleted successfully")) {
                         Log.i("AccountViewModel", "User deleted successfully")
                         _actionEvent.value = Event(AccountAction.OnDeleteAccountSuccess)
-                        StoreDataUser().logoutUser(context)
+                        store.logoutUser()
                     } else {
                         Log.e("AccountViewModel", "Unexpected response body (possible token issue or malformed content): $bodyString")
                         _actionEvent.value = Event(AccountAction.OnDeleteAccountError)
@@ -202,17 +204,4 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-}
-
-
-open class Event<out T>(private val content: T) {
-    private var hasBeenHandled = false
-
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) null
-        else {
-            hasBeenHandled = true
-            content
-        }
-    }
 }

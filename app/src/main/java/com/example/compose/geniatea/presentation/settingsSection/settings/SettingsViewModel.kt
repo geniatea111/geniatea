@@ -1,7 +1,9 @@
 package com.example.compose.geniatea.presentation.settingsSection.settings
 
+import android.app.Application
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,108 +15,109 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel: ViewModel() {
+class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(SettingsScreenState())
     val state = _state
+
     private val _actionEvent = MutableLiveData<Event<SettingsAction>>()
     val actionEvent: LiveData<Event<SettingsAction>> = _actionEvent
-    private val storeData = StoreDataUser()
 
+    // 2. Usamos el contexto de la aplicación
+    private val storeData = StoreDataUser(getApplication<Application>().applicationContext)
+
+    // Estado separado para el Toggle (si es necesario sincronizar con _state)
     private val _darkMode = MutableStateFlow(false)
     val darkMode: StateFlow<Boolean> = _darkMode
 
-    // Called when loading data on startup
-    fun setDarkMode(isDark: Boolean) {
+    // Función simple para inicializar estado visual si viene de otro lado
+    fun setDarkModeState(isDark: Boolean) {
         _darkMode.value = isDark
     }
 
     fun onAction(action: SettingsAction) {
         when (action) {
-            SettingsAction.OnBackPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnBackPressed)
-            }
-            SettingsAction.OnAccountPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnAccountPressed)
-            }
-
+            SettingsAction.OnBackPressed -> _actionEvent.value = Event(SettingsAction.OnBackPressed)
+            SettingsAction.OnAccountPressed -> _actionEvent.value = Event(SettingsAction.OnAccountPressed)
             is SettingsAction.OnLogoutPressed -> {
+                logoutUser() // Llamamos a la función de logout
                 _actionEvent.value = Event(SettingsAction.OnLogoutPressed)
             }
-            is SettingsAction.OnAboutPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnAboutPressed)
-            }
-            is SettingsAction.OnPrivacyPolicyPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnPrivacyPolicyPressed)
-            }
-            is SettingsAction.OnLocalizationsPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnLocalizationsPressed)
-            }
-            is SettingsAction.OnAISettingsPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnAISettingsPressed)
-            }
+            is SettingsAction.OnAboutPressed -> _actionEvent.value = Event(SettingsAction.OnAboutPressed)
+            is SettingsAction.OnPrivacyPolicyPressed -> _actionEvent.value = Event(SettingsAction.OnPrivacyPolicyPressed)
+            is SettingsAction.OnLocalizationsPressed -> _actionEvent.value = Event(SettingsAction.OnLocalizationsPressed)
+            is SettingsAction.OnAISettingsPressed -> _actionEvent.value = Event(SettingsAction.OnAISettingsPressed)
+
+            // --- Lógica de Toggles corregida para guardar datos ---
 
             is SettingsAction.OnDarkModeToggle -> {
-                _state.value = _state.value.copy(isDarkMode = !_state.value.isDarkMode)
-                _actionEvent.value = Event(SettingsAction.OnDarkModeToggle(_state.value.isDarkMode))
+                val newValue = !_state.value.isDarkMode
+                // Actualizamos UI inmediata
+                _state.value = _state.value.copy(isDarkMode = newValue)
+                // Guardamos en persistencia
+                saveDarkMode(newValue)
+                _actionEvent.value = Event(SettingsAction.OnDarkModeToggle(newValue))
             }
 
             is SettingsAction.OnAnimationsToggle -> {
-                _state.value = _state.value.copy(isAnimationsEnabled = !_state.value.isAnimationsEnabled)
-                _actionEvent.value = Event(SettingsAction.OnAnimationsToggle(_state.value.isAnimationsEnabled))
+                val newValue = !_state.value.isAnimationsEnabled
+                _state.value = _state.value.copy(isAnimationsEnabled = newValue)
+                // Guardamos en persistencia
+                setAnimationsEnabled(newValue)
+                _actionEvent.value = Event(SettingsAction.OnAnimationsToggle(newValue))
             }
 
             is SettingsAction.OnPictogramsToggle -> {
-                _state.value = _state.value.copy(isPictosEnabled = !_state.value.isPictosEnabled)
-                _actionEvent.value = Event(SettingsAction.OnPictogramsToggle(_state.value.isPictosEnabled))
-
-                //TODO: Llamada al back o guardar en datastore
+                val newValue = !_state.value.isPictosEnabled
+                _state.value = _state.value.copy(isPictosEnabled = newValue)
+                // Guardamos en persistencia
+                setPictogramsEnabled(newValue)
+                _actionEvent.value = Event(SettingsAction.OnPictogramsToggle(newValue))
             }
 
-            is SettingsAction.OnLanguagePress -> {
-                _actionEvent.value = Event(SettingsAction.OnLanguagePress(action.language))
-            }
-
-            SettingsAction.OnNotificationPress -> {
-                _actionEvent.value = Event(SettingsAction.OnNotificationPress)
-            }
-
-            is SettingsAction.OnAppIconPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnAppIconPressed)
-            }
-
-            is SettingsAction.OnAppColorPressed -> {
-                _actionEvent.value = Event(SettingsAction.OnAppColorPressed)
-            }
-
+            is SettingsAction.OnLanguagePress -> _actionEvent.value = Event(SettingsAction.OnLanguagePress(action.language))
+            SettingsAction.OnNotificationPress -> _actionEvent.value = Event(SettingsAction.OnNotificationPress)
+            is SettingsAction.OnAppIconPressed -> _actionEvent.value = Event(SettingsAction.OnAppIconPressed)
+            is SettingsAction.OnAppColorPressed -> _actionEvent.value = Event(SettingsAction.OnAppColorPressed)
         }
     }
 
-    suspend fun logoutUser(context: Context){
-        storeData.logoutUser(context)
-    }
+    // 3. Funciones de lógica (Ya no necesitan recibir Context por parámetro)
 
-
-    suspend fun setDarkMode(isDarkMode: Boolean, context: Context) {
-        storeData.saveDarkMode(context, isDarkMode)
-        _state.value = _state.value.copy(isDarkMode = isDarkMode)
-
-        withContext(Dispatchers.Main) {
-            AppCompatDelegate.setDefaultNightMode(
-                if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
-                else AppCompatDelegate.MODE_NIGHT_NO
-            )
+    fun logoutUser() {
+        viewModelScope.launch {
+            storeData.logoutUser()
         }
     }
 
-    suspend fun setAnimationsEnabled(isEnabled: Boolean, context: Context) {
-        storeData.saveAnimationsEnabled(context, isEnabled)
-        _state.value = _state.value.copy(isAnimationsEnabled = isEnabled)
+    // Renombrado a 'save' para diferenciar de la actualización de estado simple
+    fun saveDarkMode(isDarkMode: Boolean) {
+        viewModelScope.launch {
+            storeData.saveDarkMode(isDarkMode)
+            _darkMode.value = isDarkMode // Sincronizamos el otro flujo si se usa
+
+            withContext(Dispatchers.Main) {
+                AppCompatDelegate.setDefaultNightMode(
+                    if (isDarkMode) AppCompatDelegate.MODE_NIGHT_YES
+                    else AppCompatDelegate.MODE_NIGHT_NO
+                )
+            }
+        }
     }
 
-    suspend fun setPictogramsEnabled(isEnabled: Boolean, context: Context) {
-        storeData.savePictogramsEnabled(context, isEnabled)
-        _state.value = _state.value.copy(isPictosEnabled = isEnabled)
+    fun setAnimationsEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            storeData.saveAnimationsEnabled(isEnabled)
+            // El estado _state ya se actualizó en onAction, pero por seguridad:
+            _state.value = _state.value.copy(isAnimationsEnabled = isEnabled)
+        }
+    }
+
+    fun setPictogramsEnabled(isEnabled: Boolean) {
+        viewModelScope.launch {
+            storeData.savePictogramsEnabled(isEnabled)
+            _state.value = _state.value.copy(isPictosEnabled = isEnabled)
+        }
     }
 }
 

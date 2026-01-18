@@ -7,16 +7,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
 import com.example.compose.geniatea.R
-import com.example.compose.geniatea.data.backendConection.BackendAPI
 import com.example.compose.geniatea.data.backendConection.ApiService
+import com.example.compose.geniatea.data.backendConection.BackendAPI
 import com.example.compose.geniatea.domain.User
-import com.example.compose.geniatea.presentation.userManagementSection.login.Event
+import com.example.compose.geniatea.utils.Event
 import com.example.compose.geniatea.utils.TextFielValidity
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.io.IOException
 import retrofit2.HttpException
+import java.io.IOException
 import java.net.SocketTimeoutException
 
 class RegisterViewModel : ViewModel() {
@@ -28,21 +28,17 @@ class RegisterViewModel : ViewModel() {
     val navigationEvent: LiveData<Event<RegisterAction>> = _navigationEvent
 
 
-    fun register(context: Context){
+    fun register(context: Context) {
         _state.value = _state.value.copy(errorForm = null)
 
-        if(checkDataValidity()){
+        if (checkDataValidity()) {
             viewModelScope.launch {
                 try {
                     val response = BackendAPI.retrofitService.register(
                         ApiService.RegisterRequest(
-                         //   name = state.value.name,
                             username = state.value.username,
                             email = state.value.email,
-//                            birthdate = formatDateToBack(state.value.birthDate),
-//                            gender = formatGenderToBack(state.value.gender),
-                            password = state.value.password,
-                            roles = listOf("USER")
+                            password = state.value.password
                         )
                     )
 
@@ -85,7 +81,7 @@ class RegisterViewModel : ViewModel() {
         var isValid = true
 
         _state.value = currentState.copy(
-          //  errorName = false,
+            //  errorName = false,
             errorUsername = false,
             errorEmail = false,
 //            errorBirthDate = false,
@@ -118,7 +114,7 @@ class RegisterViewModel : ViewModel() {
         return isValid
     }
 
-    fun isBlank(currentState : RegisterScreenState): Boolean {
+    fun isBlank(currentState: RegisterScreenState): Boolean {
         var isValid = true
 //        if (currentState.name.isBlank()) {
 //            _state.value = _state.value.copy(errorName = true)
@@ -195,4 +191,3 @@ class RegisterViewModel : ViewModel() {
     }
 
 }
-

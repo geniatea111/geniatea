@@ -18,7 +18,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_splash_screen">
+    app:startDestination="@id/nav_prelogin">
 
     <fragment
         android:id="@+id/nav_home"
@@ -79,8 +79,8 @@
             android:id="@+id/action_nav_prelogin_to_nav_login"
             app:destination="@id/nav_login" />
         <action
-            android:id="@+id/action_nav_prelogin_to_nav_preregister"
-            app:destination="@id/nav_preregister" />
+            android:id="@+id/action_nav_prelogin_to_nav_onboarding"
+            app:destination="@id/nav_onboarding" />
     </fragment>
 
     <fragment

@@ -8,10 +8,11 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object BackendAPI {
     const val BASE_URL_MOCKROON = "http://192.168.18.121:3000/"
-    const val BASE_URL_LOCAL = "http://192.168.18.121:8080/"
+    const val BASE_URL_LOCAL = "http://192.168.5.136:8080/"
     const val BASE_URL_LOCAL2 = "http://192.168.137.1:8080/"
 
     val gson: Gson = GsonBuilder()
@@ -27,7 +28,10 @@ object BackendAPI {
 
     fun init(context: Context) {
         client = OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(context, StoreDataUser()))
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .addInterceptor(AuthInterceptor(context))
             .addInterceptor(logging)
             .build()
 

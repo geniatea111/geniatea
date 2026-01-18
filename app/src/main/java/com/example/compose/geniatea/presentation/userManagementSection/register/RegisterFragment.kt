@@ -22,7 +22,7 @@ class RegisterFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
-        val storeDataUser = StoreDataUser()
+        val storeDataUser = StoreDataUser(requireContext())
 
         rootView.findViewById<ComposeView>(R.id.toolbar_compose_view).apply {
 
@@ -33,8 +33,8 @@ class RegisterFragment : Fragment() {
                         is RegisterAction.OnRegisterClicked -> viewModel.register(requireContext())
                         is RegisterAction.OnRegisterSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                storeDataUser.saveUser(requireContext(), action.user)
-                                findNavController().navigate(R.id.nav_home)
+                                storeDataUser.saveUser(action.user)
+                                findNavController().navigate(R.id.action_nav_register_to_nav_onboarding)
                             }
                         }
                         is RegisterAction.OnRegisterError -> {

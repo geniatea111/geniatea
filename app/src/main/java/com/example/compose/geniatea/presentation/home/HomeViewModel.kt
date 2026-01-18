@@ -42,7 +42,7 @@ class HomeViewModel: ViewModel() {
     }
 
     suspend fun setData(context: Context) {
-        val name = StoreDataUser().getName(context) ?: "Usuario"
+        val name = StoreDataUser(context).getName() ?: "Usuario"
         // dependiendo de la hora buenos dias, bueas tardes o buenas noches
         val greeting = when (java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)) {
             in 0..13 -> "Buenos días"
