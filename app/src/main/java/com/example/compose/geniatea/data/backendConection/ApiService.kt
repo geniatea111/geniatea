@@ -94,6 +94,12 @@ interface ApiService {
         val image: String? = null // Base64 encoded image string (optional)
     )
 
+    data class ChatSessionResponse(
+        val sessionId: Long,
+        val createdAt: String,
+        val conversationSummary: String
+    )
+
     @POST("auth/login")
     suspend fun login(
         @Body loginRequest: LoginRequest
@@ -153,6 +159,17 @@ interface ApiService {
     @GET("chat/history")
     suspend fun getChatHistory(
         @Header("Authorization") token: String,
+    ): Response<List<ChatHistoryResponse>>
+
+    @GET("chat/sessions")
+    suspend fun getChatSessions(
+        @Header("Authorization") token: String
+    ): Response<List<ChatSessionResponse>>
+
+    @GET("chat/sessions/{sessionId}")
+    suspend fun getChatSession(
+        @Header("Authorization") token: String,
+        @Path("sessionId") sessionId: Long
     ): Response<List<ChatHistoryResponse>>
 
 }

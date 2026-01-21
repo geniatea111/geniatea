@@ -44,6 +44,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import com.example.compose.geniatea.presentation.components.HomeAppBar
 import com.example.compose.geniatea.presentation.components.LogoAppBar
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChatBubble
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
+
+// Placeholder data class for recent conversations
+data class RecentConversation(val id: String, val title: String, val time: String)
 
 @Composable
 fun HomeRoot(
@@ -142,6 +154,14 @@ fun HomeScreen(
                         }
                     }
 
+                    // Placeholder recent conversations
+                    val recentConversations = listOf(
+                        RecentConversation("1", "Intenciones en el trabajo", "Hace 2h"),
+                        RecentConversation("2", "Planes para el fin de semana", "Ayer")
+                    )
+
+                    RecentConversationsCard(conversations = recentConversations, onAction = onAction)
+
                    // val tasks = listOf("Ir al gimnasio", "Poner una lavadora", "Pagar la suscripción de Netflix", "Comprar comida para el perro", "Llevar el coche al taller")
                    val tasks = listOf<String>()
                     
@@ -151,35 +171,109 @@ fun HomeScreen(
                    // BottomNavPanel(onAction)
             }
 }
-/*
-@Composable
-fun BoxScope.BottomNavPanel(onAction : (HomeAction) -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .fillMaxWidth()
-    ) {
-        //BottomNavPanelWithCutOut(onAction)
 
-        // Floating button positioned over the cutout
-        Button(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 32.dp)
-                .width(77.dp)
-                .height(53.dp)
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
-            onClick = { onAction(HomeAction.OnChatPressed) },
+@Composable
+fun RecentConversationsCard(conversations: List<RecentConversation>, onAction: (HomeAction) -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(bottom = 16.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
+            Text(
+                text = "Recientes",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = W700,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = "Ver todo",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.clickable { onAction(HomeAction.OnSeeAllRecentChatsPressed) }
+            )
             Icon(
-                painter = painterResource(id = R.drawable.svg_sparkles2),
-                contentDescription = "Floating Action Button",
-                modifier = Modifier.size(30.dp)
+                painter = painterResource(id = R.drawable.chevron_right),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.size(20.dp)
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (conversations.isEmpty()) {
+            Text(
+                text = "No hay chats recientes 🕸️",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                textAlign = TextAlign.Center
+            )
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                conversations.take(3).forEach { conversation ->
+                    RecentConversationItem(conversation = conversation, onAction = onAction)
+                }
+            }
+        }
     }
-}*/
+}
+
+@Composable
+fun RecentConversationItem(conversation: RecentConversation, onAction: (HomeAction) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onAction(HomeAction.OnRecentChatPressed(conversation.id)) }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surface),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.ChatBubble,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = MaterialTheme.colorScheme.onSurface
+            )
+        }
+
+        Spacer(modifier = Modifier.width(16.dp))
+
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = conversation.title,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = W700
+            )
+            Text(
+                text = conversation.time,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+            )
+        }
+
+        Icon(
+            imageVector = Icons.Default.ChevronRight,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
+    }
+}
 
 
 @Composable
@@ -379,50 +473,6 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
     }
 }
 
-/*
-@Composable
-fun BoxScope.BottomNavPanelWithCutOut(onAction : (HomeAction) -> Unit = {}) {
-    Box(
-        modifier = Modifier
-            .align(Alignment.BottomCenter)
-            .fillMaxWidth()
-            .height(70.dp)
-            .clip(
-                BottomNavBar(
-                    dockRadius = with(LocalDensity.current) { 77.dp.toPx() },
-                ),
-            ) // Apply the custom shape
-            .background(MaterialTheme.colorScheme.primaryContainer)
-
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 50.dp)
-                .padding(top = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            IconButton(onClick = { /* Handle home click */ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.home),
-                    contentDescription = "Home",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-            IconButton(onClick = { onAction(HomeAction.OnAccountPressed) }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.account),
-                    contentDescription = "Profile",
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-
-
-        }
-    }
-}*/
-
 @Composable
 fun task(text: String){
     Box(
@@ -443,104 +493,6 @@ fun task(text: String){
     }
 }
 
-/*
-@Composable
-fun buttonOption(text: String, @DrawableRes icon: Int, onClick: () -> Unit) {
-    val colorStops = arrayOf(
-        0.4f to MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-        1f to MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-    )
-    Box(
-        modifier = Modifier
-            .wrapContentWidth()
-            .widthIn(min = 170.dp, max = 350.dp)
-            .heightIn(min = 75.dp)
-            .clip(RoundedCornerShape(35.dp))
-            .background(brush = Brush.linearGradient(colorStops = colorStops, start = Offset(0f, Float.POSITIVE_INFINITY), end = Offset(Float.POSITIVE_INFINITY, 0f)))
-            .clickable { onClick() },
-        contentAlignment = Alignment.Center
-    ) {
-        Column(modifier = Modifier.padding(20.dp).align(Alignment.CenterStart)) {
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                modifier = Modifier
-                    .height(35.dp)
-                    .width(45.dp)
-                    .clip(RoundedCornerShape(50.dp))
-                    .background(MaterialTheme.colorScheme.surface.copy(0.8f))
-                    .padding(5.dp)
-            )
-
-            Text(
-                text = text,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontWeight = W700,
-                modifier = Modifier.padding(top = 20.dp)
-            )
-        }
-    }
-}
-@Composable
-fun optionsSecondaries(onAction: (HomeAction) -> Unit) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(bottom = 30.dp, start = 25.dp, end = 25.dp)
-    ) {
-
-        buttonSecondaryOption(
-            text = "Traductor a pictogramas",
-            onClick = { onAction(HomeAction.OnResourcesPressed) }
-        )
-
-        buttonSecondaryOption(
-            text = "Consultas favoritas",
-            onClick = { onAction(HomeAction.OnResourcesPressed) }
-        )
-
-        buttonSecondaryOption(
-            text = "Recursos",
-            onClick = { onAction(HomeAction.OnResourcesPressed) }
-        )
-    }
-}
-
-@Composable
-fun buttonSecondaryOption(text: String, onClick: () -> Unit) {
-    OutlinedButton(
-        onClick = { onClick() },
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 55.dp),
-        shape = RoundedCornerShape(30.dp),
-        border = null,
-        colors = ButtonDefaults.outlinedButtonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-        ),
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .padding(start = 20.dp)
-                .weight(1f),
-            fontWeight = W700,
-        )
-
-        Icon(
-            painter = painterResource(id = R.drawable.ic_arrow_right),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurface,
-        )
-    }
-}
-*/
 @Preview
 @Composable
 fun Preview() {

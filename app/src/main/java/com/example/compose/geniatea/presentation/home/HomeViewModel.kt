@@ -38,6 +38,12 @@ class HomeViewModel: ViewModel() {
             HomeAction.OnTaskListPressed -> {
                 _navigationEvent.value = Event(HomeAction.OnTaskListPressed)
             }
+            is HomeAction.OnRecentChatPressed -> {
+                _navigationEvent.value = Event(action)
+            }
+            HomeAction.OnSeeAllRecentChatsPressed -> {
+                _navigationEvent.value = Event(HomeAction.OnSeeAllRecentChatsPressed)
+            }
         }
     }
 

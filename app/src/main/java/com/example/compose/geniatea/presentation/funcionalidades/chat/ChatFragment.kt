@@ -54,6 +54,12 @@ class ChatFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
 
+        val sessionId = arguments?.getLong("sessionId", -1L) ?: -1L
+        if (sessionId != -1L) {
+            viewModel.setSessionId(sessionId)
+            viewModel.loadChatSession(requireContext())
+        }
+
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO)
             != PackageManager.PERMISSION_GRANTED
         ) {

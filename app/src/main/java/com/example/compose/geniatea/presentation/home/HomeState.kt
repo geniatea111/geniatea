@@ -1,5 +1,7 @@
 package com.example.compose.geniatea.presentation.home
 
+import com.example.compose.geniatea.data.backendConection.ApiService
+
 
 data class HomeScreenState(
     val saludo: String = "",
@@ -11,5 +13,6 @@ data class HomeScreenState(
     val showSnackBar: Boolean = false,
     val snackBarMessage: String = "",
     val showToast: Boolean = false,
-    val toastMessage: String = ""
+    val toastMessage: String = "",
+    val recentConversations: List<ApiService.ChatSessionResponse> = emptyList()
 )

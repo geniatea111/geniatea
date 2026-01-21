@@ -29,6 +29,12 @@ class ChatViewModel: ViewModel() {
     private val _actionEvent = MutableLiveData<Event<ChatAction>>()
     val navigationEvent: LiveData<Event<ChatAction>> = _actionEvent
 
+    private var sessionId: Long = -1L
+
+    fun setSessionId(id: Long) {
+        sessionId = id
+    }
+
     fun onAction(action: ChatAction) {
         when (action) {
             ChatAction.OnBackPressed -> _actionEvent.value = Event(ChatAction.OnBackPressed)
@@ -41,7 +47,7 @@ class ChatViewModel: ViewModel() {
             is ChatAction.OnMessageSend -> {
                 // Add user message to state
                 val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault()))
-                val userMessage = Message("Usuario", action.message, time, action.image) // TODO: Use string resource for author
+                val userMessage = Message(author = "Usuario", content = action.message, timestamp = time, image = action.image)
 
                 _state.update { it.copy(
                     messages = it.messages + userMessage,
@@ -87,6 +93,32 @@ class ChatViewModel: ViewModel() {
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Error sending message: ${e.localizedMessage}")
                 Toast.makeText(context, context.getString(R.string.error_sending_message), Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun loadChatSession(context: Context) {
+        if (sessionId == -1L) return
+
+        viewModelScope.launch {
+            try {
+                val token = StoreDataUser(context).getToken()
+                if (token != null) {
+                    val response = BackendAPI.retrofitService.getChatSession("Bearer $token", sessionId)
+                    if (response.isSuccessful) {
+                        val messages = response.body()?.map { chatHistoryResponse ->
+                            Message(
+                                author = chatHistoryResponse.sender,
+                                content = chatHistoryResponse.message,
+                                timestamp = chatHistoryResponse.createdAt
+                            )
+                        } ?: emptyList()
+                        _state.update { it.copy(messages = messages) }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("ChatViewModel", "Error loading chat session: ${e.localizedMessage}")
+                Toast.makeText(context, "Error loading chat session", Toast.LENGTH_LONG).show()
             }
         }
     }

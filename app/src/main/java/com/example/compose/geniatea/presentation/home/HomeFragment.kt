@@ -39,6 +39,7 @@ class HomeFragment : Fragment() {
                         is HomeAction.OnFormalizerPressed -> findNavController().navigate(R.id.nav_formalizer)
                         is HomeAction.OnResourcesPressed -> findNavController().navigate(R.id.nav_resources)
                         is HomeAction.OnTaskListPressed -> findNavController().navigate(R.id.nav_tasklist)
+                        is HomeAction.OnSeeAllRecentChatsPressed -> findNavController().navigate(R.id.nav_history)
                         else -> {
                             // Handle other actions if needed
                         }
@@ -52,12 +53,12 @@ class HomeFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                    HomeRoot(
-                        viewModel = viewModel,
-                        onBackPressed = {
-                            activity?.onBackPressedDispatcher?.onBackPressed()
-                        }
-                    )
+                HomeRoot(
+                    viewModel = viewModel,
+                    onBackPressed = {
+                        activity?.onBackPressedDispatcher?.onBackPressed()
+                    }
+                )
             }
         }
         return rootView
