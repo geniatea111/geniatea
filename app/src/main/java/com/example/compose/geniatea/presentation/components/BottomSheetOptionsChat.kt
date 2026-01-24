@@ -1,6 +1,5 @@
 package com.example.compose.geniatea.presentation.components
 
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,12 +15,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+import com.example.compose.geniatea.presentation.funcionalidades.chat.ChatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomSheetOptions(
-    onDismiss : () -> Unit = {}, ) {
+    onDismiss: () -> Unit = {},
+    chatStyle: ChatStyle,
+    onStyleChange: (ChatStyle) -> Unit
+) {
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
@@ -43,21 +45,24 @@ fun BottomSheetOptions(
                 modifier = Modifier.padding(bottom = 20.dp, start = 15.dp, end = 15.dp).fillMaxWidth()
             )
 
-            option(
+            Option(
                 title = "Normal",
                 description = "Respuestas estándar",
-                isChoosen = true
+                isChoosen = chatStyle == ChatStyle.NORMAL,
+                onClick = { onStyleChange(ChatStyle.NORMAL) }
             )
-            option(
+            Option(
                 title = "Conciso",
                 description = "Respuestas más breves y directas",
-                isChoosen = false
+                isChoosen = chatStyle == ChatStyle.CONCISE,
+                onClick = { onStyleChange(ChatStyle.CONCISE) }
             )
 
-            option(
+            Option(
                 title = "Aprendizaje",
                 description = "Respuestas que fomentan el aprendizaje y la comprensión",
-                isChoosen = false
+                isChoosen = chatStyle == ChatStyle.LEARNING,
+                onClick = { onStyleChange(ChatStyle.LEARNING) }
             )
 
         }
@@ -65,7 +70,12 @@ fun BottomSheetOptions(
 }
 
 @Composable
-fun option(title: String, description: String, isChoosen : Boolean){
+fun Option(
+    title: String,
+    description: String,
+    isChoosen: Boolean,
+    onClick: () -> Unit
+) {
     val backgroundColor = if (isChoosen) MaterialTheme.colorScheme.surfaceContainerLow else MaterialTheme.colorScheme.surface
 
     Button(
@@ -74,17 +84,17 @@ fun option(title: String, description: String, isChoosen : Boolean){
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
         modifier = Modifier.padding(vertical = 5.dp, horizontal = 15.dp).fillMaxWidth(),
-        onClick = {  },
+        onClick = onClick,
 
-    ){
+        ) {
         Column() {
-            Text (
+            Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
-            Text (
+            Text(
                 text = description,
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Start,
@@ -99,5 +109,5 @@ fun option(title: String, description: String, isChoosen : Boolean){
 @Preview
 @Composable
 fun BottomSheetOptionsPreview() {
-    BottomSheetOptions()
+    BottomSheetOptions(chatStyle = ChatStyle.NORMAL, onStyleChange = {})
 }

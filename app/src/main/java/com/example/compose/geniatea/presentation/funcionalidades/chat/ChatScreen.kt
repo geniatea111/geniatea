@@ -125,6 +125,8 @@ fun ChatScreen(
         if(showBottomSheet){
             BottomSheetOptions(
                 onDismiss = { showBottomSheet = false },
+                chatStyle = uiState.chatStyle,
+                onStyleChange = { onAction(ChatAction.OnStyleChange(it)) }
             )
         }
         Column(

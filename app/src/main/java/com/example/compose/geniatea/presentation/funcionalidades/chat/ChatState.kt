@@ -7,7 +7,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 data class ChatState(
     val messages: List<Message> = emptyList(),
     val currentMessage: TextFieldValue = TextFieldValue(""),
-    val selectedImage: Uri? = null
+    val selectedImage: Uri? = null,
+    val chatStyle: ChatStyle = ChatStyle.NORMAL
 )
 
 @Immutable

@@ -47,7 +47,8 @@ interface ApiService {
     data class MessageRequest(
         val userId: String,
         val message: String,
-        val image: String? = null // Base64 encoded image string (optional)
+        val image: String? = null, // Base64 encoded image string (optional)
+        val style: String? = null
     )
 
     data class EmailCheckRequest(

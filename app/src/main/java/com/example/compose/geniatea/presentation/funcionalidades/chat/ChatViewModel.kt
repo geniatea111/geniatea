@@ -61,6 +61,9 @@ class ChatViewModel: ViewModel() {
             is ChatAction.OnMessageChange -> {
                 _state.update { it.copy(currentMessage = action.value) }
             }
+            is ChatAction.OnStyleChange -> {
+                _state.update { it.copy(chatStyle = action.style) }
+            }
         }
     }
 
@@ -71,7 +74,8 @@ class ChatViewModel: ViewModel() {
                     ApiService.MessageRequest(
                         userId = StoreDataUser(context).getId().toString(),
                         message = messageText,
-                        image = null // TODO: Handle image sending
+                        image = null, // TODO: Handle image sending
+                        style = _state.value.chatStyle.value
                     )
                 )
 
@@ -90,7 +94,7 @@ class ChatViewModel: ViewModel() {
                         }
                     }
                 }
-            } catch (e: Exception) {
+            } catch (e: Exception) { 
                 Log.e("ChatViewModel", "Error sending message: ${e.localizedMessage}")
                 Toast.makeText(context, context.getString(R.string.error_sending_message), Toast.LENGTH_LONG).show()
             }

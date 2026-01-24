@@ -15,4 +15,5 @@ sealed class ChatAction {
     object OnStartRecording : ChatAction()
     object OnStopRecording : ChatAction()
     data class OnMessageChange(val value: TextFieldValue) : ChatAction()
+    data class OnStyleChange(val style: ChatStyle) : ChatAction()
 }
