@@ -8,7 +8,7 @@ sealed interface HomeAction {
     data object OnFormalizerPressed : HomeAction
     data object OnResourcesPressed : HomeAction
     data object OnTaskListPressed : HomeAction
-    data class OnRecentChatPressed(val chatId: String) : HomeAction
+    data class OnRecentChatPressed(val conversationId: Long) : HomeAction
     data object OnSeeAllRecentChatsPressed : HomeAction
 
 }

@@ -35,15 +35,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.theme.titleApp
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import com.example.compose.geniatea.presentation.components.HomeAppBar
-import com.example.compose.geniatea.presentation.components.LogoAppBar
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -52,10 +49,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.Close
-
-// Placeholder data class for recent conversations
-data class RecentConversation(val id: String, val title: String, val time: String)
+import com.example.compose.geniatea.data.Conversation
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun HomeRoot(
@@ -66,12 +63,8 @@ fun HomeRoot(
 
     HomeScreen(
         state = state,
-        onAction = { action ->
-            when (action) {
-                is HomeAction.OnBackPressed -> onBackPressed()
-                else -> Unit
-            }
-            viewModel.onAction(action)
+        onAction = {
+            viewModel.onAction(it)
         }
     )
 }
@@ -85,95 +78,92 @@ fun HomeScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-             HomeAppBar(
+            HomeAppBar(
                 onAccountPressed = { onAction(HomeAction.OnAccountPressed) }
             )
         },
         contentWindowInsets = WindowInsets(0.dp),
     ) { innerPadding ->
 
-                Column(modifier = Modifier.fillMaxSize().padding(innerPadding).padding(top = 0.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(top = 0.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
+                    .paint(
+                        painter = painterResource(id = R.drawable.background_home),
+                        contentScale = ContentScale.Crop,
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp))
+                        .padding(top = 40.dp, bottom = 40.dp)
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
-                            .paint(
-                                painter = painterResource(id = R.drawable.background_home),
-                                contentScale = ContentScale.Crop,
-                            ),
-                        contentAlignment = Alignment.Center
-                    ){
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp))
-                                .padding(top = 40.dp, bottom = 40.dp)
-                                .padding(horizontal = 24.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = state.saludo,
-                                style = titleApp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                fontSize = 24.sp,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
-                            )
-
-                            Text(
-                                text = stringResource(id = R.string.how_can_we_help_you_today),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier
-                                    .padding(top = 10.dp, bottom = 40.dp).fillMaxWidth(),
-                                fontSize = 18.sp,
-                                textAlign = TextAlign.Center
-
-                            )
-
-                            Button(
-                                modifier = Modifier
-                                    .heightIn(min = 60.dp)
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 30.dp),
-                                onClick ={ onAction(HomeAction.OnChatPressed) },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.surface,
-                                    contentColor = MaterialTheme.colorScheme.onSurface
-                                ),
-                            ) {
-                                Text(
-                                    text = "Habla con Geni",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = W700
-                                )
-                            }
-                        }
-                    }
-
-                    // Placeholder recent conversations
-                    val recentConversations = listOf(
-                        RecentConversation("1", "Intenciones en el trabajo", "Hace 2h"),
-                        RecentConversation("2", "Planes para el fin de semana", "Ayer")
+                    Text(
+                        text = state.saludo,
+                        style = titleApp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontSize = 24.sp,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
                     )
 
-                    RecentConversationsCard(conversations = recentConversations, onAction = onAction)
+                    Text(
+                        text = stringResource(id = R.string.how_can_we_help_you_today),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier
+                            .padding(top = 10.dp, bottom = 40.dp)
+                            .fillMaxWidth(),
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Center
 
-                   // val tasks = listOf("Ir al gimnasio", "Poner una lavadora", "Pagar la suscripción de Netflix", "Comprar comida para el perro", "Llevar el coche al taller")
-                   val tasks = listOf<String>()
-                    
-                    optionsButtons(onAction = onAction, tasks)
+                    )
 
+                    Button(
+                        modifier = Modifier
+                            .heightIn(min = 60.dp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 30.dp),
+                        onClick = { onAction(HomeAction.OnChatPressed) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        ),
+                    ) {
+                        Text(
+                            text = "Habla con Geni",
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = W700
+                        )
+                    }
                 }
-                   // BottomNavPanel(onAction)
             }
+
+            RecentConversationsCard(conversations = state.conversations, onAction = onAction)
+
+            val tasks = listOf<String>()
+
+            optionsButtons(onAction = onAction, tasks)
+
+        }
+    }
 }
 
 @Composable
-fun RecentConversationsCard(conversations: List<RecentConversation>, onAction: (HomeAction) -> Unit) {
+fun RecentConversationsCard(conversations: List<Conversation>, onAction: (HomeAction) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -219,7 +209,7 @@ fun RecentConversationsCard(conversations: List<RecentConversation>, onAction: (
             )
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                conversations.take(3).forEach { conversation ->
+                conversations.take(2).forEach { conversation ->
                     RecentConversationItem(conversation = conversation, onAction = onAction)
                 }
             }
@@ -228,7 +218,7 @@ fun RecentConversationsCard(conversations: List<RecentConversation>, onAction: (
 }
 
 @Composable
-fun RecentConversationItem(conversation: RecentConversation, onAction: (HomeAction) -> Unit) {
+fun RecentConversationItem(conversation: Conversation, onAction: (HomeAction) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -260,7 +250,7 @@ fun RecentConversationItem(conversation: RecentConversation, onAction: (HomeActi
                 fontWeight = W700
             )
             Text(
-                text = conversation.time,
+                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(conversation.timestamp)),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
@@ -277,14 +267,13 @@ fun RecentConversationItem(conversation: RecentConversation, onAction: (HomeActi
 
 
 @Composable
-fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyList()) {
+fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyList()) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Tasks Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -295,17 +284,17 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
                 modifier = Modifier
                     .clip(RoundedCornerShape(25.dp))
                     .background(MaterialTheme.colorScheme.primaryContainer)
-                    .heightIn(max =300.dp)
+                    .heightIn(max = 300.dp)
                     .padding(20.dp)
-            ){
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
-                ){
+                ) {
                     Button(
-                        onClick = {onAction(HomeAction.OnTaskListPressed)},
+                        onClick = { onAction(HomeAction.OnTaskListPressed) },
                         modifier = Modifier
                             .padding(bottom = 10.dp)
                             .fillMaxWidth(1f)
@@ -317,7 +306,7 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
                         ),
                         contentPadding = PaddingValues(0.dp)
                     ) {
-                        Row{
+                        Row {
                             Text(
                                 modifier = Modifier.weight(1f),
                                 style = MaterialTheme.typography.bodyLarge,
@@ -335,8 +324,7 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
                         }
                     }
 
-                    //if tasks is not empty show tasks
-                    if(tasks.isNotEmpty()){
+                    if (tasks.isNotEmpty()) {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -347,7 +335,7 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
                                 task(text = tasks[index])
                             }
                         }
-                    }else{
+                    } else {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -358,7 +346,7 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "No hay tareas pendientes \uD83C\uDF89",
+                                text = "No hay tareas pendientes 🕸️",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = W700,
@@ -372,7 +360,6 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
             }
         }
 
-        // Intention and Rewriter Section
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -393,9 +380,11 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Text(
-                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                         text = "Intención",
                         textAlign = TextAlign.Start,
                         fontWeight = W700
@@ -422,9 +411,11 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
-                ){
+                ) {
                     Text(
-                        modifier = Modifier.fillMaxWidth().weight(1f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                         text = "Reescribir",
                         textAlign = TextAlign.Start,
                         fontWeight = W700
@@ -438,43 +429,12 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks : List<String> = emptyL
                     )
                 }
             }
-
-         /*   OutlinedButton(
-                onClick = { onAction(HomeAction.OnResourcesPressed) },
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight(),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Column{
-                    Image(
-                        painter = painterResource(id = R.drawable.placeholder_task),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 15.dp)
-                            .height(130.dp)
-                    )
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = "Recursos",
-                        textAlign = TextAlign.Center,
-                        fontWeight = W400
-                    )
-                }
-            }*/
         }
     }
 }
 
 @Composable
-fun task(text: String){
+fun task(text: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
