@@ -31,11 +31,12 @@ fun AISettingsRoot(
     AISettings(
         onAction = { action ->
             when (action) {
-                is AISettingsAction.OnBackPressed -> onBackPressed()
+                is AISettingsAction.OnBackPressed -> Unit
                 else -> Unit
             }
             viewModel.onAction(action)
-        }
+        },
+        onNavIconPressed = { viewModel.onAction(AISettingsAction.OnBackPressed) }
     )
 }
 
@@ -43,13 +44,14 @@ fun AISettingsRoot(
 @Composable
 fun AISettings(
     onAction: (AISettingsAction) -> Unit,
+    onNavIconPressed: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TitleAppBar(
                 title = stringResource(id = R.string.ia_settings),
-                onNavIconPressed = { onAction(AISettingsAction.OnBackPressed) }
+                onNavIconPressed = { onNavIconPressed() }
             )
         },
         contentWindowInsets = WindowInsets(0.dp),
@@ -80,7 +82,8 @@ fun AISettings(
 fun RegisterPreview() {
     GenIATEATheme {
         AISettings(
-            onAction = {}
+            onAction = {},
+            onNavIconPressed = {}
         )
     }
 }

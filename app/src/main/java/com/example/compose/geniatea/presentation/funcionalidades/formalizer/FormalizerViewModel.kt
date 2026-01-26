@@ -3,7 +3,11 @@ package com.example.compose.geniatea.presentation.funcionalidades.formalizer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.compose.geniatea.data.backendConection.ApiService
+import com.example.compose.geniatea.data.backendConection.BackendAPI
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class FormalizerViewModel: ViewModel() {
 
@@ -31,13 +35,24 @@ class FormalizerViewModel: ViewModel() {
                 _actionEvent.value = Event(FormalizerAction.OnCopyPressed(action.text))
             }
             FormalizerAction.OnConvertPressed -> {
-                // Lógica para convertir el texto según la formalidad seleccionada
-                val convertedText = when (_state.value.formality) {
-                    "Formal" -> "Este es un texto formal convertido."
-                    "Informal" -> "Este es un texto informal convertido."
-                    else -> _state.value.consulta
+                viewModelScope.launch {
+                    try {
+                        val response = BackendAPI.retrofitService.rewrite(
+                            ApiService.RewriteRequest(
+                                text = _state.value.consulta,
+                                style = _state.value.formality
+                            )
+                        )
+                        if (response.isSuccessful) {
+                            val convertedText = response.body()?.string() ?: ""
+                             _state.value = _state.value.copy(resultado = convertedText)
+                        } else {
+                             _state.value = _state.value.copy(resultado = "Error: ${response.code()}")
+                        }
+                    } catch (e: Exception) {
+                        _state.value = _state.value.copy(resultado = "Error: ${e.message}")
+                    }
                 }
-                _state.value = _state.value.copy(resultado = convertedText)
             }
         }
     }

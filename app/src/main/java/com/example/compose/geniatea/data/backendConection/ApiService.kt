@@ -77,6 +77,11 @@ interface ApiService {
         val text: String
     )
 
+    data class RewriteRequest(
+        val text: String,
+        val style: String
+    )
+
     /************************************************************/
 
     data class LoginResponse(
@@ -197,6 +202,11 @@ interface ApiService {
     @POST("chat/analyze-intent")
     suspend fun analyzeIntent(
         @Body request: AnalyzeIntentRequest
+    ): Response<ResponseBody>
+
+    @POST("chat/rewrite")
+    suspend fun rewrite(
+        @Body request: RewriteRequest
     ): Response<ResponseBody>
 
     @GET("chat/sessions/{sessionId}")
