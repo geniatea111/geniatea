@@ -1,5 +1,6 @@
 package com.example.compose.geniatea.data.backendConection
 
+import com.example.compose.geniatea.presentation.funcionalidades.tasklist.TaskDTO
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -53,6 +54,15 @@ interface ApiService {
 
     data class EmailCheckRequest(
         val email: String
+    )
+
+    data class CreateTaskRequest(
+        val title: String,
+        val time: String,
+        val date: String,
+        val note: String,
+        val parentId: String?,
+        val subtasks: List<CreateTaskRequest>
     )
 
     /************************************************************/
@@ -172,5 +182,11 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("sessionId") sessionId: Long
     ): Response<List<ChatHistoryResponse>>
+
+    @GET("tasks")
+    suspend fun getTasks(): Response<List<TaskDTO>>
+
+    @POST("tasks")
+    suspend fun createTask(@Body task: CreateTaskRequest): Response<ResponseBody>
 
 }

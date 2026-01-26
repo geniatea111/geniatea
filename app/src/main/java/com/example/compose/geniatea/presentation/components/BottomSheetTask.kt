@@ -148,7 +148,7 @@ fun BottomSheetTask(onDismiss : () -> Unit = {}, onAction: (TaskListAction) -> U
                     .padding(bottom = 20.dp)
                     .height(55.dp),
                 shape = CircleShape,
-                onClick = {  }
+                onClick = { onAction(TaskListAction.OnCreateTaskClicked) }
             ) {
                 Text(
                     text = stringResource(R.string.create),
@@ -273,8 +273,6 @@ fun subtareas(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) 
                     OutlinedButton(
                         onClick = {
                             onAction(TaskListAction.OnGeneratingTasksChanged(true))
-                            val updatedTasks = state.tasks.toMutableList()
-                            onAction(TaskListAction.OnNoteChanged("")) // You might want to create a new action for adding subtasks
                         },
                         modifier = Modifier.fillMaxWidth().padding(top = 10.dp).height(52.dp),
                         shape = RoundedCornerShape(35.dp),
@@ -327,8 +325,8 @@ fun subtareas(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) 
                     }
 
                     OutlinedTextField(
-                        value = "",
-                        onValueChange = { /* Handle subtask input change */ },
+                        value = state.newSubtask,
+                        onValueChange = { onAction(TaskListAction.OnNewSubtaskChanged(it)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 15.dp)
@@ -354,8 +352,9 @@ fun subtareas(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) 
                                     )
                                     .padding(4.dp)
                                     .clickable {
-                                        val updatedTasks = state.tasks.toMutableList()
-                                        onAction(TaskListAction.OnNoteChanged("")) // You might want to create a new action for adding subtasks
+                                        if (state.newSubtask.isNotEmpty()) {
+                                            onAction(TaskListAction.OnAddTask(state.newSubtask))
+                                        }
                                     }
                             )
                         },

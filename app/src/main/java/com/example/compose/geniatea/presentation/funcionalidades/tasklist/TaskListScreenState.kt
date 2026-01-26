@@ -6,7 +6,9 @@ import java.util.UUID
 @Immutable
 data class TaskListScreenState(
     val tasks: List<TaskNode> = emptyList(),
-
+    val isLoading: Boolean = false,
+    val isBottomSheetVisible: Boolean = false,
+    val error: String? = null
 )
 
 data class BottomsheetState(
@@ -15,6 +17,7 @@ data class BottomsheetState(
     val taskDate: String = "",
     var taskTime: String = "",
     var taskNote: String = "",
+    var newSubtask: String = "",
     var isGeneratingTasks : Boolean = false,
 )
 

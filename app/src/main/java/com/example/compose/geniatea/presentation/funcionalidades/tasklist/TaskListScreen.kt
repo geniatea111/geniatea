@@ -1,19 +1,14 @@
 package com.example.compose.geniatea.presentation.funcionalidades.tasklist
 
 import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -21,18 +16,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
@@ -42,37 +36,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.W400
 import androidx.compose.ui.text.font.FontWeight.Companion.W700
 import androidx.compose.ui.text.font.FontWeight.Companion.W800
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.BottomSheetTask
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.DMSansFont
-import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.theme.subtitleApp
 import com.example.compose.geniatea.theme.titleApp
 
@@ -88,12 +71,8 @@ fun ResourcesRoot(
     ResourcesScreen(
         state = state,
         stateBototmSheet = stateBototmSheet,
-        onAction = { action ->
-            when (action) {
-                is TaskListAction.OnBackPressed -> onBackPressed()
-                else -> Unit
-            }
-            viewModel.onAction(action)
+        onAction = {
+            viewModel.onAction(it)
         },
         onNavIconPressed = { onBackPressed() }
     )
@@ -107,9 +86,7 @@ fun ResourcesScreen(
     stateBototmSheet: BottomsheetState,
     onAction: (TaskListAction) -> Unit,
     onNavIconPressed: () -> Unit = { },
-    ) {
-
-    var showBottomSheet by remember { mutableStateOf(false) }
+) {
 
     Scaffold(
         topBar = {
@@ -119,11 +96,11 @@ fun ResourcesScreen(
             )
         }
     ) { innerPadding ->
-        if (showBottomSheet) {
+        if (state.isBottomSheetVisible) {
             BottomSheetTask(
                 onAction = onAction,
                 state = stateBototmSheet,
-                onDismiss = { showBottomSheet = false },
+                onDismiss = { onAction(TaskListAction.OnHideBottomSheet) },
             )
         }
         Box(
@@ -157,66 +134,59 @@ fun ResourcesScreen(
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
-
-                    /*Button(
-                        onClick = {},
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(5.dp),
-                        shape = CircleShape,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                        ),
-                        contentPadding = PaddingValues(6.dp)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.svg_history),
-                            contentDescription = stringResource(id = R.string.navigation_drawer_open),
-                            modifier = Modifier
-                        )
-                    }*/
                 }
 
-                if (state.tasks.isNotEmpty()) {
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(bottom = 10.dp)
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        TaskList(
-                            tasks = state.tasks,
-                            onChecked = { path, isCompleted ->
-                                onAction(TaskListAction.OnCheckNodePressed(path, isCompleted))
-                            },
-                            onDelete = { position ->
-                                onAction(TaskListAction.OnDeleteNodePressed(position))
-                            }
-                        )
+                Box(modifier = Modifier.weight(1f)) {
+                    when {
+                        state.isLoading -> {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+                        state.error != null -> {
+                            Text(
+                                text = state.error,
+                                modifier = Modifier.align(Alignment.Center),
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
+                        state.tasks.isEmpty() -> {
+                            emptyState(
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                        else -> {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 10.dp)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                TaskList(
+                                    tasks = state.tasks,
+                                    onChecked = { path, isCompleted ->
+                                        onAction(TaskListAction.OnCheckNodePressed(path, isCompleted))
+                                    },
+                                    onDelete = { position ->
+                                        onAction(TaskListAction.OnDeleteNodePressed(position))
+                                    }
+                                )
 
-                        TaskListCompletadas(
-                            tasks = state.tasks,
-                            onChecked = { path, isCompleted ->
-                                onAction(TaskListAction.OnCheckNodePressed(path, isCompleted))
-                            },
-                            onDelete = { position ->
-                                onAction(TaskListAction.OnDeleteNodePressed(position))
+                                TaskListCompletadas(
+                                    tasks = state.tasks,
+                                    onChecked = { path, isCompleted ->
+                                        onAction(TaskListAction.OnCheckNodePressed(path, isCompleted))
+                                    },
+                                    onDelete = { position ->
+                                        onAction(TaskListAction.OnDeleteNodePressed(position))
+                                    }
+                                )
                             }
-                        )
+                        }
                     }
-
-                } else {
-                    emptyState(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    )
                 }
 
 
                 Button(
-                    onClick = { showBottomSheet = true },
+                    onClick = { onAction(TaskListAction.OnShowBottomSheet) },
                     modifier = Modifier
                         .align(Alignment.End)
                         .fillMaxWidth()
@@ -343,260 +313,82 @@ fun TaskNodeItem(
     depth: Int,
     path: List<Int>,
     onDelete: (Int) -> Unit,
-    onChecked: (List<Int>, Boolean) -> Unit,
+    onChecked: (path: List<Int>, Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    var isOpen by rememberSaveable(node.id) { mutableStateOf(false) }
-    val arrowRotation by animateFloatAsState(
-        if (isOpen) 180f else 0f, label = "accordion-arrow"
+    var isExpanded by remember { mutableStateOf(node.isOpen) }
+    val alpha = if (node.isCompleted) 0.5f else 1f
+    val textDecoration = if (node.isCompleted) TextDecoration.LineThrough else null
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (isExpanded) -180f else 0f,
+        animationSpec = tween(durationMillis = 300), label = ""
     )
-
-    val visibleTrash by animateFloatAsState(
-        if (isOpen || node.subtasks.isEmpty()) 1f else 0f, label = "visibleTrash"
-    )
-
-    val backgroundColor = when (depth) {
-        0 -> MaterialTheme.colorScheme.primaryContainer
-        else -> MaterialTheme.colorScheme.surface
-    }
-
-    val padding = when (depth) {
-        0 -> 10.dp
-        1 -> 5.dp
-        else -> 0.dp
-    }
-    
-    val innerPadding = when (depth) {
-        1 -> 8.dp
-        else -> 0.dp
-    }
-
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(innerPadding)
             .clip(RoundedCornerShape(35.dp))
-            .background(backgroundColor)
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(
-                start = (depth * 10).dp,
+                top = 20.dp,
+                bottom = 20.dp,
+                start = (20.dp + (depth * 15).dp),
+                end = 20.dp
             )
-            .padding(padding)
-            .height(if (!isOpen && depth == 0) 48.dp else Dp.Unspecified) // TODO: ANIMAR ESTO
+            .alpha(alpha)
+
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            // ✨ Animate between RadioButton and Lottie animation
-            AnimatedContent(
-                targetState = node.isCompleted,
-                transitionSpec = {
-                    fadeIn(animationSpec = tween(250)) togetherWith fadeOut(animationSpec = tween(250))
-                },
-                label = "radio-to-lottie"
-            ) { completed ->
-                if (!completed) {
-                    RadioButton(
-                        selected = false,
-                        onClick = { onChecked(path, true) },
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = MaterialTheme.colorScheme.primary,
-                            unselectedColor = MaterialTheme.colorScheme.primary
-                        )
-                    )
-                } else {
-                    // ✅ Lottie animation for completion
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.success_confetti))
-                    val progress by animateLottieCompositionAsState(
-                        composition = composition,
-                        iterations = 1,
-                        restartOnPlay = false
-                    )
-
-                    LottieAnimation(
-                        composition = composition,
-                        progress = { progress },
-                        modifier = Modifier
-                            .size(55.dp)
-                            .clickable { onChecked(path, false) } // toggle back if clicked
-                    )
-                }
-            }
-
+            RadioButton(
+                selected = node.isCompleted,
+                onClick = { onChecked(path, !node.isCompleted) },
+                colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.primary,
+                    unselectedColor = MaterialTheme.colorScheme.primary
+                )
+            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "${node.title} (${node.time})",
-                style = if (node.isCompleted){
-                    TextStyle(
-                        textDecoration = TextDecoration.LineThrough,
-                        fontFamily = DMSansFont,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 14.sp,
-                        lineHeight = 22.sp,
-                        letterSpacing = 0.25.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                    )
-                }else{
-                    MaterialTheme.typography.bodyMedium
-                },
-                fontWeight = if (depth == 0) W800 else W400
+                text = node.title,
+                style = TextStyle(
+                    textDecoration = textDecoration,
+                    fontFamily = DMSansFont,
+                    fontWeight = W800,
+                    fontSize = 16.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            if (depth == 0) {
-                if (isOpen || node.subtasks.isEmpty()) {
-                    IconButton(
-                        onClick = { onDelete(path[0]) },
-                        enabled = visibleTrash > 0f,
-                        colors = IconButtonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                            disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.3f)
-                        ),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.svg_trash),
-                            contentDescription = stringResource(id = R.string.delete_account),
-                            modifier = Modifier.alpha(visibleTrash)
-                        )
-                    }
-                }
-
-                if (node.subtasks.isNotEmpty()) {
-                    IconButton(
-                        onClick = { isOpen = !isOpen }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.chevron_down),
-                            contentDescription = stringResource(id = R.string.delete_account),
-                            modifier = Modifier.rotate(arrowRotation),
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
+            if (node.subtasks.isNotEmpty()) {
+                IconButton(onClick = { isExpanded = !isExpanded }) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Expand",
+                        modifier = Modifier.rotate(rotationAngle),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }
-
-        node.subtasks.forEachIndexed { subIndex, subtask ->
-            TaskNodeItem(
-                node = subtask,
-                depth = depth + 1,
-                path = path + subIndex,
-                onDelete = onDelete,
-                onChecked = onChecked
-            )
+        if (isExpanded && node.subtasks.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+            ) {
+                node.subtasks.forEachIndexed { index, subtask ->
+                    TaskNodeItem(
+                        node = subtask,
+                        depth = depth + 1,
+                        path = path + index,
+                        onDelete = onDelete,
+                        onChecked = onChecked
+                    )
+                }
+            }
         }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewTask() {
-    GenIATEATheme {
-        ResourcesScreen(
-            state = TaskListScreenState(
-                tasks = listOf(
-                    TaskNode(
-                        title = "Project A",
-                        time = "2h",
-                        isOpen = true,
-                        isCompleted = true,
-                        subtasks = listOf(
-                            TaskNode(
-                                title = "Design",
-                                time = "1h",
-                                subtasks = listOf(
-                                    TaskNode(title = "Wireframes", time = "30m", isCompleted = true),
-                                    TaskNode(title = "UI Review", time = "30m")
-                                ),
-                            ),
-                            TaskNode(title = "Implementation", time = "1h")
-                        )
-                    ),
-                    TaskNode(
-                        title = "Project B",
-                        time = "3h",
-                        subtasks = listOf(
-                            TaskNode(title = "Research", time =  "1h"),
-                            TaskNode(title = "Development", time =  "2h")
-                        )
-                    )
-                )
-            ),
-            stateBototmSheet = BottomsheetState(
-                taskTitle = "",
-                tasks = emptyList(),
-                taskDate = "",
-                taskTime = "",
-                taskNote = ""
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PreviewTaskBlank() {
-    GenIATEATheme {
-        ResourcesScreen(
-            state = TaskListScreenState(
-                tasks = listOf()
-            ),
-            stateBototmSheet = BottomsheetState(
-                taskTitle = "",
-                tasks = emptyList(),
-                taskDate = "",
-                taskTime = "",
-                taskNote = ""
-            ),
-            onAction = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PreviewTaskDark() {
-    GenIATEATheme(isDarkTheme = true) {
-        ResourcesScreen(
-            state = TaskListScreenState(
-                tasks = listOf(
-                    TaskNode(
-                        title = "Project A",
-                        time = "2h",
-                        isOpen = true,
-                        isCompleted = true,
-                        subtasks = listOf(
-                            TaskNode(
-                                title = "Design",
-                                time = "1h",
-                                subtasks = listOf(
-                                    TaskNode(title = "Wireframes", time = "30m", isCompleted = true),
-                                    TaskNode(title = "UI Review lorem ipsum redon sdfmsdf sdfjasd faslfjsf sdfksdj sdfjsfkjsd fsdfkd ss ", time = "30m")
-                                ),
-                            ),
-                            TaskNode(title = "Implementation", time = "1h")
-                        )
-                    ),
-                    TaskNode(
-                        title = "Project B",
-                        time = "3h",
-                        subtasks = listOf(
-                            TaskNode(title = "Research", time =  "1h"),
-                            TaskNode(title = "Development", time =  "2h")
-                        )
-                    )
-                )
-            ),
-            stateBototmSheet = BottomsheetState(
-                taskTitle = "",
-                tasks = emptyList(),
-                taskDate = "",
-                taskTime = "",
-                taskNote = ""
-            ),
-            onAction = {}
-        )
     }
 }
