@@ -72,7 +72,7 @@ fun AccountRoot(
         state = state,
         onAction = { action ->
             when (action) {
-                is AccountAction.OnBackPressed -> onBackPressed()
+                is AccountAction.OnBackPressed -> Unit
                 else -> Unit
             }
             viewModel.onAction(action)

@@ -64,7 +64,8 @@ class AccountViewModel: ViewModel() {
             if (response.isSuccessful) {
                 response.body()?.let {
                     Log.i("AccountViewModel", "User data retrieved successfully: $it")
-                    updateState(it)
+                    Log.i("AccountViewModel", "User data retrieved successfully: $it")
+                    updateState(it, context)
                 }
                 return
             } else {
@@ -80,13 +81,13 @@ class AccountViewModel: ViewModel() {
         }
     }
 
-    fun updateState(user: GetUserResponse) {
+    fun updateState(user: GetUserResponse, context: Context) {
         _state.value = _state.value.copy(
             name = user.name,
             email = user.email,
             username = user.username,
             birthDate = formatDate(user.birthdate),
-            gender = formatGender(user.gender)
+            gender = formatGender(user.gender, context)
         )
     }
 
@@ -105,7 +106,7 @@ class AccountViewModel: ViewModel() {
                     updaterRequest = ApiService.UpdateUserRequest(
                         name = _state.value.name,
                         birthdate = formatDateToBack(_state.value.birthDate),
-                        gender = formatGenderToBack(_state.value.gender),
+                        gender = formatGenderToBack(_state.value.gender, context),
                         showPictograms = null
                     )
                 )

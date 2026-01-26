@@ -118,6 +118,11 @@ class SettingsFragment : Fragment() {
     }
 
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.getUserData()
+    }
+
     fun languagesTag(language: String): String {
         return when (language) {
             "Español" -> "es"

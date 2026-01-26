@@ -143,14 +143,14 @@ fun SettingsScreen(
                            modifier = Modifier.weight(1f).padding(top = 5.dp)
                        ){
                            Text(
-                               text = "Laura",
+                               text = if (state.name.isNotEmpty()) state.name else "Usuario",
                                style =  DtGetaiTypography.titleLarge,
                                fontSize = 17.sp
 
                            )
 
                            Text(
-                                 text = "Laura05"
+                                 text = if (state.username.isNotEmpty()) state.username else "usuario"
                            )
                        }
 

@@ -4,4 +4,6 @@ data class SettingsScreenState(
     val isDarkMode: Boolean = false,
     val isPictosEnabled: Boolean = true,
     val isAnimationsEnabled: Boolean = true,
+    val name: String = "",
+    val username: String = ""
 )

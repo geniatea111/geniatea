@@ -1,25 +1,27 @@
 package com.example.compose.geniatea.utils
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import com.example.compose.geniatea.R
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class Formats {
     companion object {
-        fun formatGenderToBack(gender: String): String {
+        fun formatGenderToBack(gender: String, context: Context): String {
             return when (gender) {
-                "Mujer" -> "F"
-                "Hombre" -> "M"
+                context.getString(R.string.female) -> "F"
+                context.getString(R.string.male) -> "M"
                 else -> "X"
             }
         }
 
-        fun formatGender(gender: String) : String {
+        fun formatGender(gender: String, context: Context) : String {
             return when (gender) {
-                "F" -> "Mujer"
-                "M" -> "Hombre"
-                else -> "Prefiero no decir"
+                "F" -> context.getString(R.string.female)
+                "M" -> context.getString(R.string.male)
+                else -> context.getString(R.string.xGender)
             }
         }
 

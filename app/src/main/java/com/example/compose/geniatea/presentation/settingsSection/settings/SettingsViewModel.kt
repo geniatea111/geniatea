@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.compose.geniatea.data.StoreDataUser
+import com.example.compose.geniatea.data.backendConection.BackendAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -117,6 +118,25 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             storeData.savePictogramsEnabled(isEnabled)
             _state.value = _state.value.copy(isPictosEnabled = isEnabled)
+        }
+    }
+
+    fun getUserData() {
+        viewModelScope.launch {
+            val id = storeData.getId() ?: return@launch
+            try {
+                val response = BackendAPI.retrofitService.getUserById(id)
+                if (response.isSuccessful) {
+                    response.body()?.let { user ->
+                        _state.value = _state.value.copy(
+                            name = user.name,
+                            username = user.username
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 }
