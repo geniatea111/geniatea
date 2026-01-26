@@ -73,6 +73,10 @@ interface ApiService {
         val task: String
     )
 
+    data class AnalyzeIntentRequest(
+        val text: String
+    )
+
     /************************************************************/
 
     data class LoginResponse(
@@ -188,6 +192,11 @@ interface ApiService {
     @POST("chat/generate-subtask")
     suspend fun generateSubtask(
         @Body request: GenerateSubtaskRequest
+    ): Response<ResponseBody>
+
+    @POST("chat/analyze-intent")
+    suspend fun analyzeIntent(
+        @Body request: AnalyzeIntentRequest
     ): Response<ResponseBody>
 
     @GET("chat/sessions/{sessionId}")

@@ -3,7 +3,11 @@ package com.example.compose.geniatea.presentation.funcionalidades.judge
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.compose.geniatea.data.backendConection.ApiService
+import com.example.compose.geniatea.data.backendConection.BackendAPI
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 class JudgeViewModel: ViewModel() {
 
@@ -31,13 +35,21 @@ class JudgeViewModel: ViewModel() {
             }
 
             JudgeAction.OnJudgePressed -> {
-                // Lógica para juzgar la consulta
-                val judgmentText = if (_state.value.consulta.contains("bueno", ignoreCase = true)) {
-                    "La consulta es positiva."
-                } else {
-                    "La consulta es negativa."
+                viewModelScope.launch {
+                    try {
+                        val response = BackendAPI.retrofitService.analyzeIntent(
+                            ApiService.AnalyzeIntentRequest(_state.value.consulta)
+                        )
+                        if (response.isSuccessful) {
+                            val judgmentText = response.body()?.string() ?: ""
+                            _state.value = _state.value.copy(judgment = judgmentText)
+                        } else {
+                             _state.value = _state.value.copy(judgment = "Error: ${response.code()}")
+                        }
+                    } catch (e: Exception) {
+                        _state.value = _state.value.copy(judgment = "Error: ${e.message}")
+                    }
                 }
-                _state.value = _state.value.copy(judgment = judgmentText)
             }
 
 
