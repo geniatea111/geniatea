@@ -14,4 +14,6 @@ interface TaskListAction {
     data class OnNewSubtaskChanged(val newSubtask: String) : TaskListAction
     data class OnAddTask(val title: String) : TaskListAction
     data class OnGeneratingTasksChanged(val isGenerating: Boolean) : TaskListAction
+    data class OnGenerateSubtask(val taskTitle: String, val parentIndex: Int? = null) : TaskListAction
+    data class OnDeleteSubtask(val index: Int) : TaskListAction
 }

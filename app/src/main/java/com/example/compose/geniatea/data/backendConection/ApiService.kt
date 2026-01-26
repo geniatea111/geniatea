@@ -65,6 +65,14 @@ interface ApiService {
         val subtasks: List<CreateTaskRequest>
     )
 
+    data class UpdateTaskRequest(
+        val isCompleted: Boolean
+    )
+
+    data class GenerateSubtaskRequest(
+        val task: String
+    )
+
     /************************************************************/
 
     data class LoginResponse(
@@ -177,6 +185,11 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Response<List<ChatSessionResponse>>
 
+    @POST("chat/generate-subtask")
+    suspend fun generateSubtask(
+        @Body request: GenerateSubtaskRequest
+    ): Response<ResponseBody>
+
     @GET("chat/sessions/{sessionId}")
     suspend fun getChatSession(
         @Header("Authorization") token: String,
@@ -186,7 +199,16 @@ interface ApiService {
     @GET("tasks")
     suspend fun getTasks(): Response<List<TaskDTO>>
 
+    @GET("tasks/pending")
+    suspend fun getPendingTasks(): Response<List<TaskDTO>>
+
     @POST("tasks")
     suspend fun createTask(@Body task: CreateTaskRequest): Response<ResponseBody>
+
+    @PUT("tasks/{taskId}")
+    suspend fun updateTask(
+        @Path("taskId") taskId: String,
+        @Body updateTaskRequest: UpdateTaskRequest
+    ): Response<ResponseBody>
 
 }

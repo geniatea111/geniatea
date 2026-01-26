@@ -154,9 +154,7 @@ fun HomeScreen(
 
             RecentConversationsCard(conversations = state.conversations, onAction = onAction)
 
-            val tasks = listOf<String>()
-
-            optionsButtons(onAction = onAction, tasks)
+            optionsButtons(onAction = onAction, state.pendingTasks)
 
         }
     }

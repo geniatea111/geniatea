@@ -272,7 +272,7 @@ fun subtareas(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) 
                     }
                     OutlinedButton(
                         onClick = {
-                            onAction(TaskListAction.OnGeneratingTasksChanged(true))
+                            onAction(TaskListAction.OnGenerateSubtask(state.taskTitle))
                         },
                         modifier = Modifier.fillMaxWidth().padding(top = 10.dp).height(52.dp),
                         shape = RoundedCornerShape(35.dp),
@@ -381,57 +381,89 @@ fun subtareas(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) 
 
 @Composable
 fun tasksList(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState, index: Int, subtask: TaskNode){
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(start = 10.dp, end= 5.dp),
-        verticalAlignment = CenterVertically
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_circle),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+    Column {
+        Row(
             modifier = Modifier
-                .size(25.dp)
-                .padding(end = 10.dp)
-        )
-        Text(
-            text = subtask.title,
-            style = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface
-            ),
-            modifier = Modifier.align(CenterVertically).weight(0.8f).padding(end = 8.dp),
-            maxLines = Int.MAX_VALUE,
-            overflow = TextOverflow.Clip
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.svg_sparkles),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .size(30.dp)
-                .padding(4.dp)
-                .clickable {
-                    val updatedTasks = state.tasks.toMutableList()
-                    updatedTasks.removeAt(index)
-                    onAction(TaskListAction.OnNoteChanged("")) // You might want to create a new action for removing subtasks
-                }
-        )
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(start = 10.dp, end = 5.dp),
+            verticalAlignment = CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_circle),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(25.dp)
+                    .padding(end = 10.dp)
+            )
+            Text(
+                text = subtask.title,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface
+                ),
+                modifier = Modifier.align(CenterVertically).weight(0.8f).padding(end = 8.dp),
+                maxLines = Int.MAX_VALUE,
+                overflow = TextOverflow.Clip
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.svg_sparkles),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(4.dp)
+                    .clickable {
+                        onAction(TaskListAction.OnGenerateSubtask(subtask.title, index))
+                    }
+            )
 
-        Icon(
-            painter = painterResource(id = R.drawable.svg_trash),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier
-                .size(30.dp)
-                .padding(4.dp)
-                .clickable {
-                    val updatedTasks = state.tasks.toMutableList()
-                    updatedTasks.removeAt(index)
-                    onAction(TaskListAction.OnNoteChanged("")) // You might want to create a new action for removing subtasks
+            Icon(
+                painter = painterResource(id = R.drawable.svg_trash),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .size(30.dp)
+                    .padding(4.dp)
+                    .clickable {
+                        onAction(TaskListAction.OnDeleteSubtask(index))
+                    }
+            )
+        }
+
+        if (subtask.subtasks.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 35.dp, bottom = 8.dp)
+            ) {
+                subtask.subtasks.forEach { child ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_circle),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                            modifier = Modifier
+                                .size(15.dp)
+                                .padding(end = 8.dp)
+                        )
+                        Text(
+                            text = child.title,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+                            ),
+                            maxLines = Int.MAX_VALUE,
+                            overflow = TextOverflow.Clip
+                        )
+                    }
                 }
-        )
+            }
+        }
     }
 }
 

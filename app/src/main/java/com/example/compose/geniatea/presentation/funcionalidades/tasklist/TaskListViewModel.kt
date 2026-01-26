@@ -150,6 +150,10 @@ class TaskListViewModel : ViewModel() {
             }
 
             is TaskListAction.OnCheckNodePressed -> {
+                val task = findTaskNode(state.tasks, action.path)
+                task?.let {
+                    updateTaskStatus(it.id, action.checked)
+                }
                 state = state.copy(
                     tasks = checkAt(state.tasks, action.path, action.checked)
                 )
@@ -159,6 +163,18 @@ class TaskListViewModel : ViewModel() {
                 stateBottomSheet = stateBottomSheet.copy(
                     isGeneratingTasks = action.isGenerating
                 )
+            }
+
+            is TaskListAction.OnGenerateSubtask -> {
+                generateSubtask(action.taskTitle, action.parentIndex)
+            }
+
+            is TaskListAction.OnDeleteSubtask -> {
+                val updatedTasks = stateBottomSheet.tasks.toMutableList()
+                if (action.index in updatedTasks.indices) {
+                    updatedTasks.removeAt(action.index)
+                    stateBottomSheet = stateBottomSheet.copy(tasks = updatedTasks)
+                }
             }
         }
     }
@@ -189,6 +205,70 @@ class TaskListViewModel : ViewModel() {
                 subtasks = setAllSubtasks(node.subtasks, checked)
             )
         }
+
+    private fun findTaskNode(nodes: List<TaskNode>, indices: List<Int>): TaskNode? {
+        if (indices.isEmpty()) return null
+        val index = indices.first()
+        if (index < 0 || index >= nodes.size) return null
+        val node = nodes[index]
+        if (indices.size == 1) return node
+        return findTaskNode(node.subtasks, indices.drop(1))
+    }
+
+    private fun updateTaskStatus(taskId: String, isCompleted: Boolean) {
+        viewModelScope.launch {
+            try {
+                BackendAPI.retrofitService.updateTask(
+                    taskId,
+                    ApiService.UpdateTaskRequest(isCompleted)
+                )
+            } catch (e: Exception) {
+                // Handle error
+                state = state.copy(error = e.message)
+            }
+        }
+    }
+
+    private fun generateSubtask(taskTitle: String, parentIndex: Int? = null) {
+        viewModelScope.launch {
+            stateBottomSheet = stateBottomSheet.copy(isGeneratingTasks = true)
+            try {
+                val response = BackendAPI.retrofitService.generateSubtask(
+                    ApiService.GenerateSubtaskRequest(taskTitle)
+                )
+                if (response.isSuccessful) {
+                    val newSubtaskTitle = response.body()?.string() ?: ""
+                    if (newSubtaskTitle.isNotEmpty()) {
+                        val newSubtask = TaskNode(title = newSubtaskTitle, time = "")
+
+                        if (parentIndex != null) {
+                             // Add as subtask of the task at parentIndex
+                             val updatedTasks = stateBottomSheet.tasks.toMutableList()
+                             if (parentIndex in updatedTasks.indices) {
+                                 val parent = updatedTasks[parentIndex]
+                                 updatedTasks[parentIndex] = parent.copy(
+                                     subtasks = parent.subtasks + newSubtask
+                                 )
+                                 stateBottomSheet = stateBottomSheet.copy(tasks = updatedTasks)
+                             }
+                        } else {
+                            // Add to root list
+                            stateBottomSheet = stateBottomSheet.copy(
+                                tasks = stateBottomSheet.tasks + newSubtask
+                            )
+                        }
+                    }
+                } else {
+                     // Handle error
+                     state = state.copy(error = "Error generating subtask: ${response.code()}")
+                }
+            } catch (e: Exception) {
+               state = state.copy(error = e.message)
+            } finally {
+               stateBottomSheet = stateBottomSheet.copy(isGeneratingTasks = false)
+            }
+        }
+    }
 }
 
 open class Event<out T>(private val content: T) {

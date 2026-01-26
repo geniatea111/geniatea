@@ -91,7 +91,7 @@ fun ResourcesScreen(
     Scaffold(
         topBar = {
             TitleAppBar(
-                title = "",
+                title = "Mis tareas",
                 onNavIconPressed = { onNavIconPressed() },
             )
         }
@@ -124,18 +124,6 @@ fun ResourcesScreen(
                     .padding(innerPadding)
                     .padding(horizontal = 20.dp)
             ) {
-                Row(
-                    modifier = Modifier.padding(top = 30.dp, bottom = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Mis tareas",
-                        style = subtitleApp,
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-
                 Box(modifier = Modifier.weight(1f)) {
                     when {
                         state.isLoading -> {

@@ -10,6 +10,7 @@ import com.example.compose.geniatea.data.StoreDataUser
 import com.example.compose.geniatea.data.Conversation
 import com.example.compose.geniatea.data.backendConection.ApiService
 import com.example.compose.geniatea.data.backendConection.BackendAPI
+import com.example.compose.geniatea.presentation.funcionalidades.tasklist.TaskDTO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,6 +26,7 @@ class HomeViewModel() : ViewModel() {
 
     init {
         getRecentConversations()
+        getPendingTasks()
     }
 
     private fun getRecentConversations() {
@@ -44,6 +46,22 @@ class HomeViewModel() : ViewModel() {
             } catch (e: Exception) {
                 // Handle exception
                 Log.e("HomeViewModel", "Exception getting conversations", e)
+            }
+        }
+    }
+
+    private fun getPendingTasks() {
+        viewModelScope.launch {
+            try {
+                val response = BackendAPI.retrofitService.getPendingTasks()
+                if (response.isSuccessful) {
+                    val tasks = response.body()?.map { it.title } ?: emptyList()
+                    _state.update { it.copy(pendingTasks = tasks) }
+                } else {
+                    Log.e("HomeViewModel", "Error getting tasks: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Exception getting tasks", e)
             }
         }
     }
