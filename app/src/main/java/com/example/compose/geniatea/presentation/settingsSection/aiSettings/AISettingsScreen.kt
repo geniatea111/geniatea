@@ -24,6 +24,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
@@ -144,42 +147,38 @@ fun AISettingsHeader(
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xFFE8F0FE)) // Light blue background
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Illustration (Placeholder for now, creating a mimic)
-            Image(
-                painter = painterResource(id = R.drawable.geniv2avatarsettings), // Using geni as placeholder
-                contentDescription = "Avatar Preview",
-                modifier = Modifier
-                    .size(150.dp)
-                    .padding(bottom = 16.dp),
-                contentScale = ContentScale.Fit
-            )
+        // Illustration (Placeholder for now, creating a mimic)
+        Image(
+            painter = painterResource(id = R.drawable.geniv2avatarsettings), // Using geni as placeholder
+            contentDescription = "Avatar Preview",
+            modifier = Modifier
+                .fillMaxWidth(),
+            contentScale = ContentScale.FillWidth
+        )
 
-            // Toggle Buttons
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(50))
-                    .background(Color.White)
-                    .padding(4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                SelectableButton(
-                    text = "Geni",
-                    isSelected = selectedSource == AvatarSource.GENI,
-                    onClick = { onSourceChange(AvatarSource.GENI) },
-                    modifier = Modifier.weight(1f)
-                )
-                SelectableButton(
-                    text = "Foto de la galería",
-                    isSelected = selectedSource == AvatarSource.GALLERY,
-                    onClick = { onSourceChange(AvatarSource.GALLERY) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
+        // Toggle Buttons
+        Row(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(50))
+                .background(Color.White)
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            SelectableButton(
+                text = "Geni",
+                isSelected = selectedSource == AvatarSource.GENI,
+                onClick = { onSourceChange(AvatarSource.GENI) },
+                modifier = Modifier.weight(1f)
+            )
+            SelectableButton(
+                text = "Foto de la galería",
+                isSelected = selectedSource == AvatarSource.GALLERY,
+                onClick = { onSourceChange(AvatarSource.GALLERY) },
+                modifier = Modifier.weight(1f)
+            )
         }
     }
 }
@@ -247,6 +246,7 @@ fun ClearLanguageToggle(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResponseStyleSlider(
     value: Float,
@@ -281,18 +281,86 @@ fun ResponseStyleSlider(
             valueRange = 0f..2f,
             steps = 1,
             colors = SliderDefaults.colors(
-                thumbColor = Color(0xFF5F6368),
-                activeTrackColor = Color(0xFF5F6368)
-            )
+                activeTrackColor = Color(0xFF333333),
+                inactiveTrackColor = Color.White
+            ),
+            thumb = {
+                Box(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clip(androidx.compose.foundation.shape.CircleShape)
+                        .background(Color(0xFF333333))
+                        .padding(4.dp)
+                        .clip(androidx.compose.foundation.shape.CircleShape)
+                        .background(Color.White)
+                )
+            },
+            track = { sliderState ->
+                val activeColor = Color(0xFF333333)
+                val inactiveColor = Color.White
+                val trackHeight = 4.dp
+
+                Canvas(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(trackHeight)
+                ) {
+                    val width = size.width
+                    val height = size.height
+                    val centerY = height / 2
+
+                    // Calculate active width based on slider value (0f to 2f, so we normalize)
+                    // sliderState.value is the current value. valueRange is 0..2
+                    // But sliderState has .valueRange (if we cast? No, simpler to use logic if accessible)
+                    // Actually SliderState (M3) has `value` and `valueRange`.
+                    // But wait, the standard M3 Slider `track` lambda passes `SliderState`.
+                    // We can use sliderState.value directly.
+                    
+                    val valueRange = sliderState.valueRange
+                    val fraction = (sliderState.value - valueRange.start) / (valueRange.endInclusive - valueRange.start)
+                    val activeWidth = width * fraction
+
+                    // Inactive Track
+                    drawLine(
+                        color = inactiveColor,
+                        start = Offset(activeWidth, centerY),
+                        end = Offset(width, centerY),
+                        strokeWidth = trackHeight.toPx(),
+                        cap = StrokeCap.Round
+                    )
+
+                    // Active Track
+                    drawLine(
+                        color = activeColor,
+                        start = Offset(0f, centerY),
+                        end = Offset(activeWidth, centerY),
+                        strokeWidth = trackHeight.toPx(),
+                        cap = StrokeCap.Round
+                    )
+
+                    // Start Cap (Active Color)
+                    drawCircle(
+                        color = activeColor,
+                        radius = trackHeight.toPx() * 2f, // Slightly larger to match design? Or just same/similar
+                        center = Offset(0f, centerY)
+                    )
+
+                    // End Cap (Inactive Color)
+                    drawCircle(
+                        color = inactiveColor,
+                        radius = trackHeight.toPx() * 2f,
+                        center = Offset(width, centerY)
+                    )
+                }
+            }
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Conciso", fontSize = 12.sp, color = Color.Gray)
-            Text(text = "Estándar", fontSize = 12.sp, color = Color.Gray)
-            Text(text = "Extenso", fontSize = 12.sp, color = Color.Gray)
+            Text(text = "Conciso", fontSize = 16.sp, color = Color.Gray)
+            Text(text = "Estándar", fontSize = 16.sp, color = Color.Gray)
+            Text(text = "Extenso", fontSize = 16.sp, color = Color.Gray)
         }
     }
 }
