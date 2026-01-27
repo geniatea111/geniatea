@@ -200,8 +200,8 @@ fun SelectableButton(
     ) {
         Text(
             text = text,
-            color = if (isSelected) Color.Black else Color.Black,
-            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
         )
     }
 }
@@ -387,14 +387,15 @@ fun FontSizeSelector(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(IntrinsicSize.Min) // Ensure all children have the same height
                 .clip(RoundedCornerShape(12.dp))
                 .background(Color.White)
                 .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp)),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            FontSizeOption(label = "Aa", size = 14, isSelected = selectedSize == 0, onClick = { onSizeChange(0) }, modifier = Modifier.weight(1f))
-            FontSizeOption(label = "Aa", size = 18, isSelected = selectedSize == 1, onClick = { onSizeChange(1) }, modifier = Modifier.weight(1f))
-            FontSizeOption(label = "Aa", size = 24, isSelected = selectedSize == 2, onClick = { onSizeChange(2) }, modifier = Modifier.weight(1f))
+            FontSizeOption(label = "Aa", size = 14, isSelected = selectedSize == 0, onClick = { onSizeChange(0) }, modifier = Modifier.weight(1f).fillMaxHeight())
+            FontSizeOption(label = "Aa", size = 18, isSelected = selectedSize == 1, onClick = { onSizeChange(1) }, modifier = Modifier.weight(1f).fillMaxHeight())
+            FontSizeOption(label = "Aa", size = 24, isSelected = selectedSize == 2, onClick = { onSizeChange(2) }, modifier = Modifier.weight(1f).fillMaxHeight())
         }
         
         Text(

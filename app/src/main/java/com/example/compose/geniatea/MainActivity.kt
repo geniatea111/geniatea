@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val dataStore = StoreDataUser(this@MainActivity)
             val isDarkMode = dataStore.getDarkMode().first()
+            val isUserLoggedIn = dataStore.isUserLoggedIn.first()
             val themeVariant = dataStore.getThemeVariant().first()
 
             // Save values into ViewModel
@@ -84,7 +85,16 @@ class MainActivity : AppCompatActivity() {
                     isDarkTheme = isDark
                 ) {
                     // Inflate your XML layout with Compose support
-                    AndroidViewBinding(ContentMainBinding::inflate)
+                    AndroidViewBinding(ContentMainBinding::inflate) {
+                        if (isUserLoggedIn) {
+                            val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                            navHostFragment?.navController?.let { navController ->
+                                if (navController.currentDestination?.id != R.id.nav_home) {
+                                    navController.navigate(R.id.nav_home)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
