@@ -1,6 +1,7 @@
 package com.example.compose.geniatea.data.backendConection
 
 import com.example.compose.geniatea.presentation.funcionalidades.tasklist.TaskDTO
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -10,6 +11,8 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Multipart
+import retrofit2.http.Part
 
 interface ApiService {
 
@@ -156,6 +159,20 @@ interface ApiService {
         @Body updaterRequest: UpdateUserRequest
     ): Response<ResponseBody>
 
+    @POST("users/{id}/avatar")
+    @Multipart
+    suspend fun updateAvatar(
+        @Header("Authorization") token: String,
+        @Path("id") userId: Long,
+        @Part avatar: okhttp3.MultipartBody.Part?
+    ): Response<ResponseBody>
+
+    @GET("users/{id}/avatar")
+    suspend fun getAvatar(
+        @Header("Authorization") token: String,
+        @Path("id") userId: Long
+    ): Response<ResponseBody>
+
     @GET("users/{id}")
     suspend fun getUserById(
         @Path("id") id: Long
@@ -228,6 +245,26 @@ interface ApiService {
     suspend fun updateTask(
         @Path("taskId") taskId: String,
         @Body updateTaskRequest: UpdateTaskRequest
+    ): Response<ResponseBody>
+
+    data class UserPreferenceDTO(
+        val showPictograms: Boolean?,
+        val language: String?,
+        val showAvatar: Boolean?,
+        val clearLanguage: Boolean?,
+        val responseStyle: String?,
+        val fontSize: String?
+    )
+
+    @GET("preferences")
+    suspend fun getUserPreferences(
+        @Header("Authorization") token: String
+    ): Response<UserPreferenceDTO>
+
+    @POST("preferences")
+    suspend fun updateUserPreferences(
+        @Header("Authorization") token: String,
+        @Body preferences: UserPreferenceDTO
     ): Response<ResponseBody>
 
 }

@@ -11,7 +11,6 @@ interface SettingsAction {
     data object OnPrivacyPolicyPressed : SettingsAction
     data class OnDarkModeToggle(val isChecked: Boolean) : SettingsAction
     data class OnAnimationsToggle(val isChecked: Boolean) : SettingsAction
-    data class OnPictogramsToggle(val isChecked: Boolean) : SettingsAction
     data object OnNotificationPress : SettingsAction
     data class OnLanguagePress(val language : String) : SettingsAction
     data object OnAppIconPressed : SettingsAction

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
 
+
 class AccountViewModel: ViewModel() {
 
     private val _state = MutableStateFlow(AccountState())
@@ -100,15 +101,17 @@ class AccountViewModel: ViewModel() {
             val user = User(id, token, refreshToken, _state.value.name, _state.value.email, _state.value.username, _state.value.birthDate, _state.value.gender, "USER", false)
 
             try{
+                val updateUserRequest = ApiService.UpdateUserRequest(
+                    name = _state.value.name,
+                    birthdate = formatDateToBack(_state.value.birthDate),
+                    gender = formatGenderToBack(_state.value.gender, context),
+                    showPictograms = null
+                )
+
                 val response = BackendAPI.retrofitService.updateUser(
                     token = "Bearer $token",
                     userId = id.toString(),
-                    updaterRequest = ApiService.UpdateUserRequest(
-                        name = _state.value.name,
-                        birthdate = formatDateToBack(_state.value.birthDate),
-                        gender = formatGenderToBack(_state.value.gender, context),
-                        showPictograms = null
-                    )
+                    updaterRequest = updateUserRequest
                 )
 
                 if (response.isSuccessful) {

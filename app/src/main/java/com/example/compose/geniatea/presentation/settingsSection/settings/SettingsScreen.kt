@@ -271,14 +271,7 @@ fun personalizationSection(onAction: (SettingsAction) -> Unit = {}, state: Setti
         color = MaterialTheme.colorScheme.onSurface
     )
 
-    ButtonConfig(
-        icon = R.drawable.svg_pictograms,
-        text = stringResource(id = R.string.show_pictograms),
-        onClick = { onAction(SettingsAction.OnPictogramsToggle(state.isPictosEnabled)) },
-        shape = RoundedCornerShape(topEndPercent = 30, topStartPercent = 30, bottomEndPercent = 0, bottomStartPercent = 0),
-        isSwitchButton = true,
-        checked = state.isPictosEnabled
-    )
+
 
     ButtonConfig(
         icon = R.drawable.svg_moon,

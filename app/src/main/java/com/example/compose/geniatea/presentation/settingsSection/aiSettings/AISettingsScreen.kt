@@ -28,6 +28,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.graphics.asImageBitmap
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
@@ -86,7 +87,14 @@ fun AISettings(
             ) {
                 AISettingsHeader(
                     selectedSource = state.avatarSource,
+                    avatarBitmap = state.avatarBitmap,
                     onSourceChange = { onAction(AISettingsAction.OnAvatarSourceChange(it)) }
+                )
+
+                ClearLanguageToggle(
+                    isChecked = state.showPictograms,
+                    onToggle = { onAction(AISettingsAction.OnShowPictogramsToggle(it)) },
+                    text = "Mostrar pictogramas"
                 )
 
                 ClearLanguageToggle(
@@ -104,21 +112,7 @@ fun AISettings(
                     onSizeChange = { onAction(AISettingsAction.OnFontSizeChange(it)) }
                 )
 
-                Button(
-                    onClick = { onAction(AISettingsAction.OnSavePressed) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF8AB4F8) // Light Blue from design
-                    )
-                ) {
-                    Text(
-                        text = "Guardar",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+
             }
         }
     }
@@ -139,6 +133,7 @@ fun RegisterPreview() {
 @Composable
 fun AISettingsHeader(
     selectedSource: AvatarSource,
+    avatarBitmap: android.graphics.Bitmap?,
     onSourceChange: (AvatarSource) -> Unit
 ) {
     Box(
@@ -147,14 +142,27 @@ fun AISettingsHeader(
             .clip(RoundedCornerShape(20.dp))
             .background(Color(0xFFE8F0FE)) // Light blue background
     ) {
-        // Illustration (Placeholder for now, creating a mimic)
-        Image(
-            painter = painterResource(id = R.drawable.geniv2avatarsettings), // Using geni as placeholder
-            contentDescription = "Avatar Preview",
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentScale = ContentScale.FillWidth
-        )
+        // Illustration
+        if (selectedSource == AvatarSource.GALLERY && avatarBitmap != null) {
+            androidx.compose.foundation.Image(
+                bitmap = avatarBitmap.asImageBitmap(),
+                contentDescription = "Avatar Preview",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+                    .clip(RoundedCornerShape(20.dp)),
+                contentScale = ContentScale.Crop,
+                alignment = Alignment.Center
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.geniv2avatarsettings), // Using geni as placeholder
+                contentDescription = "Avatar Preview",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentScale = ContentScale.FillWidth
+            )
+        }
 
         // Toggle Buttons
         Row(
@@ -209,7 +217,8 @@ fun SelectableButton(
 @Composable
 fun ClearLanguageToggle(
     isChecked: Boolean,
-    onToggle: (Boolean) -> Unit
+    onToggle: (Boolean) -> Unit,
+    text: String = "Lenguaje claro"
 ) {
     Row(
         modifier = Modifier
@@ -222,7 +231,7 @@ fun ClearLanguageToggle(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "Lenguaje claro",
+                text = text,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )

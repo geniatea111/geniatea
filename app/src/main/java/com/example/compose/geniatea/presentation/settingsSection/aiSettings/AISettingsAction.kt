@@ -6,5 +6,7 @@ interface AISettingsAction {
     data class OnResponseStyleChange(val value: Float) : AISettingsAction
     data class OnFontSizeChange(val size: Int) : AISettingsAction
     data class OnAvatarSourceChange(val source: AvatarSource) : AISettingsAction
-    data object OnSavePressed : AISettingsAction
+    data class OnShowPictogramsToggle(val isChecked: Boolean) : AISettingsAction
+    data class ShowToast(val message: String) : AISettingsAction
+    data object OpenGallery : AISettingsAction
 }

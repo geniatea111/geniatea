@@ -68,13 +68,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 _actionEvent.value = Event(SettingsAction.OnAnimationsToggle(newValue))
             }
 
-            is SettingsAction.OnPictogramsToggle -> {
-                val newValue = !_state.value.isPictosEnabled
-                _state.value = _state.value.copy(isPictosEnabled = newValue)
-                // Guardamos en persistencia
-                setPictogramsEnabled(newValue)
-                _actionEvent.value = Event(SettingsAction.OnPictogramsToggle(newValue))
-            }
+
 
             is SettingsAction.OnLanguagePress -> _actionEvent.value = Event(SettingsAction.OnLanguagePress(action.language))
             SettingsAction.OnNotificationPress -> _actionEvent.value = Event(SettingsAction.OnNotificationPress)
@@ -114,12 +108,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun setPictogramsEnabled(isEnabled: Boolean) {
-        viewModelScope.launch {
-            storeData.savePictogramsEnabled(isEnabled)
-            _state.value = _state.value.copy(isPictosEnabled = isEnabled)
-        }
-    }
+
 
     fun getUserData() {
         viewModelScope.launch {

@@ -81,12 +81,6 @@ class SettingsFragment : Fragment() {
                             }
                         }
 
-                        is SettingsAction.OnPictogramsToggle -> {
-                            viewLifecycleOwner.lifecycleScope.launch {
-                                viewModel.setPictogramsEnabled(action.isChecked)
-                            }
-                        }
-
                         is SettingsAction.OnAppIconPressed -> {
                             findNavController().navigate(R.id.nav_app_icon)
                         }
