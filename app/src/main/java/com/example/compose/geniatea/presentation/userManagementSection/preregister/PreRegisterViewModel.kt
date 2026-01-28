@@ -16,6 +16,11 @@ import kotlinx.coroutines.launch
 import kotlinx.io.IOException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
+import android.content.Intent
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.common.api.ApiException
+import com.example.compose.geniatea.data.backendConection.BackendAPI
+import com.example.compose.geniatea.data.backendConection.ApiService
 
 class PreRegisterViewModel : ViewModel() {
 
@@ -24,6 +29,9 @@ class PreRegisterViewModel : ViewModel() {
 
     private val _navigationEvent = MutableLiveData<Event<PreRegisterAction>>()
     val navigationEvent: LiveData<Event<PreRegisterAction>> = _navigationEvent
+
+    private val _launchGoogleSignIn = MutableLiveData<Event<Unit>>()
+    val launchGoogleSignIn: LiveData<Event<Unit>> get() = _launchGoogleSignIn
 
 
     fun continueClicked(context: Context){
@@ -71,6 +79,55 @@ class PreRegisterViewModel : ViewModel() {
         }
     }
 
+    fun onGoogleSignInClicked() {
+        _launchGoogleSignIn.value = Event(Unit)
+    }
+
+    suspend fun handleGoogleSignInResult(data: Intent?, context: Context) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val response = BackendAPI.retrofitService.loginGoogle(
+                ApiService.LoginGoogleRequest(
+                    token = account.idToken
+                )
+            )
+
+            //obtain the number of the response 500, 400, 200, etc.
+            Log.i("PreRegisterViewModel", "Google Sign-In response: $response")
+
+
+            if(response.isSuccessful) {
+                val userGoogle = User(
+                    id = response.body()?.id ?: 0L,
+                    accessToken = response.body()?.accessToken ?: "",
+                    refreshToken = response.body()?.refreshToken ?: "",
+                    name = response.body()?.name ?: "",
+                )
+
+                Log.i("PreRegisterViewModel", "Google Login successful: Token: ${account.idToken}")
+
+                _navigationEvent.value = Event(PreRegisterAction.OnGoogleLoginSuccess(userGoogle))
+            }else
+                _navigationEvent.value = Event(PreRegisterAction.OnGoogleLoginError("Google Sign-In failed"))
+
+
+            // Handle success
+        } catch (e: SocketTimeoutException) {
+            Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
+        } catch (e: java.net.UnknownHostException) {
+            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+        } catch (e: ApiException) {
+            Log.e("PreRegisterViewModel", "Google sign in failed", e)
+            _navigationEvent.value = Event(PreRegisterAction.OnGoogleLoginError("Google Sign-In failed"))
+        } catch (e: Exception) {
+            Log.e("PreRegisterViewModel", "Unknown error during Google Sign-In", e)
+            Toast.makeText(context, "Something went wrong: ${e.message}", Toast.LENGTH_SHORT).show()
+        } finally {
+            Log.i("PreRegisterViewModel", "Google Sign-In attempt finished")
+        }
+    }
+
     private fun checkDataValidity(): Boolean {
         val currentState = state.value
         var isValid = true
@@ -105,6 +162,15 @@ class PreRegisterViewModel : ViewModel() {
             }
             is PreRegisterAction.OnEmailError -> {
                 _navigationEvent.value = Event(PreRegisterAction.OnEmailError(action.error))
+            }
+            is PreRegisterAction.OnLoginGoogleClicked -> {
+                onGoogleSignInClicked()
+            }
+            is PreRegisterAction.OnGoogleLoginSuccess -> {
+                _navigationEvent.value = Event(PreRegisterAction.OnGoogleLoginSuccess(action.user))
+            }
+            is PreRegisterAction.OnGoogleLoginError -> {
+                _navigationEvent.value = Event(PreRegisterAction.OnGoogleLoginError(action.error))
             }
         }
     }

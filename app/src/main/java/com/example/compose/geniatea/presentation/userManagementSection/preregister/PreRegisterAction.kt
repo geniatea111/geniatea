@@ -11,4 +11,7 @@ interface PreRegisterAction {
 
     class OnEmailSuccess(val user: User): PreRegisterAction
     class OnEmailError(val error: String): PreRegisterAction
+
+    class OnGoogleLoginSuccess(val user: User): PreRegisterAction
+    class OnGoogleLoginError(val error: String): PreRegisterAction
 }
