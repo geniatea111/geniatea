@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "170886531589-hg4lhdf0v09hi59ommdajs3ncj6ha9p0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.compose.geniatea",
+            "certificate_hash": "e0541a80d6b0ffca11e38ee5fb1a92f2bb99bd47"
+          }
+        },
+        {
           "client_id": "170886531589-i5rbrabpsi91n9s95e16h24uslu08tbp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

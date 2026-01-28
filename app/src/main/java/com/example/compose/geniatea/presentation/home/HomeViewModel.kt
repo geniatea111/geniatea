@@ -36,7 +36,7 @@ class HomeViewModel() : ViewModel() {
                 val response = BackendAPI.retrofitService.getChatSessions(token)
                 if (response.isSuccessful) {
                     val conversations = response.body()?.map { 
-                        Conversation(it.sessionId, it.conversationSummary, System.currentTimeMillis()) 
+                        Conversation(it.sessionId, it.topic, System.currentTimeMillis()) 
                     } ?: emptyList()
                     _state.update { it.copy(conversations = conversations.take(2)) }
                 } else {

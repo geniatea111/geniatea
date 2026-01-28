@@ -176,7 +176,7 @@ fun RecentConversationsCard(conversations: List<Conversation>, onAction: (HomeAc
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Recientes",
+                text = "Chats recientes",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = W700,
                 modifier = Modifier.weight(1f)
@@ -220,7 +220,7 @@ fun RecentConversationItem(conversation: Conversation, onAction: (HomeAction) ->
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onAction(HomeAction.OnRecentChatPressed(conversation.id)) }
+            .clickable { onAction(HomeAction.OnRecentChatPressed(conversation.id, conversation.title)) }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

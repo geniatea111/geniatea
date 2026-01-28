@@ -57,6 +57,10 @@ class ChatFragment : Fragment() {
         val sessionId = arguments?.getLong("sessionId", -1L) ?: -1L
         if (sessionId != -1L) {
             viewModel.setSessionId(sessionId)
+            val topic = arguments?.getString("topic") ?: ""
+            if (topic.isNotEmpty()) {
+                viewModel.setTopic(topic)
+            }
             viewModel.loadChatSession(requireContext())
         }
 

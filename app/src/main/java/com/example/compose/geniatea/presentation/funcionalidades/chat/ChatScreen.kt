@@ -108,7 +108,7 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             TitleAppBar(
-                title = stringResource(id = R.string.home),
+                title = if (uiState.topic.isNotEmpty()) uiState.topic else stringResource(id = R.string.home),
                 onNavIconPressed = { onNavIconPressed() },
                 optionalButton = true,
                 onOptionalButtonPressed = { showBottomSheet = true },

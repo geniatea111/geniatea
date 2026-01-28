@@ -35,6 +35,10 @@ class ChatViewModel: ViewModel() {
         sessionId = id
     }
 
+    fun setTopic(topic: String) {
+        _state.update { it.copy(topic = topic) }
+    }
+
     fun onAction(action: ChatAction) {
         when (action) {
             ChatAction.OnBackPressed -> _actionEvent.value = Event(ChatAction.OnBackPressed)

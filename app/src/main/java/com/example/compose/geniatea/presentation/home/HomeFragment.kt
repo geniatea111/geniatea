@@ -55,6 +55,7 @@ class HomeFragment : Fragment() {
                     is HomeAction.OnRecentChatPressed -> {
                         val bundle = Bundle().apply {
                             putLong("sessionId", action.conversationId)
+                            putString("topic", action.topic)
                         }
                         findNavController().navigate(R.id.action_nav_home_to_nav_chat, bundle)
                     }

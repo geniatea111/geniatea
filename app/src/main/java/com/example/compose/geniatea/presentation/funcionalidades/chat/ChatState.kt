@@ -8,7 +8,8 @@ data class ChatState(
     val messages: List<Message> = emptyList(),
     val currentMessage: TextFieldValue = TextFieldValue(""),
     val selectedImage: Uri? = null,
-    val chatStyle: ChatStyle = ChatStyle.NORMAL
+    val chatStyle: ChatStyle = ChatStyle.NORMAL,
+    val topic: String = ""
 )
 
 @Immutable

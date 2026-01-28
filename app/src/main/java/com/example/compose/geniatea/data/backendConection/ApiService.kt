@@ -125,7 +125,7 @@ interface ApiService {
     data class ChatSessionResponse(
         val sessionId: Long,
         val createdAt: String,
-        val conversationSummary: String
+        val topic: String
     )
 
     @POST("auth/login")

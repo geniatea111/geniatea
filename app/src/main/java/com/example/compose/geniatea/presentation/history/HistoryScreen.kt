@@ -122,7 +122,7 @@ fun HistoryItem(session: ApiService.ChatSessionResponse, onAction: (HistoryActio
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = session.conversationSummary,
+                text = session.topic,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
