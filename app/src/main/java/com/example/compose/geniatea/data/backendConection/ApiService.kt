@@ -196,9 +196,10 @@ interface ApiService {
 
 
     @POST("chat/request")
+    @retrofit2.http.Streaming
     suspend fun requestChat(
         @Body message: MessageRequest
-    ): Response<MessageResponse>
+    ): Response<ResponseBody>
 
     @GET("chat/history")
     suspend fun getChatHistory(

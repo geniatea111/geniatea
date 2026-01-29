@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -73,33 +75,63 @@ class ChatViewModel: ViewModel() {
 
     fun sendMessage(context: Context, messageText: String) {
         viewModelScope.launch {
-            try {
-                val response = BackendAPI.retrofitService.requestChat(
-                    ApiService.MessageRequest(
-                        userId = StoreDataUser(context).getId().toString(),
-                        message = messageText,
-                        image = null // TODO: Handle image sending
-                    )
-                )
-
-                if (response.isSuccessful) {
-                    val messageResponse = response.body()
-                    messageResponse?.let {
-                        val geniMessage = Message(
-                            author = "Geni", // TODO: Use string resource for author
-                            content = it.message,
-                            timestamp = it.createdAt,
+            _state.update { it.copy(isGenerating = true) }
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = BackendAPI.retrofitService.requestChat(
+                        ApiService.MessageRequest(
+                            userId = StoreDataUser(context).getId().toString(),
+                            message = messageText,
+                            image = null // TODO: Handle image sending
                         )
-                        _state.update { currentState ->
-                            currentState.copy(
-                                messages = currentState.messages + geniMessage
+                    )
+
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null) {
+                            val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault()))
+                            val geniMessage = Message(
+                                author = "Geni", // TODO: Use string resource for author
+                                content = "",
+                                timestamp = time,
                             )
+                            _state.update { currentState ->
+                                currentState.copy(
+                                    messages = currentState.messages + geniMessage
+                                )
+                            }
+                            
+                            val source = body.source()
+                            var accumulatedText = ""
+                            
+                            while (!source.exhausted()) {
+                                val line = source.readUtf8Line()
+                                if (line != null && line.startsWith("data:")) {
+                                    val chunk = line.substring(5)
+                                    accumulatedText += chunk
+                                    _state.update { currentState ->
+                                        if (currentState.messages.isNotEmpty()) {
+                                            val messages = currentState.messages.toMutableList()
+                                            val lastIndex = messages.lastIndex
+                                            val lastMsg = messages[lastIndex]
+                                            messages[lastIndex] = lastMsg.copy(content = accumulatedText)
+                                            currentState.copy(messages = messages)
+                                        } else {
+                                            currentState
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
+                } catch (e: Exception) { 
+                    Log.e("ChatViewModel", "Error sending message: ${e.localizedMessage}")
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, context.getString(R.string.error_sending_message), Toast.LENGTH_LONG).show()
+                    }
+                } finally {
+                    _state.update { it.copy(isGenerating = false) }
                 }
-            } catch (e: Exception) { 
-                Log.e("ChatViewModel", "Error sending message: ${e.localizedMessage}")
-                Toast.makeText(context, context.getString(R.string.error_sending_message), Toast.LENGTH_LONG).show()
             }
         }
     }

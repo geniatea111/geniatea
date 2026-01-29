@@ -11,7 +11,8 @@ data class ChatState(
     val selectedImage: Uri? = null,
     val chatStyle: ChatStyle = ChatStyle.NORMAL,
     val topic: String = "",
-    val userAvatar: Bitmap? = null
+    val userAvatar: Bitmap? = null,
+    val isGenerating: Boolean = false
 )
 
 @Immutable

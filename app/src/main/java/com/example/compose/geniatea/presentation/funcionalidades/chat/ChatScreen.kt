@@ -26,6 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -171,7 +172,8 @@ fun ChatScreen(
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState,
                     onAction = onAction,
-                    avatar = uiState.userAvatar
+                    avatar = uiState.userAvatar,
+                    isGenerating = uiState.isGenerating
                 )
             }
 
@@ -201,8 +203,9 @@ fun ChatScreen(
 const val ConversationTestTag = "ConversationTestTag"
 val dateFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault())
 
+
 @Composable
-fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit, avatar: android.graphics.Bitmap? = null) {
+fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit, avatar: android.graphics.Bitmap? = null, isGenerating: Boolean = false) {
     val scope = rememberCoroutineScope()
     Box(modifier = modifier) {
 
@@ -242,6 +245,22 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                     isUserMe = content.author != "Geni",
                     onAction
                 )
+            }
+            if (isGenerating && (messages.isEmpty() || messages.last().author != "Geni")) {
+                item {
+                   Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            strokeWidth = 3.dp
+                        )
+                    }
+                }
             }
         }
         val jumpToBottomButtonEnabled by remember {
