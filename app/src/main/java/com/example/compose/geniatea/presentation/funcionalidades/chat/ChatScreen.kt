@@ -112,9 +112,9 @@ fun ChatScreen(
             TitleAppBar(
                 title = if (uiState.topic.isNotEmpty()) uiState.topic else stringResource(id = R.string.home),
                 onNavIconPressed = { onNavIconPressed() },
-                optionalButton = true,
-                onOptionalButtonPressed = { showBottomSheet = true },
-                iconButton = R.drawable.svg_preferences
+//                optionalButton = true,
+//                onOptionalButtonPressed = { showBottomSheet = true },
+//                iconButton = R.drawable.svg_preferences
             )
         },
         // Exclude ime and navigation bar padding so this can be added by the UserInput composable

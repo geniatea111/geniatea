@@ -78,8 +78,7 @@ class ChatViewModel: ViewModel() {
                     ApiService.MessageRequest(
                         userId = StoreDataUser(context).getId().toString(),
                         message = messageText,
-                        image = null, // TODO: Handle image sending
-                        style = _state.value.chatStyle.value
+                        image = null // TODO: Handle image sending
                     )
                 )
 

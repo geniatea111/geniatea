@@ -60,7 +60,8 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                                     "learning" -> 2f
                                     else -> 1f
                                 },
-                                showPictograms = DTO.showPictograms ?: false
+                                showPictograms = DTO.showPictograms ?: false,
+                                language = DTO.language
                             )
                         }
 
@@ -201,7 +202,7 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
             try {
                 val dto = ApiService.UserPreferenceDTO(
                     showPictograms = currentState.showPictograms,
-                    language = null,
+                    language = currentState.language,
                     showAvatar = currentState.avatarSource == AvatarSource.GALLERY,
                     clearLanguage = currentState.isClearLanguage,
                     responseStyle = when (currentState.responseStyle) {

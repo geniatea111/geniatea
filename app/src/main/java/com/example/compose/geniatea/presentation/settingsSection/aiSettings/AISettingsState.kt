@@ -10,5 +10,6 @@ data class AISettingsState(
     val fontSize: Int = 1, // 0: Small, 1: Medium, 2: Large
     val avatarSource: AvatarSource = AvatarSource.GENI,
     val showPictograms: Boolean = false,
-    val avatarBitmap: android.graphics.Bitmap? = null
+    val avatarBitmap: android.graphics.Bitmap? = null,
+    val language: String? = null
 )

@@ -20,6 +20,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -43,6 +45,22 @@ fun CustomDialogLanguage(
     onConfirmation: () -> Unit,
     onAction: (SettingsAction) -> Unit = {},
 ) {
+    // Determine current language for initial state
+    val currentLanguage = Locale.getDefault().displayLanguage.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
+    val spanish = stringResource(id = R.string.spanish)
+    val english = stringResource(id = R.string.english)
+    val french = stringResource(id = R.string.french)
+
+    // Normalize initial state to match one of our options if possible
+    val initialState = when {
+        currentLanguage.equals(spanish, ignoreCase = true) -> spanish
+        currentLanguage.equals(english, ignoreCase = true) -> english
+        currentLanguage.equals(french, ignoreCase = true) -> french
+        else -> spanish // Default fallback
+    }
+
+    var selectedLanguage by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(initialState) }
+
     Dialog(
         onDismissRequest = {
             onDismissRequest()
@@ -80,10 +98,16 @@ fun CustomDialogLanguage(
                         modifier = Modifier.padding(top = 25.dp, bottom =  25.dp, start = 16.dp, end = 16.dp)
                     )
 
-                    ListLanguages(onAction)
+                    ListLanguages(
+                        selectedLanguage = selectedLanguage,
+                        onLanguageSelected = { selectedLanguage = it }
+                    )
 
                     Button(
-                        onClick = { onConfirmation() },
+                        onClick = {
+                            onAction(SettingsAction.OnLanguagePress(selectedLanguage))
+                            onConfirmation()
+                        },
                         modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                     ) {
                         Row{
@@ -104,7 +128,8 @@ fun CustomDialogLanguage(
 
 @Composable
 fun ListLanguages(
-    onAction: (SettingsAction) -> Unit = {}
+    selectedLanguage: String,
+    onLanguageSelected: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -116,19 +141,15 @@ fun ListLanguages(
         val english = stringResource(id = R.string.english)
         val french = stringResource(id = R.string.french)
 
-        //first letter uppercase
-        val currentLanguage = Locale.getDefault().displayLanguage.replaceFirstChar { if (it.isLowerCase()) it.titlecase(java.util.Locale.getDefault()) else it.toString() }
-        Log.i("LanguageTag", "Current language: $currentLanguage")
-
-        listItemLanguage(spanish, icon = painterResource(id = R.drawable.svg_spain), spanish == currentLanguage, onAction)
-        listItemLanguage(english, icon = painterResource(id = R.drawable.svg_england), english == currentLanguage, onAction)
-        listItemLanguage(french, icon = painterResource(id = R.drawable.svg_france), french == currentLanguage, onAction)
+        listItemLanguage(spanish, icon = painterResource(id = R.drawable.svg_spain), isChoosen = spanish == selectedLanguage, onSelect = { onLanguageSelected(spanish) })
+        listItemLanguage(english, icon = painterResource(id = R.drawable.svg_england), isChoosen = english == selectedLanguage, onSelect = { onLanguageSelected(english) })
+        listItemLanguage(french, icon = painterResource(id = R.drawable.svg_france), isChoosen = french == selectedLanguage, onSelect = { onLanguageSelected(french) })
     }
 }
 
 
 @Composable
-fun listItemLanguage(text: String, icon: Painter, isChoosen: Boolean = false, onAction: (SettingsAction) -> Unit = {},){
+fun listItemLanguage(text: String, icon: Painter, isChoosen: Boolean = false, onSelect: () -> Unit){
 
     val backgroundColor = if (isChoosen) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface
 
@@ -141,7 +162,7 @@ fun listItemLanguage(text: String, icon: Painter, isChoosen: Boolean = false, on
                 contentColor = MaterialTheme.colorScheme.onSurface
             ),
             modifier = Modifier.fillMaxWidth(),
-            onClick = { onAction(SettingsAction.OnLanguagePress(text)) },
+            onClick = { onSelect() },
         ) {
             Image(
                 painter = icon,

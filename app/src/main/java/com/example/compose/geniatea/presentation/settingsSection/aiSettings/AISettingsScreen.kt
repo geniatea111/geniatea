@@ -29,6 +29,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.asImageBitmap
+import kotlinx.coroutines.launch
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
@@ -99,7 +100,8 @@ fun AISettings(
 
                 ClearLanguageToggle(
                     isChecked = state.isClearLanguage,
-                    onToggle = { onAction(AISettingsAction.OnClearLanguageToggle(it)) }
+                    onToggle = { onAction(AISettingsAction.OnClearLanguageToggle(it)) },
+                    tooltipText = "Texto simple y conciso. Evita ambigüedades, dobles sentidos, ironías y metáforas."
                 )
 
                 ResponseStyleSlider(
@@ -214,11 +216,13 @@ fun SelectableButton(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClearLanguageToggle(
     isChecked: Boolean,
     onToggle: (Boolean) -> Unit,
-    text: String = "Lenguaje claro"
+    text: String = "Lenguaje claro",
+    tooltipText: String? = null
 ) {
     Row(
         modifier = Modifier
@@ -235,14 +239,57 @@ fun ClearLanguageToggle(
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
-            Icon(
-                imageVector = Icons.Default.HelpOutline,
-                contentDescription = "Help",
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(start = 4.dp),
-                tint = Color.Gray
-            )
+            if (tooltipText != null) {
+                val tooltipState = rememberTooltipState(isPersistent = true)
+                val scope = androidx.compose.runtime.rememberCoroutineScope()
+                val configuration = androidx.compose.ui.platform.LocalConfiguration.current
+                val screenWidth = configuration.screenWidthDp.dp
+                val tooltipWidth = screenWidth - 32.dp
+
+                TooltipBox(
+                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+                    tooltip = {
+                        RichTooltip(
+                            colors = TooltipDefaults.richTooltipColors(
+                                containerColor = Color.White,
+                                contentColor = Color.Black
+                            ),
+                            shape = RoundedCornerShape(24.dp)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.width(tooltipWidth)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.HelpOutline,
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 8.dp),
+                                    tint = Color.Black
+                                )
+                                Text(
+                                    text = tooltipText,
+                                    color = Color.Black
+                                )
+                            }
+                        }
+                    },
+                    state = tooltipState
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.HelpOutline,
+                        contentDescription = "Help",
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(start = 4.dp)
+                            .clickable {
+                                scope.launch {
+                                    tooltipState.show()
+                                }
+                            },
+                        tint = Color.Gray
+                    )
+                }
+            }
         }
         Switch(
             checked = isChecked,
@@ -272,15 +319,8 @@ fun ResponseStyleSlider(
             Text(
                 text = "Estilo de respuesta",
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
-            )
-            Icon(
-                imageVector = Icons.Default.HelpOutline,
-                contentDescription = "Help",
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(start = 4.dp),
-                tint = Color.Gray
+                fontSize = 16.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
         }
         

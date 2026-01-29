@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.compose.geniatea.data.StoreDataUser
 import com.example.compose.geniatea.data.backendConection.BackendAPI
+import com.example.compose.geniatea.data.backendConection.ApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -81,7 +82,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
 
 
-            is SettingsAction.OnLanguagePress -> _actionEvent.value = Event(SettingsAction.OnLanguagePress(action.language))
+            is SettingsAction.OnLanguagePress -> {
+                saveLanguagePreference(action.language)
+                _actionEvent.value = Event(SettingsAction.OnLanguagePress(action.language))
+            }
             SettingsAction.OnNotificationPress -> _actionEvent.value = Event(SettingsAction.OnNotificationPress)
             is SettingsAction.OnAppIconPressed -> _actionEvent.value = Event(SettingsAction.OnAppIconPressed)
             is SettingsAction.OnAppColorPressed -> _actionEvent.value = Event(SettingsAction.OnAppColorPressed)
@@ -132,6 +136,45 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                             name = user.name,
                             username = user.username
                         )
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun getLanguageCode(language: String): String {
+        return when (language) {
+            "Español" -> "spanish"
+            "English" -> "english"
+            "Français" -> "french"
+            else -> "spanish"
+        }
+    }
+
+    private fun saveLanguagePreference(languageName: String) {
+        val languageCode = getLanguageCode(languageName)
+        android.util.Log.d("LanguageUpdate", "Updating language. Name: $languageName, Code: $languageCode")
+        viewModelScope.launch {
+            val token = storeData.getToken() ?: return@launch
+            try {
+                // Fetch current preferences to update this specific field safely
+                val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
+                if (response.isSuccessful) {
+                    val currentPrefs = response.body()
+                    val newPrefs = currentPrefs?.copy(language = languageCode) ?: ApiService.UserPreferenceDTO(
+                        showPictograms = null,
+                        language = languageCode,
+                        showAvatar = null,
+                        clearLanguage = null,
+                        responseStyle = null,
+                        fontSize = null
+                    )
+
+                    val updateResponse = BackendAPI.retrofitService.updateUserPreferences("Bearer $token", newPrefs)
+                    if (updateResponse.isSuccessful) {
+                        storeData.saveLanguage(languageCode)
                     }
                 }
             } catch (e: Exception) {

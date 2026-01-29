@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 ) {
                     // Inflate your XML layout with Compose support
                     AndroidViewBinding(ContentMainBinding::inflate) {
-                        if (isUserLoggedIn) {
+                        if (isUserLoggedIn && savedInstanceState == null) {
                             val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
                             navHostFragment?.navController?.let { navController ->
                                 if (navController.currentDestination?.id != R.id.nav_home) {
