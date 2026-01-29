@@ -11,6 +11,9 @@ import com.example.compose.geniatea.data.Conversation
 import com.example.compose.geniatea.data.backendConection.ApiService
 import com.example.compose.geniatea.data.backendConection.BackendAPI
 import com.example.compose.geniatea.presentation.funcionalidades.tasklist.TaskDTO
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -66,6 +69,96 @@ class HomeViewModel() : ViewModel() {
         }
     }
 
+    private fun fetchParameters(context: Context) {
+        viewModelScope.launch {
+            val store = StoreDataUser(context)
+            val token = store.getToken() ?: return@launch
+            
+            // Fetch User Preferences
+            try {
+                val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
+                if (response.isSuccessful) {
+                    val prefs = response.body()
+                    if (prefs != null) {
+                        store.savePictogramsEnabled(prefs.showPictograms ?: false)
+                        
+                        prefs.language?.let { rawLanguage ->
+                            store.saveLanguage(rawLanguage)
+                            val language = rawLanguage.trim().lowercase(Locale.ROOT)
+                            
+                            Log.d("HomeViewModel", "Backend language: $rawLanguage, Normalized: $language")
+                            
+                            val tag = when (language) {
+                                "español", "spanish", "es" -> "es"
+                                "english", "ingles", "en" -> "en"
+                                "français", "french", "fr" -> "fr"
+                                else -> "es"
+                            }
+                            
+                            val appLocale = LocaleListCompat.create(Locale.forLanguageTag(tag))
+                            val currentLocales = AppCompatDelegate.getApplicationLocales()
+                            val currentTag = if (!currentLocales.isEmpty) currentLocales.get(0)?.language else "es"
+                            
+                            Log.d("HomeViewModel", "Current Tag: $currentTag, New Tag: $tag")
+                            
+                            if (currentTag != tag) {
+                                Log.d("HomeViewModel", "Applying new locale: $tag")
+                                AppCompatDelegate.setApplicationLocales(appLocale)
+                            } else {
+                                Log.d("HomeViewModel", "Locale already set to $tag")
+                            }
+                        }
+                        store.saveShowAvatar(prefs.showAvatar ?: false)
+                        
+                        // Map response style
+                        val style = when(prefs.responseStyle) {
+                            "concise" -> "concise"
+                            "learning" -> "learning"
+                            else -> "normal"
+                        }
+                        store.saveResponseStyle(style)
+
+                        // Map font size
+                        val size = when(prefs.fontSize) {
+                            "S" -> "S"
+                            "L" -> "L"
+                            else -> "M"
+                        }
+                        store.saveFontSize(size)
+                        
+                        // Process Avatar fetching if needed
+                        if (prefs.showAvatar == true) {
+                             fetchAndSaveAvatar(context, token, store.getId() ?: 0L)
+                        } else {
+                             // Correctly handle case where avatar is disabled/removed?
+                             // Maybe delete local avatar? user preferences say showAvatar=false
+                             // so we might not need to delete, just not show. 
+                             // But if they switched to Geni, showAvatar would be false (gallery is false).
+                             // Let's rely on showAvatar boolean for UI.
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Exception fetching preferences", e)
+            }
+        }
+    }
+
+    private suspend fun fetchAndSaveAvatar(context: Context, token: String, userId: Long) {
+         try {
+            val response = BackendAPI.retrofitService.getAvatar("Bearer $token", userId)
+            if (response.isSuccessful) {
+                val bytes = response.body()?.bytes()
+                if (bytes != null) {
+                    val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                    com.example.compose.geniatea.data.repository.AvatarRepository(context).saveAvatar(bitmap)
+                }
+            }
+        } catch (e: Exception) {
+             Log.e("HomeViewModel", "Exception fetching avatar", e)
+        }
+    }
+
     fun onAction(action: HomeAction) {
         when (action) {
             HomeAction.OnBackPressed -> {
@@ -107,6 +200,7 @@ class HomeViewModel() : ViewModel() {
     }
 
     suspend fun setData(context: Context) {
+        fetchParameters(context)
         val name = StoreDataUser(context).getName() ?: "Usuario"
         val greeting = when (java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)) {
             in 0..13 -> "Buenos días"

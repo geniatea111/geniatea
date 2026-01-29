@@ -130,6 +130,15 @@ class ChatViewModel: ViewModel() {
             }
         }
     }
+
+    fun loadAvatar(context: Context) {
+        viewModelScope.launch {
+            val avatar = com.example.compose.geniatea.data.repository.AvatarRepository(context).getAvatar()
+            if (avatar != null) {
+                _state.update { it.copy(userAvatar = avatar) }
+            }
+        }
+    }
 }
 
 open class Event<out T>(private val content: T) {

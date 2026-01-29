@@ -29,6 +29,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.theme.GenIATEATheme
+import androidx.fragment.app.activityViewModels
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -51,6 +56,9 @@ class ChatFragment : Fragment() {
         }
     }
 
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
+    private val appColorViewModel: AppColorViewModel by activityViewModels()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
 
@@ -69,6 +77,8 @@ class ChatFragment : Fragment() {
         ) {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
+        
+        viewModel.loadAvatar(requireContext())
 
         rootView.findViewById<ComposeView>(R.id.toolbar_compose_view).apply {
 
@@ -151,12 +161,28 @@ class ChatFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
-                ChatRoot(
-                    viewModel = viewModel,
-                    onBackPressed = {
-                        activity?.onBackPressedDispatcher?.onBackPressed()
-                    },
-                )
+                val fontSize by settingsViewModel.fontSize.collectAsState()
+                val isDark by settingsViewModel.darkMode.collectAsState()
+                val themeVariant by appColorViewModel.themeVariant.collectAsState()
+
+                val fontScale = when(fontSize) {
+                    "S" -> 0.85f
+                    "L" -> 1.15f
+                    else -> 1.0f
+                }
+
+                GenIATEATheme(
+                    themeVariant = themeVariant,
+                    isDarkTheme = isDark,
+                    fontScale = fontScale
+                ) {
+                    ChatRoot(
+                        viewModel = viewModel,
+                        onBackPressed = {
+                            activity?.onBackPressedDispatcher?.onBackPressed()
+                        },
+                    )
+                }
             }
         }
 

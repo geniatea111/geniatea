@@ -203,6 +203,7 @@
     <string name="color_app">Color de la aplicación</string>
     <string name="icon_app">Icono de la aplicación</string>
     <string name="animations">Animaciones</string>
+    <string name="chat_header_greeting">¿En qué puedo ayudarte?</string>
 
 
 </resources>

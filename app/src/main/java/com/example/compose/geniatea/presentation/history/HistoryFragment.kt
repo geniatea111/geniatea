@@ -14,12 +14,19 @@ import androidx.navigation.fragment.findNavController
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.data.StoreDataUser
 import com.example.compose.geniatea.theme.GenIATEATheme
+import androidx.fragment.app.activityViewModels
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 class HistoryFragment : Fragment() {
 
     private val viewModel: HistoryViewModel by viewModels {
         HistoryViewModelFactory(StoreDataUser(requireContext()))
     }
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
+    private val appColorViewModel: AppColorViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +35,21 @@ class HistoryFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                GenIATEATheme {
+                val fontSize by settingsViewModel.fontSize.collectAsState()
+                val isDark by settingsViewModel.darkMode.collectAsState()
+                val themeVariant by appColorViewModel.themeVariant.collectAsState()
+
+                val fontScale = when(fontSize) {
+                    "S" -> 0.85f
+                    "L" -> 1.15f
+                    else -> 1.0f
+                }
+
+                GenIATEATheme(
+                    themeVariant = themeVariant,
+                    isDarkTheme = isDark,
+                    fontScale = fontScale
+                ) {
                     HistoryScreen(
                         viewModel = viewModel,
                         onAction = { action: HistoryAction ->

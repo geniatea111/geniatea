@@ -1,6 +1,7 @@
 package com.example.compose.geniatea.presentation.funcionalidades.chat
 
 import android.net.Uri
+import android.graphics.Bitmap
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.input.TextFieldValue
 
@@ -9,7 +10,8 @@ data class ChatState(
     val currentMessage: TextFieldValue = TextFieldValue(""),
     val selectedImage: Uri? = null,
     val chatStyle: ChatStyle = ChatStyle.NORMAL,
-    val topic: String = ""
+    val topic: String = "",
+    val userAvatar: Bitmap? = null
 )
 
 @Immutable

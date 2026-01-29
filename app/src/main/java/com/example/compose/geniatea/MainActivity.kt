@@ -77,12 +77,20 @@ class MainActivity : AppCompatActivity() {
             setContent {
                 val isDark by settingsViewModel.darkMode.collectAsState()
                 val theme by appColorViewModel.themeVariant.collectAsState()
+                val fontSize by settingsViewModel.fontSize.collectAsState()
 
-                Log.d("MainActivity", "Applying theme: $theme, Dark mode: $isDark")
+                val fontScale = when(fontSize) {
+                    "S" -> 0.85f
+                    "L" -> 1.15f
+                    else -> 1.0f
+                }
+
+                Log.d("MainActivity", "Applying theme: $theme, Dark mode: $isDark, Font Scale: $fontScale")
 
                 GenIATEATheme(
                     themeVariant = theme,
-                    isDarkTheme = isDark
+                    isDarkTheme = isDark,
+                    fontScale = fontScale
                 ) {
                     // Inflate your XML layout with Compose support
                     AndroidViewBinding(ContentMainBinding::inflate) {

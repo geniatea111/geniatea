@@ -14,11 +14,18 @@ import com.example.compose.geniatea.R
 import com.example.compose.geniatea.data.StoreDataUser
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.presentation.userManagementSection.login.LoginAction
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+import androidx.fragment.app.activityViewModels
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.launch
 
 
 class RegisterFragment : Fragment() {
     private val viewModel: RegisterViewModel by viewModels()
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
+    private val appColorViewModel: AppColorViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
@@ -50,6 +57,21 @@ class RegisterFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
+                val fontSize by settingsViewModel.fontSize.collectAsState()
+                val isDark by settingsViewModel.darkMode.collectAsState()
+                val themeVariant by appColorViewModel.themeVariant.collectAsState()
+
+                val fontScale = when(fontSize) {
+                    "S" -> 0.85f
+                    "L" -> 1.15f
+                    else -> 1.0f
+                }
+
+                GenIATEATheme(
+                    themeVariant = themeVariant,
+                    isDarkTheme = isDark,
+                    fontScale = fontScale
+                ) {
                     RegisterRoot(
                         viewModel = viewModel,
                         onBackPressed = {
@@ -57,6 +79,7 @@ class RegisterFragment : Fragment() {
                         }
                     )
                 }
+            }
             
         }
         return rootView

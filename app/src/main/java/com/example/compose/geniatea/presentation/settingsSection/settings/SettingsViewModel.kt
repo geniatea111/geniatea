@@ -36,6 +36,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         _darkMode.value = isDark
     }
 
+    private val _fontSize = MutableStateFlow("M")
+    val fontSize: StateFlow<String> = _fontSize
+
+    init {
+       viewModelScope.launch {
+           storeData.getFontSize().collect {
+               _fontSize.value = it
+           }
+       }
+    }
+
     fun onAction(action: SettingsAction) {
         when (action) {
             SettingsAction.OnBackPressed -> _actionEvent.value = Event(SettingsAction.OnBackPressed)

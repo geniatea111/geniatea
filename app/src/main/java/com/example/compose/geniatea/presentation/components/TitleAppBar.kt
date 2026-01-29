@@ -6,6 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.Image
+import android.graphics.Bitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
@@ -40,6 +45,7 @@ fun TitleAppBar(
     optionalButton: Boolean = false,
     onOptionalButtonPressed: () -> Unit = { },
     iconButton: Int = R.drawable.svg_preferences,
+    avatar: Bitmap? = null
 ) {
     TopAppBar(
         //transparent
@@ -47,6 +53,14 @@ fun TitleAppBar(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f)
         ),
         actions = {
+            if (avatar != null) {
+                Image(
+                    bitmap = avatar.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier.padding(end = 8.dp).size(32.dp).clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+            }
             if (optionalButton) {
                 IconButton(
                     onClick = onOptionalButtonPressed,

@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.update
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
-class AISettingsViewModel: ViewModel() {
+class AISettingsViewModel(application: android.app.Application): androidx.lifecycle.AndroidViewModel(application) {
 
     private val _state = MutableStateFlow(AISettingsState())
     val state = _state.asStateFlow()
@@ -28,9 +28,14 @@ class AISettingsViewModel: ViewModel() {
     private var userToken: String? = null
     private var userId: Long? = null
 
-    fun loadSettings(context: Context) {
+    // Helper to get store
+    private val storeDataUser: StoreDataUser
+        get() = StoreDataUser(getApplication<android.app.Application>().applicationContext)
+
+    fun loadSettings(context: Context) { // Keep signature for compatibility if needed, or remove param
         viewModelScope.launch {
             try {
+                // Use the passed context or the application context
                 val store = StoreDataUser(context)
                 userToken = store.getToken()
                 userId = store.getId()
@@ -87,9 +92,6 @@ class AISettingsViewModel: ViewModel() {
             }
             is AISettingsAction.OnResponseStyleChange -> {
                 _state.update { it.copy(responseStyle = action.value) }
-                // Slider invokes this continuously, might need debounce. But for now implementing as requested.
-                // NOTE: User probably wants on drag end, but action is vague.
-                // Assuming this is called on change.
                 saveSettings("Estilo de respuesta actualizado")
             }
             is AISettingsAction.OnFontSizeChange -> {
@@ -99,28 +101,21 @@ class AISettingsViewModel: ViewModel() {
             is AISettingsAction.OnAvatarSourceChange -> {
                 if (action.source == AvatarSource.GALLERY) {
                     _actionEvent.value = Event(AISettingsAction.OpenGallery)
-                    // State update deferred until image selection or user cancels/switches back
-                    // Actually, consistent with other settings, we might want to optimistic update
-                    // But for Gallery, we need the file.
-                    // Let's optimistic update the UI selector, but not save until file picked?
-                    // Or only update UI if file picked?
-                    // User request: "si se selecciona foto de la galeria, se debe abrir... el usuario puede seleccionar... que sera enviada"
                     _state.update { it.copy(avatarSource = action.source) }
                 } else {
                     _state.update { it.copy(avatarSource = action.source) }
-                    saveSettings("Fuente de avatar actualizada") // Updates preferences
-                    updateAvatar(null, "Avatar removido") // Updates avatar specifically to null
+                    saveSettings("Fuente de avatar actualizada") 
+                    updateAvatar(null, "Avatar removido") 
                 }
             }
             is AISettingsAction.ShowToast -> {
                  _actionEvent.value = Event(action)
             }
-            AISettingsAction.OpenGallery -> { /* No-op here, handled by view */ }
+            AISettingsAction.OpenGallery -> { }
         }
     }
 
     fun onAvatarSelected(uri: android.net.Uri, context: Context) {
-        // Create MultipartBody.Part from Uri
         val contentResolver = context.contentResolver
         val type = contentResolver.getType(uri) ?: "image/*"
         val inputStream = contentResolver.openInputStream(uri)
@@ -135,7 +130,6 @@ class AISettingsViewModel: ViewModel() {
             val body = okhttp3.MultipartBody.Part.createFormData("avatar", "avatar.jpg", requestFile)
             updateAvatar(body, "Avatar actualizado")
 
-            // Update local state immediately
             val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             _state.update { it.copy(avatarBitmap = bitmap, avatarSource = AvatarSource.GALLERY) }
         } else {
@@ -152,6 +146,19 @@ class AISettingsViewModel: ViewModel() {
                  val response = BackendAPI.retrofitService.updateAvatar("Bearer $token", uId, avatar)
                  if (response.isSuccessful) {
                      _actionEvent.value = Event(AISettingsAction.ShowToast(message))
+                     
+                     // If we removed avatar, clear local bitmap
+                     if (avatar == null) {
+                         _state.update { it.copy(avatarBitmap = null) }
+                         // Also clear from repository
+                         com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).deleteAvatar()
+                     } else {
+                         // If we updated avatar, we might want to save it to repository too?
+                         // Ideally yes.
+                         _state.value.avatarBitmap?.let {
+                             com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).saveAvatar(it)
+                         }
+                     }
                  } else {
                      Log.e("AISettingsViewModel", "Error updating avatar: ${response.code()}")
                  }
@@ -173,6 +180,8 @@ class AISettingsViewModel: ViewModel() {
                     if (bytes != null) {
                         val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                          _state.update { it.copy(avatarBitmap = bitmap) }
+                         // Save to repo
+                         com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).saveAvatar(bitmap)
                     }
                 } else {
                      Log.e("AISettingsViewModel", "Error fetching avatar: ${response.code()}")
@@ -192,7 +201,7 @@ class AISettingsViewModel: ViewModel() {
             try {
                 val dto = ApiService.UserPreferenceDTO(
                     showPictograms = currentState.showPictograms,
-                    language = null, // Ignored
+                    language = null,
                     showAvatar = currentState.avatarSource == AvatarSource.GALLERY,
                     clearLanguage = currentState.isClearLanguage,
                     responseStyle = when (currentState.responseStyle) {
@@ -211,6 +220,13 @@ class AISettingsViewModel: ViewModel() {
 
                 val response = BackendAPI.retrofitService.updateUserPreferences("Bearer $token", dto)
                 if (response.isSuccessful) {
+                    // Update Local Persistence using Application Context
+                     val store = storeDataUser
+                     store.savePictogramsEnabled(dto.showPictograms ?: false)
+                     store.saveShowAvatar(dto.showAvatar ?: false)
+                     store.saveResponseStyle(dto.responseStyle ?: "normal")
+                     store.saveFontSize(dto.fontSize ?: "M")
+
                     _actionEvent.value = Event(AISettingsAction.ShowToast(changeMessage))
                 } else {
                     Log.e("AISettingsViewModel", "Error updating preferences: ${response.code()}")

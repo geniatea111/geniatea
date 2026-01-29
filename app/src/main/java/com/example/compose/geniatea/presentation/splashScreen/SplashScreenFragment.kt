@@ -20,8 +20,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.getValue
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 class SplashScreenFragment : Fragment() {
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
+    private val appColorViewModel: AppColorViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +37,21 @@ class SplashScreenFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_profile, container, false)
 
         rootView.findViewById<ComposeView>(R.id.compose_view)?.setContent {
-            GenIATEATheme {
+            val fontSize by settingsViewModel.fontSize.collectAsState()
+            val isDark by settingsViewModel.darkMode.collectAsState()
+            val themeVariant by appColorViewModel.themeVariant.collectAsState()
+
+            val fontScale = when(fontSize) {
+                "S" -> 0.85f
+                "L" -> 1.15f
+                else -> 1.0f
+            }
+
+            GenIATEATheme(
+                themeVariant = themeVariant,
+                isDarkTheme = isDark,
+                fontScale = fontScale
+            ) {
                 SplashScreen()
             }
         }

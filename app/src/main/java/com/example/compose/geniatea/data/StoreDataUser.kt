@@ -33,6 +33,10 @@ class StoreDataUser(private val context: Context) {
         val ANIMATIONS_ENABLED_KEY = booleanPreferencesKey("animations_enabled")
         val PICTOGRAMS_ENABLED_KEY = booleanPreferencesKey("pictograms_enabled")
         val THEME_VARIANT_KEY = stringPreferencesKey("theme_variant")
+        val FONT_SIZE_KEY = stringPreferencesKey("font_size")
+        val RESPONSE_STYLE_KEY = stringPreferencesKey("response_style")
+        val SHOW_AVATAR_KEY = booleanPreferencesKey("show_avatar")
+        val LANGUAGE_KEY = stringPreferencesKey("language")
     }
 
     suspend fun saveUser(user: User) {
@@ -155,6 +159,44 @@ class StoreDataUser(private val context: Context) {
     suspend fun savePictogramsEnabled(isEnabled: Boolean) {
         context.dataStore.edit { preferences ->
             preferences[PICTOGRAMS_ENABLED_KEY] = isEnabled
+        }
+    }
+
+    // AI Settings Preferences
+
+    fun getFontSize(): Flow<String> = context.dataStore.data.map { it[FONT_SIZE_KEY] ?: "M" }
+
+    suspend fun saveFontSize(size: String) {
+        context.dataStore.edit { preferences ->
+            preferences[FONT_SIZE_KEY] = size
+        }
+    }
+
+    fun getResponseStyle(): Flow<String> = context.dataStore.data.map { it[RESPONSE_STYLE_KEY] ?: "normal" }
+
+    suspend fun saveResponseStyle(style: String) {
+        context.dataStore.edit { preferences ->
+            preferences[RESPONSE_STYLE_KEY] = style
+        }
+    }
+
+    fun getShowAvatar(): Flow<Boolean> = context.dataStore.data.map { it[SHOW_AVATAR_KEY] ?: false }
+
+    suspend fun saveShowAvatar(show: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[SHOW_AVATAR_KEY] = show
+        }
+    }
+    
+    fun getLanguage(): Flow<String?> = context.dataStore.data.map { it[LANGUAGE_KEY] }
+
+    suspend fun saveLanguage(language: String?) {
+        context.dataStore.edit { preferences ->
+            if (language != null) {
+                preferences[LANGUAGE_KEY] = language
+            } else {
+                preferences.remove(LANGUAGE_KEY)
+            }
         }
     }
 

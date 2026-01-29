@@ -18,9 +18,15 @@ import com.example.compose.geniatea.theme.GenIATEATheme
 import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.getValue
+import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
+import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 
 class PreferencesFragment : Fragment() {
     private val viewModel: PreferencesViewModel by activityViewModels()
+    private val settingsViewModel: SettingsViewModel by activityViewModels()
+    private val appColorViewModel: AppColorViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
@@ -59,13 +65,28 @@ class PreferencesFragment : Fragment() {
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
+                val fontSize by settingsViewModel.fontSize.collectAsState()
+                val isDark by settingsViewModel.darkMode.collectAsState()
+                val themeVariant by appColorViewModel.themeVariant.collectAsState()
+
+                val fontScale = when(fontSize) {
+                    "S" -> 0.85f
+                    "L" -> 1.15f
+                    else -> 1.0f
+                }
+
+                GenIATEATheme(
+                    themeVariant = themeVariant,
+                    isDarkTheme = isDark,
+                    fontScale = fontScale
+                ) {
                     PreferencesRoot(
                         viewModel = viewModel,
                         onBackPressed = {
                             activity?.onBackPressedDispatcher?.onBackPressed()
                         }
                     )
-
+                }
             }
         }
         return rootView

@@ -47,7 +47,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
@@ -130,11 +132,13 @@ fun ChatScreen(
             )
         }
         Column(
-            Modifier.fillMaxSize().padding(paddingValues)
+            Modifier.fillMaxSize()
+                .padding(bottom = paddingValues.calculateBottomPadding())
+                .padding(top = if (uiState.userAvatar != null) 0.dp else paddingValues.calculateTopPadding())
                 .background(color = Color.Transparent)
                 .border(width = 2.dp, color = Color.Transparent),
         ) {
-            if( uiState.messages.isEmpty() ) {
+            if( uiState.messages.isEmpty() && uiState.userAvatar == null ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
@@ -167,6 +171,7 @@ fun ChatScreen(
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState,
                     onAction = onAction,
+                    avatar = uiState.userAvatar
                 )
             }
 
@@ -197,7 +202,7 @@ const val ConversationTestTag = "ConversationTestTag"
 val dateFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault())
 
 @Composable
-fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit) {
+fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit, avatar: android.graphics.Bitmap? = null) {
     val scope = rememberCoroutineScope()
     Box(modifier = modifier) {
 
@@ -207,6 +212,30 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                 .testTag(ConversationTestTag)
                 .fillMaxSize(),
         ) {
+            if (avatar != null) {
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                         Image(
+                            bitmap = avatar.asImageBitmap(),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(horizontal = 16.dp)
+                                .clip(RoundedCornerShape(16.dp)),
+                            contentScale = ContentScale.Fit
+                        )
+                        Text(
+                            text = stringResource(id = R.string.chat_header_greeting), 
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(top = 16.dp)
+                        )
+                    }
+                }
+            }
             items(messages) { content ->
                 Message(
                     msg = content,

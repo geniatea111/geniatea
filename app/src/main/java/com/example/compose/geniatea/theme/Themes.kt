@@ -203,7 +203,13 @@ enum class AppColorVariant {
 
 @SuppressLint("NewApi")
 @Composable
-fun GenIATEATheme(themeVariant: AppColorVariant = AppColorVariant.BLUE, isDarkTheme: Boolean = isSystemInDarkTheme(), dynamicColor: Boolean = false, content: @Composable () -> Unit) {
+fun GenIATEATheme(
+    themeVariant: AppColorVariant = AppColorVariant.BLUE,
+    isDarkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false,
+    fontScale: Float = 1.0f,
+    content: @Composable () -> Unit
+) {
     val myColorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
@@ -229,7 +235,10 @@ fun GenIATEATheme(themeVariant: AppColorVariant = AppColorVariant.BLUE, isDarkTh
         )
     }
 
-    CompositionLocalProvider(LocalExtraColors provides extraColors) {
+    val currentDensity = androidx.compose.ui.platform.LocalDensity.current
+    val scaledDensity = androidx.compose.ui.unit.Density(currentDensity.density, currentDensity.fontScale * fontScale)
+
+    CompositionLocalProvider(LocalExtraColors provides extraColors, androidx.compose.ui.platform.LocalDensity provides scaledDensity) {
         MaterialTheme(
             colorScheme = myColorScheme,
             typography = GenIATEATypography,

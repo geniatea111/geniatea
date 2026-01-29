@@ -73,8 +73,8 @@ fun AISettings(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(bottom = 20.dp)
+                .padding(top = if (state.avatarSource == AvatarSource.GALLERY && state.avatarBitmap != null) 0.dp else innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
         ) {
             Column(
@@ -151,7 +151,7 @@ fun AISettingsHeader(
                     .fillMaxWidth()
                     .height(250.dp)
                     .clip(RoundedCornerShape(20.dp)),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 alignment = Alignment.Center
             )
         } else {
