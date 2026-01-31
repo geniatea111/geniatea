@@ -49,7 +49,7 @@ interface ApiService {
     )
 
     data class MessageRequest(
-        val userId: String,
+        val sessionId: Long? = null,
         val message: String,
         val image: String? = null // Base64 encoded image string (optional)
     )
