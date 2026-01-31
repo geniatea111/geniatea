@@ -62,7 +62,7 @@ class ChatViewModel: ViewModel() {
             is ChatAction.OnMessageSend -> {
                 // Add user message to state
                 val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault()))
-                val userMessage = Message(author = "Usuario", content = action.message, timestamp = time, image = action.image)
+                val userMessage = Message(author = "Usuario", content = action.message, timestamp = time, image = action.image?.toString())
 
                 _state.update { it.copy(
                     messages = it.messages + userMessage,
@@ -208,7 +208,8 @@ class ChatViewModel: ViewModel() {
                             Message(
                                 author = chatHistoryResponse.sender,
                                 content = chatHistoryResponse.message,
-                                timestamp = chatHistoryResponse.createdAt
+                                timestamp = chatHistoryResponse.createdAt,
+                                image = chatHistoryResponse.image
                             )
                         } ?: emptyList()
                         _state.update { it.copy(messages = messages) }

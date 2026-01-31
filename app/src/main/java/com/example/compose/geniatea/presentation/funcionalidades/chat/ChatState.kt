@@ -20,6 +20,6 @@ data class Message(
     val author: String,
     val content: String,
     val timestamp: String,
-    val image: Uri? = null,
+    val image: String? = null,
    // val authorImage: Int = R.drawable.geni
 )

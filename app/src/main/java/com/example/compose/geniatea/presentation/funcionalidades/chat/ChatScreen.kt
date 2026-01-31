@@ -429,19 +429,43 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
             }
         }
 
-        message.image?.let { uri ->
-            val painter = rememberAsyncImagePainter(model = uri)
+        message.image?.let { imageString ->
+            val isBase64 = !imageString.startsWith("content://") && !imageString.startsWith("file://")
+            
             Surface(
                 color = backgroundBubbleColor,
                 shape = chatBubbleShape,
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Image(
-                    painter = painter,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.size(160.dp),
-                    contentDescription = stringResource(id = R.string.attached_image),
-                )
+                if (isBase64) {
+                    val bitmap = remember(imageString) {
+                         try {
+                            val imageBytes = android.util.Base64.decode(imageString, android.util.Base64.DEFAULT)
+                            val decoded = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                             decoded?.asImageBitmap()
+                        }catch (e: Exception){
+                            e.printStackTrace()
+                            null
+                        }
+                    }
+                    
+                    if (bitmap != null) {
+                         Image(
+                            bitmap = bitmap,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(160.dp),
+                            contentDescription = stringResource(id = R.string.attached_image),
+                        )
+                    }
+                } else {
+                    val painter = rememberAsyncImagePainter(model = android.net.Uri.parse(imageString))
+                    Image(
+                        painter = painter,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.size(160.dp),
+                        contentDescription = stringResource(id = R.string.attached_image),
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(4.dp))
         }
