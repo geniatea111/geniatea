@@ -10,6 +10,7 @@ sealed class ChatAction {
     object OnOptionsPressed: ChatAction()
     data class OnMessageSend(val message: String, val image: Uri?): ChatAction()
     object OnImageSelection: ChatAction()
+    data class OnImagePicked(val uri: Uri?): ChatAction()
     data class OnSoundPressed(val message: String): ChatAction()
     data class OnCopyPressed(val message: String): ChatAction()
     object OnStartRecording : ChatAction()

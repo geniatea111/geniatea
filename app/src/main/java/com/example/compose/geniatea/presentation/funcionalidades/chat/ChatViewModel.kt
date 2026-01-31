@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
+import android.util.Base64
+import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -45,7 +47,14 @@ class ChatViewModel: ViewModel() {
         when (action) {
             ChatAction.OnBackPressed -> _actionEvent.value = Event(ChatAction.OnBackPressed)
             ChatAction.OnAccountPressed -> _actionEvent.value = Event(ChatAction.OnAccountPressed)
-            ChatAction.OnImageSelection -> _actionEvent.value = Event(ChatAction.OnImageSelection)
+            ChatAction.OnImageSelection -> {
+                Log.d("ChatViewModel", "Action: OnImageSelection")
+                _actionEvent.value = Event(ChatAction.OnImageSelection)
+            }
+            is ChatAction.OnImagePicked -> {
+                Log.d("ChatViewModel", "Action: OnImagePicked. URI: ${action.uri}")
+                _state.update { it.copy(selectedImage = action.uri) }
+            }
             is ChatAction.OnSoundPressed -> _actionEvent.value = Event(ChatAction.OnSoundPressed(action.message))
             is ChatAction.OnCopyPressed -> _actionEvent.value = Event(ChatAction.OnCopyPressed(action.message))
             ChatAction.OnStartRecording -> _actionEvent.value = Event(ChatAction.OnStartRecording)
@@ -76,13 +85,42 @@ class ChatViewModel: ViewModel() {
     fun sendMessage(context: Context, messageText: String) {
         viewModelScope.launch {
             _state.update { it.copy(isGenerating = true) }
+            val currentImageUri = _state.value.selectedImage
+            Log.d("ChatViewModel", "Sending message. Selected Image URI: $currentImageUri")
+
             withContext(Dispatchers.IO) {
                 try {
+                    var base64Image: String? = null
+                    if (currentImageUri != null) {
+                       try {
+                           val inputStream = context.contentResolver.openInputStream(currentImageUri)
+                           val bitmap = android.graphics.BitmapFactory.decodeStream(inputStream)
+                           inputStream?.close()
+                           
+                           if (bitmap != null) {
+                               val outputStream = ByteArrayOutputStream()
+                               bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, outputStream)
+                               val jpegBytes = outputStream.toByteArray()
+                               base64Image = Base64.encodeToString(jpegBytes, Base64.NO_WRAP)
+                               Log.d("ChatViewModel", "Image converted to JPEG Base64. Length: ${base64Image.length}")
+                           } else {
+                               Log.e("ChatViewModel", "Failed to decode bitmap from URI")
+                           }
+                       } catch (e: Exception) {
+                           Log.e("ChatViewModel", "Error encoding image: ${e.localizedMessage}")
+                       }
+                    } else {
+                        Log.d("ChatViewModel", "No image selected")
+                    }
+
+                    // Clear image before causing the network request, to update UI immediately
+                    _state.update { it.copy(selectedImage = null) }
+
                     val response = BackendAPI.retrofitService.requestChat(
                         ApiService.MessageRequest(
                             userId = StoreDataUser(context).getId().toString(),
                             message = messageText,
-                            image = null // TODO: Handle image sending
+                            image = base64Image
                         )
                     )
 
@@ -122,6 +160,12 @@ class ChatViewModel: ViewModel() {
                                     }
                                 }
                             }
+                        }
+
+                    } else {
+                        Log.e("ChatViewModel", "Error response: ${response.code()} ${response.message()}")
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(context, "Error: ${response.code()} - ${response.message()}", Toast.LENGTH_LONG).show()
                         }
                     }
                 } catch (e: Exception) { 

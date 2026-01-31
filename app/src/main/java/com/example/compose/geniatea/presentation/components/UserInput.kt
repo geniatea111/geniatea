@@ -89,17 +89,7 @@ fun UserInput(
     modifier: Modifier = Modifier,
     resetScroll: () -> Unit = {}) {
 
-    var selectedImage by remember {
-        mutableStateOf<Uri?>(null)
-    }
-
-    val photoPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = {
-            selectedImage = it
-        }
-    )
-
+    // Local state removed in favor of ChatState
     var textFieldFocusState by remember { mutableStateOf(false) }
 
     Surface {
@@ -108,11 +98,7 @@ fun UserInput(
                 InputSelectorButton(
                     modifier = Modifier.align(Alignment.Bottom),
                     onClick = {
-                        photoPickerLauncher.launch(
-                            PickVisualMediaRequest(
-                                ActivityResultContracts.PickVisualMedia.ImageOnly
-                            )
-                        )
+                        onAction(ChatAction.OnImageSelection)
                     },
                     icon = painterResource(id = R.drawable.ic_insert_photo),
                     description = stringResource(id = R.string.attach_photo_desc),
@@ -129,13 +115,13 @@ fun UserInput(
                     },
                     sendMessageEnabled = state.currentMessage.text.isNotBlank(),
                     onMessageSent = {
-                        onAction(ChatAction.OnMessageSend(state.currentMessage.text, selectedImage))
-                        selectedImage = null
+                        onAction(ChatAction.OnMessageSend(state.currentMessage.text, state.selectedImage))
+                        // selectedImage = null // Handled by ViewModel
                         textFieldFocusState = false
                     },
                     onAction = onAction,
-                    selectedImage = selectedImage,
-                    onRemoveImage = { selectedImage = null },
+                    selectedImage = state.selectedImage,
+                    onRemoveImage = { onAction(ChatAction.OnImagePicked(null)) },
                 )
             }
         }

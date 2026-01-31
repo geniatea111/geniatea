@@ -51,8 +51,9 @@ class ChatFragment : Fragment() {
     }
 
     private val imagePicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        Log.d("ChatFragment", "Image picker result: $uri")
         uri?.let {
-            // TODO: Handle image selection
+            viewModel.onAction(ChatAction.OnImagePicked(it))
         }
     }
 
