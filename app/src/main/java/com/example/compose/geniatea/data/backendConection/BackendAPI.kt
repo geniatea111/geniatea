@@ -48,6 +48,18 @@ object BackendAPI {
         }
         retrofit.create(ApiService::class.java)
     }
+
+    private const val ARASAAC_BASE_URL = "https://api.arasaac.org/api/"
+
+    val arasaacService: ArasaacAPI by lazy {
+        Retrofit.Builder()
+            .baseUrl(ARASAAC_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(client) // Reusing the same client (ensure it's safe or create a new one if auth headers cause issues)
+            .build()
+            .create(ArasaacAPI::class.java)
+    }
+
 }
 
 

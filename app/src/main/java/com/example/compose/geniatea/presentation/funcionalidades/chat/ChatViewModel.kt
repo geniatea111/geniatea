@@ -23,6 +23,9 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.first
 
 
 class ChatViewModel: ViewModel() {
@@ -146,7 +149,7 @@ class ChatViewModel: ViewModel() {
                                         // Normal content
                                         accumulatedText += content
 
-                                        if (isFirstMessage) {
+                    if (isFirstMessage) {
                                             val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault()))
                                             val geniMessage = Message(
                                                 author = "Geni", // TODO: Use string resource for author
@@ -175,6 +178,33 @@ class ChatViewModel: ViewModel() {
                                     }
                                 }
                             }
+                            
+                            // Pictogram generation logic
+                            try {
+                                val storeDataUser = StoreDataUser(context)
+                                val showPictograms = storeDataUser.getPictogramsEnabled().first()
+                                
+                                if (showPictograms) {
+                                    val language = storeDataUser.getLanguage().first() ?: "es"
+                                    val pictograms = fetchPictograms(accumulatedText, language)
+                                    
+                                    if (pictograms.isNotEmpty()) {
+                                        _state.update { currentState ->
+                                            if (currentState.messages.isNotEmpty()) {
+                                                val messages = currentState.messages.toMutableList()
+                                                val lastIndex = messages.lastIndex
+                                                val lastMsg = messages[lastIndex]
+                                                messages[lastIndex] = lastMsg.copy(pictograms = pictograms)
+                                                currentState.copy(messages = messages)
+                                            } else {
+                                                currentState
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (e: Exception) {
+                                Log.e("ChatViewModel", "Error fetching pictograms: ${e.localizedMessage}")
+                            }
                         }
 
                     } else {
@@ -195,16 +225,74 @@ class ChatViewModel: ViewModel() {
         }
     }
 
+    private suspend fun fetchPictograms(text: String, language: String): List<String> {
+        // Simple stop words list for Spanish (extend as needed)
+        val stopWordsEs = setOf(
+            "el", "la", "los", "las", "un", "una", "unos", "unas",
+            "y", "o", "pero", "porque", "de", "del", "al", "en", "con", "por", "para", "sin", "sobre",
+            "a", "ante", "bajo", "cabe", "contra", "desde", "hacia", "hasta", "mediante", "según", "tras",
+            "yo", "tú", "él", "ella", "nosotros", "vosotros", "ellos", "ellas",
+            "mi", "tu", "su", "mis", "tus", "sus", "que", "cual", "quien", "cuando", "donde", "como"
+        )
+        
+        // Use English stop words if language is English (basic list)
+        val stopWordsEn = setOf(
+            "the", "a", "an", "and", "or", "but", "because", "of", "in", "with", "by", "for", "without", "on",
+            "to", "at", "from", "towards", "until", "through", "after",
+            "i", "you", "he", "she", "we", "they", "it",
+            "my", "your", "his", "her", "our", "their", "that", "which", "who", "when", "where", "how"
+        )
+
+        val targetStopWords = if (language.lowercase().startsWith("en")) stopWordsEn else stopWordsEs
+
+        val words = text.split("\\s+".toRegex())
+            .map { it.replace(Regex("[^\\p{L}\\p{Nd}]+"), "").lowercase() } // Remove punctuation and lowercase
+            .filter { it.isNotBlank() && !targetStopWords.contains(it) }
+
+        return withContext(Dispatchers.IO) {
+             val deferredResults = words.map { word ->
+                 async {
+                     try {
+                         // We use the language code "es" for Spanish, "en" for English, etc.
+                         val langCode = when (language.lowercase()) {
+                             "spanish", "espanol", "español" -> "es"
+                             "english", "ingles" -> "en"
+                             else -> "es" // Default to Spanish if unknown
+                         }
+
+                         val response = BackendAPI.arasaacService.searchPictograms(langCode, word)
+                         if (response.isSuccessful && response.body() != null && response.body()!!.isNotEmpty()) {
+                             // Get the first match
+                             val bestMatch = response.body()!![0]
+                             "https://static.arasaac.org/pictograms/${bestMatch._id}/${bestMatch._id}_500.png"
+                         } else {
+                             null
+                         }
+                     } catch (e: Exception) {
+                         Log.e("ChatViewModel", "Error searching pictogram for word '$word': ${e.message}")
+                         null
+                     }
+                 }
+             }
+             deferredResults.awaitAll().filterNotNull()
+        }
+    }
+
+
     fun loadChatSession(context: Context) {
         if (sessionId == -1L) return
 
         viewModelScope.launch {
             try {
                 val token = StoreDataUser(context).getToken()
+                val storeDataUser = StoreDataUser(context)
+                val showPictograms = storeDataUser.getPictogramsEnabled().first()
+                val language = storeDataUser.getLanguage().first() ?: "es"
+
                 if (token != null) {
                     val response = BackendAPI.retrofitService.getChatSession("Bearer $token", sessionId)
                     if (response.isSuccessful) {
-                        val messages = response.body()?.map { chatHistoryResponse ->
+                        var messages = response.body()?.map { chatHistoryResponse ->
                             Message(
                                 author = chatHistoryResponse.sender,
                                 content = chatHistoryResponse.message,
@@ -212,6 +300,21 @@ class ChatViewModel: ViewModel() {
                                 image = chatHistoryResponse.image
                             )
                         } ?: emptyList()
+                        
+                        // If pictograms are enabled, fetch them for history messages from "Geni" (AI)
+                        if (showPictograms && messages.isNotEmpty()) {
+                             messages = messages.map { msg ->
+                                 if (msg.author == "Geni") { // Or however the AI author is identified in history
+                                     // This could be slow for many messages; consider optimizing or loading lazily
+                                     // For now, we do it for all to ensure consistency
+                                     val pictograms = fetchPictograms(msg.content, language)
+                                     msg.copy(pictograms = pictograms)
+                                 } else {
+                                     msg
+                                 }
+                             }
+                        }
+
                         _state.update { it.copy(messages = messages) }
                     }
                 }

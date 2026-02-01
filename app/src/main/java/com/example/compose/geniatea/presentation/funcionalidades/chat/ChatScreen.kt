@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -481,6 +482,32 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                 message = message,
                 isUserMe = isUserMe,
             )
+        }
+
+        message.pictograms?.let { pictograms ->
+            if (pictograms.isNotEmpty()) {
+                LazyRow(
+                    modifier = Modifier
+                        .align(if (isUserMe) Alignment.End else Alignment.Start)
+                        .padding(top = 8.dp, start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(pictograms) { url ->
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = Color.White, // White background for pictograms
+                            modifier = Modifier.size(64.dp)
+                        ) {
+                            Image(
+                                painter = rememberAsyncImagePainter(model = url),
+                                contentDescription = null,
+                                modifier = Modifier.padding(4.dp),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                    }
+                }
+            }
         }
 
 
