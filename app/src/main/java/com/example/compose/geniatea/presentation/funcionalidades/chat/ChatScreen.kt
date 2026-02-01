@@ -111,11 +111,7 @@ fun ChatScreen(
     val scope = rememberCoroutineScope()
     val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
-    LaunchedEffect(uiState.messages.size) {
-        if (uiState.messages.isNotEmpty()) {
-            scrollState.animateScrollToItem(uiState.messages.size - 1)
-        }
-    }
+    // Scroll logic moved to Messages composable to handle loader visibility
 
     Scaffold(
         topBar = {
@@ -216,6 +212,20 @@ val dateFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDe
 @Composable
 fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit, avatar: android.graphics.Bitmap? = null, isGenerating: Boolean = false) {
     val scope = rememberCoroutineScope()
+    
+    // Auto-scroll when generating state changes or message content updates (redundancy for safety)
+    LaunchedEffect(messages.size, messages.lastOrNull()?.content, isGenerating) {
+        if (messages.isNotEmpty()) {
+             // We scroll to the very last item, which might be the loader if isGenerating is true
+             // The loader is an extra item, so size is index of last message, size + 1 is loader if present.
+             // LazyColumn item count calculation:
+             // 1 item (avatar) if not null + messages.size + 1 item (loader) if generating
+             
+             // Simplest approach: scroll to a large index, LazyList handles bounds safely
+             scrollState.animateScrollToItem(Int.MAX_VALUE)
+        }
+    }
+
     Box(modifier = modifier) {
 
         LazyColumn(
