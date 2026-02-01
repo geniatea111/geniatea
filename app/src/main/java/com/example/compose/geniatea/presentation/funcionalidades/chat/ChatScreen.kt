@@ -61,12 +61,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.BottomSheetOptions
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.presentation.components.UserInput
+import com.example.compose.geniatea.presentation.components.TypingIndicator
 import com.example.compose.geniatea.presentation.components.JumpToBottom
 import com.example.compose.geniatea.theme.GenIATEATheme
 import kotlinx.coroutines.launch
@@ -253,13 +261,19 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
-                        contentAlignment = Alignment.Center
+                        contentAlignment = Alignment.CenterStart // Align to left
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                            strokeWidth = 3.dp
-                        )
+                        Surface(
+                            shape = ChatBubbleShapeGeni,
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
+                            modifier = Modifier.padding(start = 0.dp) // Maintain consistent padding
+                        ) {
+                            TypingIndicator(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                dotSize = 8.dp,
+                                dotColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }
