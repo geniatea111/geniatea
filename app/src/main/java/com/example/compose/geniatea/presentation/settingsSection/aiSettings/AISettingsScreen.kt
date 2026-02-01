@@ -13,6 +13,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HelpOutline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,10 +29,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.Canvas
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.graphics.asImageBitmap
-import kotlinx.coroutines.launch
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
+import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.unit.LayoutDirection
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
@@ -240,54 +254,121 @@ fun ClearLanguageToggle(
                 fontSize = 16.sp
             )
             if (tooltipText != null) {
-                val tooltipState = rememberTooltipState(isPersistent = true)
-                val scope = androidx.compose.runtime.rememberCoroutineScope()
+                var showTooltip by remember { androidx.compose.runtime.mutableStateOf(false) }
+                var iconPosition by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
+                val density = LocalDensity.current
                 val configuration = androidx.compose.ui.platform.LocalConfiguration.current
-                val screenWidth = configuration.screenWidthDp.dp
-                val tooltipWidth = screenWidth - 32.dp
+                val screenWidthDp = configuration.screenWidthDp.dp
+                val screenWidthPx = with(density) { screenWidthDp.toPx() }
+                val margin = 16.dp
+                val marginPx = with(density) { margin.toPx() }
 
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
-                    tooltip = {
-                        RichTooltip(
-                            colors = TooltipDefaults.richTooltipColors(
-                                containerColor = Color.White,
-                                contentColor = Color.Black
-                            ),
-                            shape = RoundedCornerShape(24.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.width(tooltipWidth)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.HelpOutline,
-                                    contentDescription = null,
-                                    modifier = Modifier.padding(end = 8.dp),
-                                    tint = Color.Black
-                                )
-                                Text(
-                                    text = tooltipText,
-                                    color = Color.Black
-                                )
-                            }
-                        }
-                    },
-                    state = tooltipState
-                ) {
+                Box {
                     Icon(
                         imageVector = Icons.Default.HelpOutline,
                         contentDescription = "Help",
                         modifier = Modifier
                             .size(20.dp)
                             .padding(start = 4.dp)
-                            .clickable {
-                                scope.launch {
-                                    tooltipState.show()
-                                }
-                            },
+                            .onGloballyPositioned { coordinates ->
+                                iconPosition = coordinates.positionInRoot()
+                            }
+                            .clickable { showTooltip = !showTooltip },
                         tint = Color.Gray
                     )
+
+                    if (showTooltip) {
+                        val offsetX = -(iconPosition.x - marginPx).toInt()
+                        
+                        Popup(
+                            alignment = Alignment.TopStart,
+                            offset = IntOffset(x = offsetX, y = with(density){ 30.dp.toPx().toInt() }),
+                            onDismissRequest = { showTooltip = false },
+                            properties = PopupProperties(focusable = true)
+                        ) {
+                            val arrowHeight = with(density) { 12.dp.toPx() } // slightly larger for visibility
+                            val arrowWidth = with(density) { 24.dp.toPx() }
+                            val cornerRadius = with(density) { 16.dp.toPx() }
+                            val iconWidthPx = with(density) { 20.dp.toPx() }
+                            // Calculate arrow tip X relative to the popup content 
+                            val arrowTipX = (iconPosition.x + (iconWidthPx / 2)) - marginPx
+
+                            val bubbleShape = remember(arrowTipX) {
+                                GenericShape { size, _ ->
+                                    val width = size.width
+                                    val height = size.height
+                                    val contentTop = arrowHeight // The content starts after the arrow
+
+                                    // Define the path
+                                    // Start top-left of content box
+                                    moveTo(cornerRadius, contentTop)
+                                    
+                                    // Top edge to arrow start
+                                    lineTo(arrowTipX - (arrowWidth / 2), contentTop)
+                                    // Arrow tip
+                                    lineTo(arrowTipX, 0f)
+                                    // Arrow end
+                                    lineTo(arrowTipX + (arrowWidth / 2), contentTop)
+                                    
+                                    // Top edge to right corner
+                                    lineTo(width - cornerRadius, contentTop)
+                                    quadraticBezierTo(width, contentTop, width, contentTop + cornerRadius)
+                                    
+                                    // Right edge
+                                    lineTo(width, height - cornerRadius)
+                                    quadraticBezierTo(width, height, width - cornerRadius, height)
+                                    
+                                    // Bottom edge
+                                    lineTo(cornerRadius, height)
+                                    quadraticBezierTo(0f, height, 0f, height - cornerRadius)
+                                    
+                                    // Left edge
+                                    lineTo(0f, contentTop + cornerRadius)
+                                    quadraticBezierTo(0f, contentTop, cornerRadius, contentTop)
+                                    
+                                    close()
+                                }
+                            }
+
+                            Box(
+                                modifier = Modifier
+                                    .width(screenWidthDp - (margin * 2))
+                                    // We don't use a separate Column/Canvas anymore.
+                                    // The Surface uses the custom shape.
+                            ) {
+                                Surface(
+                                    shape = bubbleShape,
+                                    color = Color.White,
+                                    shadowElevation = 4.dp,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(
+                                            start = 16.dp, 
+                                            end = 16.dp, 
+                                            bottom = 16.dp, 
+                                            top = 16.dp + 12.dp // Add arrow height to top padding so text isn't covered
+                                        ) 
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.HelpOutline,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .padding(end = 8.dp),
+                                            tint = Color.Black
+                                        )
+                                        Text(
+                                            text = tooltipText,
+                                            color = Color.Black,
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
