@@ -129,6 +129,9 @@ class HomeViewModel() : ViewModel() {
                         // Process Avatar fetching if needed
                         if (prefs.showAvatar == true) {
                              fetchAndSaveAvatar(context, token, store.getId() ?: 0L)
+                             if (!prefs.avatarVideo.isNullOrEmpty()) {
+                                 fetchAndSaveAvatarVideo(context, token, store.getId() ?: 0L)
+                             }
                         } else {
                              // Correctly handle case where avatar is disabled/removed?
                              // Maybe delete local avatar? user preferences say showAvatar=false
@@ -156,6 +159,25 @@ class HomeViewModel() : ViewModel() {
             }
         } catch (e: Exception) {
              Log.e("HomeViewModel", "Exception fetching avatar", e)
+        }
+    }
+
+    private suspend fun fetchAndSaveAvatarVideo(context: Context, token: String, userId: Long) {
+         try {
+            val response = BackendAPI.retrofitService.getAvatarVideo("Bearer $token", userId)
+            if (response.isSuccessful) {
+                val bytes = response.body()?.bytes()
+                if (bytes != null) {
+                    // Save to temp file to create URI
+                    val tempFile = java.io.File.createTempFile("avatar_video_temp", ".mp4", context.cacheDir)
+                    tempFile.writeBytes(bytes)
+                    val uri = android.net.Uri.fromFile(tempFile)
+                    // Save to persistent storage
+                    com.example.compose.geniatea.data.repository.AvatarRepository(context).saveAvatarVideo(uri)
+                }
+            }
+        } catch (e: Exception) {
+             Log.e("HomeViewModel", "Exception fetching avatar video", e)
         }
     }
 

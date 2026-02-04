@@ -109,26 +109,31 @@ fun OnboardingStep3Screen(
 
                     Spacer(modifier = Modifier.height(32.dp))
 
-                    OutlinedTextField(
-                        value = birthDate,
-                        onValueChange = {},
-                        readOnly = true,
-                        placeholder = { Text("DD/MM/AAAA") },
-                        trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Date Picker") },
-                        shape = RoundedCornerShape(50),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                            disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                            disabledPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
-                            disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
-                        ),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { dateDialogState.show() },
-                        enabled = false
-                    )
+                    Box {
+                        OutlinedTextField(
+                            value = birthDate,
+                            onValueChange = {},
+                            readOnly = true,
+                            placeholder = { Text("DD/MM/AAAA") },
+                            trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = "Date Picker") },
+                            shape = RoundedCornerShape(50),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                disabledBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                disabledPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = false
+                        )
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .clickable { dateDialogState.show() }
+                        )
+                    }
                 }
 
                 Button(

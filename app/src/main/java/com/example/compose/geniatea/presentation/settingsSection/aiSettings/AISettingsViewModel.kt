@@ -47,7 +47,10 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                          _state.update { currentState ->
                             currentState.copy(
                                 isClearLanguage = DTO.clearLanguage ?: false,
-                                avatarSource = if (DTO.showAvatar == true) AvatarSource.GALLERY else AvatarSource.GENI,
+                                avatarSource = if (DTO.showAvatar == true) {
+                                    if (!DTO.avatarVideo.isNullOrEmpty()) AvatarSource.VIDEO_GALLERY
+                                    else AvatarSource.GALLERY
+                                } else AvatarSource.GENI,
                                 fontSize = when (DTO.fontSize) {
                                     "S" -> 0
                                     "M" -> 1
@@ -66,7 +69,11 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                         }
 
                         if (DTO.showAvatar == true) {
-                            fetchAvatar()
+                            if (!DTO.avatarVideo.isNullOrEmpty()) {
+                                fetchAvatarVideo()
+                            } else {
+                                fetchAvatar()
+                            }
                         }
                     }
                 } else {
@@ -102,17 +109,24 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
             is AISettingsAction.OnAvatarSourceChange -> {
                 if (action.source == AvatarSource.GALLERY) {
                     _actionEvent.value = Event(AISettingsAction.OpenGallery)
+                    // Optimistically set source, though ideally wait for result
+                    _state.update { it.copy(avatarSource = action.source) }
+                } else if (action.source == AvatarSource.VIDEO_GALLERY) {
+                    _actionEvent.value = Event(AISettingsAction.OpenVideoGallery)
                     _state.update { it.copy(avatarSource = action.source) }
                 } else {
                     _state.update { it.copy(avatarSource = action.source) }
                     saveSettings("Fuente de avatar actualizada") 
+                    // Remove both avatar and video
                     updateAvatar(null, "Avatar removido") 
+                    updateAvatarVideo(null, "Video de avatar removido")
                 }
             }
             is AISettingsAction.ShowToast -> {
                  _actionEvent.value = Event(action)
             }
             AISettingsAction.OpenGallery -> { }
+            AISettingsAction.OpenVideoGallery -> { }
         }
     }
 
@@ -135,6 +149,37 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
             _state.update { it.copy(avatarBitmap = bitmap, avatarSource = AvatarSource.GALLERY) }
         } else {
             Log.e("AISettingsViewModel", "Could not read file from Uri")
+        }
+    }
+
+    fun onAvatarVideoSelected(uri: android.net.Uri, context: Context) {
+        val contentResolver = context.contentResolver
+        val type = contentResolver.getType(uri) ?: "video/*"
+        val inputStream = contentResolver.openInputStream(uri)
+        val bytes = inputStream?.readBytes()
+        inputStream?.close()
+
+        if (bytes != null) {
+            val requestFile = okhttp3.RequestBody.create(
+                type.toMediaTypeOrNull(),
+                bytes
+            )
+            val body = okhttp3.MultipartBody.Part.createFormData("avatarVideo", "avatar_video.mp4", requestFile)
+            updateAvatarVideo(body, "Video de avatar actualizado")
+
+            // For video, we might want to generate a thumbnail or just indicate video is selected
+            // For now, let's just update the source. 
+            // Ideally we'd decode a frame as bitmap for preview.
+            // But let's keep it simple first.
+            // For video, we might want to generate a thumbnail or just indicate video is selected
+            // For now, let's just update the source. 
+            // Ideally we'd decode a frame as bitmap for preview.
+            // But let's keep it simple first.
+            _state.update { it.copy(avatarSource = AvatarSource.VIDEO_GALLERY, avatarVideoUri = uri) }
+            // Maybe clear image bitmap to avoid confusion?
+            // _state.update { it.copy(avatarBitmap = null) } 
+        } else {
+            Log.e("AISettingsViewModel", "Could not read video file from Uri")
         }
     }
 
@@ -169,6 +214,28 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
         }
     }
 
+    private fun updateAvatarVideo(video: okhttp3.MultipartBody.Part?, message: String) {
+         val token = userToken ?: return
+         val uId = userId ?: return
+
+         viewModelScope.launch {
+              try {
+                  val response = BackendAPI.retrofitService.updateAvatarVideo("Bearer $token", uId, video)
+                  if (response.isSuccessful) {
+                      _actionEvent.value = Event(AISettingsAction.ShowToast(message))
+                      // Save video locally if we have the URI in state (which we set in onAvatarVideoSelected)
+                      _state.value.avatarVideoUri?.let { uri ->
+                          com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).saveAvatarVideo(uri)
+                      }
+                  } else {
+                      Log.e("AISettingsViewModel", "Error updating avatar video: ${response.code()}")
+                  }
+              } catch (e: Exception) {
+                  Log.e("AISettingsViewModel", "Exception updating avatar video", e)
+              }
+         }
+    }
+
     private fun fetchAvatar() {
         val token = userToken ?: return
         val uId = userId ?: return
@@ -193,6 +260,36 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
         }
     }
 
+    private fun fetchAvatarVideo() {
+        val token = userToken ?: return
+        val uId = userId ?: return
+
+        viewModelScope.launch {
+            try {
+                val response = BackendAPI.retrofitService.getAvatarVideo("Bearer $token", uId)
+                if (response.isSuccessful) {
+                    val bytes = response.body()?.bytes()
+                    if (bytes != null) {
+                        // Save to temp file to create URI, then save to repo
+                        val context = getApplication<android.app.Application>().applicationContext
+                        val tempFile = java.io.File.createTempFile("avatar_video_temp", ".mp4", context.cacheDir)
+                        tempFile.writeBytes(bytes)
+                        val uri = android.net.Uri.fromFile(tempFile)
+                        
+                        _state.update { it.copy(avatarVideoUri = uri) }
+                        
+                        // Save to repo for persistent access
+                        com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).saveAvatarVideo(uri)
+                    }
+                } else {
+                    Log.e("AISettingsViewModel", "Error fetching avatar video: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("AISettingsViewModel", "Exception fetching avatar video", e)
+            }
+        }
+    }
+
 
     private fun saveSettings(changeMessage: String) {
         val token = userToken ?: return
@@ -203,7 +300,7 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                 val dto = ApiService.UserPreferenceDTO(
                     showPictograms = currentState.showPictograms,
                     language = currentState.language,
-                    showAvatar = currentState.avatarSource == AvatarSource.GALLERY,
+                    showAvatar = currentState.avatarSource == AvatarSource.GALLERY || currentState.avatarSource == AvatarSource.VIDEO_GALLERY,
                     clearLanguage = currentState.isClearLanguage,
                     responseStyle = when (currentState.responseStyle) {
                         0f -> "concise"

@@ -12,6 +12,8 @@ data class ChatState(
     val chatStyle: ChatStyle = ChatStyle.NORMAL,
     val topic: String = "",
     val userAvatar: Bitmap? = null,
+    val avatarVideoUri: Uri? = null,
+    val isSpeaking: Boolean = false,
     val isGenerating: Boolean = false
 )
 

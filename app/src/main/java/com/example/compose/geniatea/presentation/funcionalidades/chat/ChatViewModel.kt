@@ -325,12 +325,20 @@ class ChatViewModel: ViewModel() {
         }
     }
 
+    fun setSpeaking(speaking: Boolean) {
+        _state.update { it.copy(isSpeaking = speaking) }
+    }
+
     fun loadAvatar(context: Context) {
         viewModelScope.launch {
-            val avatar = com.example.compose.geniatea.data.repository.AvatarRepository(context).getAvatar()
-            if (avatar != null) {
-                _state.update { it.copy(userAvatar = avatar) }
-            }
+            val repo = com.example.compose.geniatea.data.repository.AvatarRepository(context)
+            val avatar = repo.getAvatar()
+            val videoUri = repo.getAvatarVideo()
+            
+            _state.update { it.copy(
+                userAvatar = avatar,
+                avatarVideoUri = videoUri
+            ) }
         }
     }
 }

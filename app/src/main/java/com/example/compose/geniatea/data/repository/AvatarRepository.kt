@@ -54,4 +54,50 @@ class AvatarRepository(private val context: Context) {
             }
         }
     }
+
+    private val avatarVideoFileName = "user_avatar_video.mp4"
+
+    suspend fun saveAvatarVideo(uri: android.net.Uri) {
+        withContext(Dispatchers.IO) {
+            try {
+                val inputStream = context.contentResolver.openInputStream(uri)
+                val file = File(context.filesDir, avatarVideoFileName)
+                val outputStream = FileOutputStream(file)
+                inputStream?.copyTo(outputStream)
+                inputStream?.close()
+                outputStream.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    suspend fun getAvatarVideo(): android.net.Uri? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val file = File(context.filesDir, avatarVideoFileName)
+                if (file.exists()) {
+                    android.net.Uri.fromFile(file)
+                } else {
+                    null
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
+        }
+    }
+
+    suspend fun deleteAvatarVideo() {
+        withContext(Dispatchers.IO) {
+            try {
+                val file = File(context.filesDir, avatarVideoFileName)
+                if (file.exists()) {
+                    file.delete()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
 }

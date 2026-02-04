@@ -9,4 +9,5 @@ interface AISettingsAction {
     data class OnShowPictogramsToggle(val isChecked: Boolean) : AISettingsAction
     data class ShowToast(val message: String) : AISettingsAction
     data object OpenGallery : AISettingsAction
+    data object OpenVideoGallery : AISettingsAction
 }

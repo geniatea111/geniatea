@@ -103,7 +103,23 @@ class ChatFragment : Fragment() {
                                     if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                                         Log.e("ChatFragment", "Language not supported")
                                     } else {
-                                        tts?.speak(action.message, TextToSpeech.QUEUE_FLUSH, null, null)
+                                        tts?.setOnUtteranceProgressListener(object : android.speech.tts.UtteranceProgressListener() {
+                                            override fun onStart(utteranceId: String?) {
+                                                viewModel.setSpeaking(true)
+                                            }
+
+                                            override fun onDone(utteranceId: String?) {
+                                                viewModel.setSpeaking(false)
+                                            }
+
+                                            override fun onError(utteranceId: String?) {
+                                                viewModel.setSpeaking(false)
+                                            }
+                                        })
+                                        
+                                        val params = Bundle()
+                                        params.putString(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "messageID")
+                                        tts?.speak(action.message, TextToSpeech.QUEUE_FLUSH, params, "messageID")
                                         Log.i("ChatFragment", "Speaking message: ${action.message}")
                                     }
                                 } else {

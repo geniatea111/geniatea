@@ -177,8 +177,7 @@ fun ChatScreen(
                     modifier = Modifier.weight(1f),
                     scrollState = scrollState,
                     onAction = onAction,
-                    avatar = uiState.userAvatar,
-                    isGenerating = uiState.isGenerating
+                    uiState = uiState
                 )
             }
 
@@ -210,7 +209,9 @@ val dateFormatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDe
 
 
 @Composable
-fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit, avatar: android.graphics.Bitmap? = null, isGenerating: Boolean = false) {
+fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modifier = Modifier, onAction: (ChatAction) -> Unit, uiState: ChatState) {
+    val avatar = uiState.userAvatar
+    val isGenerating = uiState.isGenerating
     val scope = rememberCoroutineScope()
     
     // Auto-scroll when generating state changes or message content updates (redundancy for safety)
@@ -240,16 +241,27 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                         modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                         Image(
-                            bitmap = avatar.asImageBitmap(),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                                .padding(horizontal = 16.dp)
-                                .clip(RoundedCornerShape(16.dp)),
-                            contentScale = ContentScale.Fit
-                        )
+                        if (uiState.isSpeaking && uiState.avatarVideoUri != null) {
+                            com.example.compose.geniatea.presentation.components.VideoPlayer(
+                                uri = uiState.avatarVideoUri,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .padding(horizontal = 16.dp)
+                                    .clip(RoundedCornerShape(16.dp))
+                            )
+                        } else {
+                            Image(
+                                bitmap = avatar.asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp)
+                                    .padding(horizontal = 16.dp)
+                                    .clip(RoundedCornerShape(16.dp)),
+                                contentScale = ContentScale.Fit
+                            )
+                        }
                         Text(
                             text = stringResource(id = R.string.chat_header_greeting), 
                             style = MaterialTheme.typography.titleLarge,

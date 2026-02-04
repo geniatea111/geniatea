@@ -166,8 +166,22 @@ interface ApiService {
         @Part avatar: okhttp3.MultipartBody.Part?
     ): Response<ResponseBody>
 
+    @POST("users/{id}/avatar-video")
+    @Multipart
+    suspend fun updateAvatarVideo(
+        @Header("Authorization") token: String,
+        @Path("id") userId: Long,
+        @Part avatarVideo: okhttp3.MultipartBody.Part?
+    ): Response<ResponseBody>
+
     @GET("users/{id}/avatar")
     suspend fun getAvatar(
+        @Header("Authorization") token: String,
+        @Path("id") userId: Long
+    ): Response<ResponseBody>
+
+    @GET("users/{id}/avatar-video")
+    suspend fun getAvatarVideo(
         @Header("Authorization") token: String,
         @Path("id") userId: Long
     ): Response<ResponseBody>
@@ -253,7 +267,9 @@ interface ApiService {
         val showAvatar: Boolean?,
         val clearLanguage: Boolean?,
         val responseStyle: String?,
-        val fontSize: String?
+        val fontSize: String?,
+        val avatarUrl: String? = null,
+        val avatarVideo: String? = null
     )
 
     @GET("preferences")

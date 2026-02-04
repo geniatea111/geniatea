@@ -1,7 +1,7 @@
 package com.example.compose.geniatea.presentation.settingsSection.aiSettings
 
 enum class AvatarSource {
-    GENI, GALLERY
+    GENI, GALLERY, VIDEO_GALLERY
 }
 
 data class AISettingsState(
@@ -11,5 +11,6 @@ data class AISettingsState(
     val avatarSource: AvatarSource = AvatarSource.GENI,
     val showPictograms: Boolean = false,
     val avatarBitmap: android.graphics.Bitmap? = null,
+    val avatarVideoUri: android.net.Uri? = null,
     val language: String? = null
 )

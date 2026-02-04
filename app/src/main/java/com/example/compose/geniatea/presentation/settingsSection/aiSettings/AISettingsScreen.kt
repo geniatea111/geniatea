@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
+import com.example.compose.geniatea.presentation.components.VideoPlayer
 
 @Composable
 fun AISettingsRoot(
@@ -103,6 +104,7 @@ fun AISettings(
                 AISettingsHeader(
                     selectedSource = state.avatarSource,
                     avatarBitmap = state.avatarBitmap,
+                    avatarVideoUri = state.avatarVideoUri,
                     onSourceChange = { onAction(AISettingsAction.OnAvatarSourceChange(it)) }
                 )
 
@@ -150,6 +152,7 @@ fun RegisterPreview() {
 fun AISettingsHeader(
     selectedSource: AvatarSource,
     avatarBitmap: android.graphics.Bitmap?,
+    avatarVideoUri: android.net.Uri?,
     onSourceChange: (AvatarSource) -> Unit
 ) {
     Box(
@@ -170,6 +173,14 @@ fun AISettingsHeader(
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.Center
             )
+        } else if (selectedSource == AvatarSource.VIDEO_GALLERY && avatarVideoUri != null) {
+             VideoPlayer(
+                 uri = avatarVideoUri,
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .height(250.dp)
+                     .clip(RoundedCornerShape(20.dp))
+             )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.geniv2avatarsettings), // Using geni as placeholder
@@ -201,6 +212,12 @@ fun AISettingsHeader(
                 text = "Foto de la galería",
                 isSelected = selectedSource == AvatarSource.GALLERY,
                 onClick = { onSourceChange(AvatarSource.GALLERY) },
+                modifier = Modifier.weight(1f)
+            )
+            SelectableButton(
+                text = "Video de la galería",
+                isSelected = selectedSource == AvatarSource.VIDEO_GALLERY,
+                onClick = { onSourceChange(AvatarSource.VIDEO_GALLERY) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -571,3 +588,4 @@ fun FontSizeOption(
         )
     }
 }
+

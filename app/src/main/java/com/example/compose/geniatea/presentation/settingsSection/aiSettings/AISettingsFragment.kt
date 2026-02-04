@@ -32,6 +32,14 @@ class AISettingsFragment : Fragment() {
         }
     }
 
+    private val pickVideo = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            viewModel.onAvatarVideoSelected(uri, requireContext())
+        } else {
+            // User cancelled the picker
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
 
@@ -45,6 +53,11 @@ class AISettingsFragment : Fragment() {
                         AISettingsAction.OpenGallery -> {
                             pickMedia.launch(
                                 PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        }
+                        AISettingsAction.OpenVideoGallery -> {
+                            pickVideo.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.VideoOnly)
                             )
                         }
                         else -> Unit
