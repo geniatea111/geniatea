@@ -149,7 +149,7 @@ fun ChatScreen(
                 .background(color = Color.Transparent)
                 .border(width = 2.dp, color = Color.Transparent),
         ) {
-            if( uiState.messages.isEmpty() && uiState.userAvatar == null ) {
+            if( uiState.messages.isEmpty() ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
