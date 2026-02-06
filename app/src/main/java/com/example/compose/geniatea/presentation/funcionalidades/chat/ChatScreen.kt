@@ -120,7 +120,9 @@ fun ChatScreen(
             TitleAppBar(
                 title = if (uiState.topic.isNotEmpty()) uiState.topic else stringResource(id = R.string.home),
                 onNavIconPressed = { onNavIconPressed() },
-                avatar = uiState.userAvatar
+                avatar = uiState.userAvatar,
+                isSpeaking = uiState.isSpeaking,
+                videoUri = uiState.avatarVideoUri
 //                optionalButton = true,
 //                onOptionalButtonPressed = { showBottomSheet = true },
 //                iconButton = R.drawable.svg_preferences

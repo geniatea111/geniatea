@@ -38,6 +38,8 @@ import com.example.compose.geniatea.theme.DtGetaiTypography
 import com.example.compose.geniatea.theme.GenIATEATheme
 import androidx.compose.material3.CenterAlignedTopAppBar
 
+import android.net.Uri
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TitleAppBar(
@@ -47,7 +49,9 @@ fun TitleAppBar(
     optionalButton: Boolean = false,
     onOptionalButtonPressed: () -> Unit = { },
     iconButton: Int = R.drawable.svg_preferences,
-    avatar: Bitmap? = null
+    avatar: Bitmap? = null,
+    isSpeaking: Boolean = false,
+    videoUri: Uri? = null
 ) {
     if (avatar != null) {
         CenterAlignedTopAppBar(
@@ -56,15 +60,27 @@ fun TitleAppBar(
                 containerColor = MaterialTheme.colorScheme.surface
             ),
             title = {
-                 Image(
-                    bitmap = avatar.asImageBitmap(),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .width(300.dp)
-                        .height(320.dp)
-                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
-                    contentScale = ContentScale.Crop
-                )
+                 if (isSpeaking && videoUri != null) {
+                     VideoPlayer(
+                         uri = videoUri,
+                         modifier = Modifier
+                             .width(300.dp)
+                             .height(320.dp)
+                             .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                         isMuted = true,
+                         useCrop = true
+                     )
+                 } else {
+                     Image(
+                        bitmap = avatar.asImageBitmap(),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .width(300.dp)
+                            .height(320.dp)
+                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
+                        contentScale = ContentScale.Crop
+                    )
+                 }
             },
             actions = {
                 if (optionalButton) {
