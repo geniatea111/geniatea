@@ -334,14 +334,24 @@ class ChatViewModel: ViewModel() {
 
     fun loadAvatar(context: Context) {
         viewModelScope.launch {
-            val repo = com.example.compose.geniatea.data.repository.AvatarRepository(context)
-            val avatar = repo.getAvatar()
-            val videoUri = repo.getAvatarVideo()
+            val storeDataUser = StoreDataUser(context)
+            val showAvatar = storeDataUser.getShowAvatar().first()
             
-            _state.update { it.copy(
-                userAvatar = avatar,
-                avatarVideoUri = videoUri
-            ) }
+            if (showAvatar) {
+                val repo = com.example.compose.geniatea.data.repository.AvatarRepository(context)
+                val avatar = repo.getAvatar()
+                val videoUri = repo.getAvatarVideo()
+
+                _state.update { it.copy(
+                    userAvatar = avatar,
+                    avatarVideoUri = videoUri
+                ) }
+            } else {
+                 _state.update { it.copy(
+                    userAvatar = null,
+                    avatarVideoUri = null
+                ) }
+            }
         }
     }
 }

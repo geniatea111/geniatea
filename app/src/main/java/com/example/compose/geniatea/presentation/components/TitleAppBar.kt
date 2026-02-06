@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.Image
 import android.graphics.Bitmap
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.theme.DtGetaiTypography
 import com.example.compose.geniatea.theme.GenIATEATheme
+import androidx.compose.material3.CenterAlignedTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,48 +49,83 @@ fun TitleAppBar(
     iconButton: Int = R.drawable.svg_preferences,
     avatar: Bitmap? = null
 ) {
-    TopAppBar(
-        //transparent
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f)
-        ),
-        actions = {
-            if (avatar != null) {
-                Image(
+    if (avatar != null) {
+        CenterAlignedTopAppBar(
+            modifier = Modifier.height(320.dp),
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
+            title = {
+                 Image(
                     bitmap = avatar.asImageBitmap(),
                     contentDescription = null,
-                    modifier = Modifier.padding(end = 8.dp).size(32.dp).clip(CircleShape),
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(320.dp)
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
                     contentScale = ContentScale.Crop
                 )
-            }
-            if (optionalButton) {
-                IconButton(
-                    onClick = onOptionalButtonPressed,
-                    modifier = Modifier.padding(10.dp)
-                ) {
+            },
+            actions = {
+                if (optionalButton) {
+                    IconButton(
+                        onClick = onOptionalButtonPressed,
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = iconButton),
+                            contentDescription = stringResource(id = R.string.more_options)
+                        )
+                    }
+                }
+            },
+            scrollBehavior = scrollBehavior,
+            navigationIcon = {
+                IconButton(onClick = onNavIconPressed){
                     Icon(
-                        painter = painterResource(id = iconButton),
-                        contentDescription = stringResource(id = R.string.more_options)
+                        painter = painterResource(id = R.drawable.ic_arrow_back),
+                        tint = MaterialTheme.colorScheme.outline,
+                        contentDescription = null,
                     )
                 }
             }
-        },
-        title = {
-            Text(
-                style = DtGetaiTypography.titleLarge,
-                text = title,
-            )
-        },
-        scrollBehavior = scrollBehavior,
-        navigationIcon = {
-            IconButton(onClick = onNavIconPressed){
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_back),
-                    tint = MaterialTheme.colorScheme.outline,
-                    contentDescription = null,
+        )
+    } else {
+        TopAppBar(
+            //transparent
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f)
+            ),
+            actions = {
+                if (optionalButton) {
+                    IconButton(
+                        onClick = onOptionalButtonPressed,
+                        modifier = Modifier.padding(10.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = iconButton),
+                            contentDescription = stringResource(id = R.string.more_options)
+                        )
+                    }
+                }
+            },
+            title = {
+                Text(
+                    style = DtGetaiTypography.titleLarge,
+                    text = title,
                 )
-            }
-        })
+            },
+            scrollBehavior = scrollBehavior,
+            navigationIcon = {
+                IconButton(onClick = onNavIconPressed){
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_back),
+                        tint = MaterialTheme.colorScheme.outline,
+                        contentDescription = null,
+                    )
+                }
+            })
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

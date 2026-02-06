@@ -120,6 +120,7 @@ fun ChatScreen(
             TitleAppBar(
                 title = if (uiState.topic.isNotEmpty()) uiState.topic else stringResource(id = R.string.home),
                 onNavIconPressed = { onNavIconPressed() },
+                avatar = uiState.userAvatar
 //                optionalButton = true,
 //                onOptionalButtonPressed = { showBottomSheet = true },
 //                iconButton = R.drawable.svg_preferences
@@ -142,7 +143,7 @@ fun ChatScreen(
         Column(
             Modifier.fillMaxSize()
                 .padding(bottom = paddingValues.calculateBottomPadding())
-                .padding(top = if (uiState.userAvatar != null) 0.dp else paddingValues.calculateTopPadding())
+                .padding(top = paddingValues.calculateTopPadding())
                 .background(color = Color.Transparent)
                 .border(width = 2.dp, color = Color.Transparent),
         ) {
@@ -237,41 +238,7 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                 .testTag(ConversationTestTag)
                 .fillMaxSize(),
         ) {
-            if (avatar != null) {
-                item {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp, bottom = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        if (uiState.isSpeaking && uiState.avatarVideoUri != null) {
-                            com.example.compose.geniatea.presentation.components.VideoPlayer(
-                                uri = uiState.avatarVideoUri,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                                    .padding(horizontal = 16.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                            )
-                        } else {
-                            Image(
-                                bitmap = avatar.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp)
-                                    .padding(horizontal = 16.dp)
-                                    .clip(RoundedCornerShape(16.dp)),
-                                contentScale = ContentScale.Fit
-                            )
-                        }
-                        Text(
-                            text = stringResource(id = R.string.chat_header_greeting), 
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(top = 16.dp)
-                        )
-                    }
-                }
-            }
+            // Avatar moved to TopAppBar
             items(messages) { content ->
                 Message(
                     msg = content,
