@@ -67,6 +67,8 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
@@ -507,42 +509,61 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
             Spacer(modifier = Modifier.height(4.dp))
         }
 
-        Surface(
-            color = backgroundBubbleColor,
-            shape = chatBubbleShape,
-            modifier = Modifier
-                .align(if (isUserMe) Alignment.End else Alignment.Start)
-                .padding(start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp)
-        ) {
-            ClickableMessage(
-                message = message,
-                isUserMe = isUserMe,
-            )
-        }
-
-        message.pictograms?.let { pictograms ->
-            if (pictograms.isNotEmpty()) {
-                LazyRow(
-                    modifier = Modifier
-                        .align(if (isUserMe) Alignment.End else Alignment.Start)
-                        .padding(top = 8.dp, start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+        val pictograms = message.pictograms
+        if (pictograms != null && pictograms.isNotEmpty()) {
+             Surface(
+                color = backgroundBubbleColor,
+                shape = chatBubbleShape,
+                modifier = Modifier
+                    .align(if (isUserMe) Alignment.End else Alignment.Start)
+                    .padding(start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp)
+            ) {
+                FlowRow(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(pictograms) { url ->
+                    pictograms.forEach { pictogram ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.width(80.dp)
+                    ) {
                         Surface(
                             shape = RoundedCornerShape(8.dp),
-                            color = Color.White, // White background for pictograms
-                            modifier = Modifier.size(64.dp)
+                            color = Color.White,
+                            modifier = Modifier.size(80.dp)
                         ) {
                             Image(
-                                painter = rememberAsyncImagePainter(model = url),
-                                contentDescription = null,
+                                painter = rememberAsyncImagePainter(model = pictogram.url),
+                                contentDescription = pictogram.word,
                                 modifier = Modifier.padding(4.dp),
                                 contentScale = ContentScale.Fit
                             )
                         }
+                        Text(
+                            text = pictogram.word,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(top = 4.dp),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 2,
+                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                        )
                     }
                 }
+            }}
+        } else {
+            Surface(
+                color = backgroundBubbleColor,
+                shape = chatBubbleShape,
+                modifier = Modifier
+                    .align(if (isUserMe) Alignment.End else Alignment.Start)
+                    .padding(start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp)
+            ) {
+                ClickableMessage(
+                    message = message,
+                    isUserMe = isUserMe,
+                )
             }
         }
 

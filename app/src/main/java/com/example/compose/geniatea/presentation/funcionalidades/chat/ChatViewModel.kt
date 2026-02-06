@@ -225,7 +225,7 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-    private suspend fun fetchPictograms(text: String, language: String): List<String> {
+    private suspend fun fetchPictograms(text: String, language: String): List<Pictogram> {
         // Simple stop words list for Spanish (extend as needed)
         val stopWordsEs = setOf(
             "el", "la", "los", "las", "un", "una", "unos", "unas",
@@ -264,7 +264,10 @@ class ChatViewModel: ViewModel() {
                          if (response.isSuccessful && response.body() != null && response.body()!!.isNotEmpty()) {
                              // Get the first match
                              val bestMatch = response.body()!![0]
-                             "https://static.arasaac.org/pictograms/${bestMatch._id}/${bestMatch._id}_500.png"
+                             Pictogram(
+                                 word = word,
+                                 url = "https://static.arasaac.org/pictograms/${bestMatch._id}/${bestMatch._id}_500.png"
+                             )
                          } else {
                              null
                          }

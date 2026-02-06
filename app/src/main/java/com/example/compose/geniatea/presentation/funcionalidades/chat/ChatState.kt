@@ -23,6 +23,11 @@ data class Message(
     val content: String,
     val timestamp: String,
     val image: String? = null,
-    val pictograms: List<String>? = null
+    val pictograms: List<Pictogram>? = null
    // val authorImage: Int = R.drawable.geni
+)
+
+data class Pictogram(
+    val word: String,
+    val url: String
 )
