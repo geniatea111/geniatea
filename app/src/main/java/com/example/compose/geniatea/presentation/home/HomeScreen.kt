@@ -79,7 +79,8 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             HomeAppBar(
-                onAccountPressed = { onAction(HomeAction.OnAccountPressed) }
+                onAccountPressed = { onAction(HomeAction.OnAccountPressed) },
+                onFavoritesPressed = { onAction(HomeAction.OnFavoritesPressed) }
             )
         },
         contentWindowInsets = WindowInsets(0.dp),

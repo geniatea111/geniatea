@@ -19,11 +19,13 @@ data class ChatState(
 
 @Immutable
 data class Message(
+    val id: Long = -1,
     val author: String,
     val content: String,
     val timestamp: String,
     val image: String? = null,
-    val pictograms: List<Pictogram>? = null
+    val pictograms: List<Pictogram>? = null,
+    val isFavorite: Boolean = false
    // val authorImage: Int = R.drawable.geni
 )
 

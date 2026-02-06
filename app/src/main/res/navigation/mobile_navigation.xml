@@ -42,6 +42,18 @@
         <action
             android:id="@+id/action_nav_home_to_nav_history"
             app:destination="@id/nav_history" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_favorites"
+            app:destination="@id/nav_favorites" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_favorites"
+        android:name="com.example.compose.geniatea.presentation.funcionalidades.favorites.FavoriteResponsesFragment"
+        android:label="Favoritos" >
+        <action
+            android:id="@+id/action_nav_favorites_to_nav_chat"
+            app:destination="@id/nav_chat" />
     </fragment>
 
     <fragment

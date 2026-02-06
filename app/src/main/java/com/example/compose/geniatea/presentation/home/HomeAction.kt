@@ -7,6 +7,7 @@ sealed interface HomeAction {
     data object OnJudgePressed : HomeAction
     data object OnFormalizerPressed : HomeAction
     data object OnResourcesPressed : HomeAction
+    data object OnFavoritesPressed: HomeAction
     data object OnTaskListPressed : HomeAction
     data class OnRecentChatPressed(val conversationId: Long, val topic: String) : HomeAction
     data object OnSeeAllRecentChatsPressed : HomeAction

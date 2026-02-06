@@ -30,6 +30,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -423,15 +426,19 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                     )
                 }
 
+                val context = androidx.compose.ui.platform.LocalContext.current
                 IconButton(
-                    onClick = {},
+                    onClick = { onAction(ChatAction.OnMessageFavorite(message.id, context)) },
                     modifier = Modifier
                         .size(32.dp)
                 ) {
+                    val icon = if (message.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
+                    
                     Icon(
-                        painter = painterResource(R.drawable.svg_bookmark),
-                        contentDescription = stringResource(id = R.string.home),
-                        modifier = Modifier.size(24.dp).alpha(0.6f),
+                        imageVector = icon,
+                        contentDescription = stringResource(id = R.string.home), // Should ideally be "Favorite"
+                        modifier = Modifier.size(24.dp),
+                        tint = if (message.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             }

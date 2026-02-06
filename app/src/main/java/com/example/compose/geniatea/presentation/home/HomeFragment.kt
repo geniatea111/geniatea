@@ -76,6 +76,7 @@ class HomeFragment : Fragment() {
                     is HomeAction.OnResourcesPressed -> findNavController().navigate(R.id.nav_resources)
                     is HomeAction.OnTaskListPressed -> findNavController().navigate(R.id.nav_tasklist)
                     is HomeAction.OnSeeAllRecentChatsPressed -> findNavController().navigate(R.id.nav_history)
+                    is HomeAction.OnFavoritesPressed -> findNavController().navigate(R.id.action_nav_home_to_nav_favorites)
                     is HomeAction.OnRecentChatPressed -> {
                         val bundle = Bundle().apply {
                             putLong("sessionId", action.conversationId)

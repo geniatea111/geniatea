@@ -218,6 +218,10 @@ class HomeViewModel() : ViewModel() {
             HomeAction.OnSeeAllRecentChatsPressed -> {
                 _navigationEvent.value = Event(HomeAction.OnSeeAllRecentChatsPressed)
             }
+
+            HomeAction.OnFavoritesPressed -> {
+                _navigationEvent.value = Event(HomeAction.OnFavoritesPressed)
+            }
         }
     }
 

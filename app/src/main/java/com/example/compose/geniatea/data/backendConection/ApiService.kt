@@ -121,7 +121,10 @@ interface ApiService {
         val message: String,
         val createdAt : String,
         val sender: String, // "user" or "assistant"
-        val image: String? = null // Base64 encoded image string (optional)
+        val image: String? = null, // Base64 encoded image string (optional)
+        val favorite: Boolean? = false,
+        val previousMessage: String? = null,
+        val sessionId: Long? = null
     )
 
     data class ChatSessionResponse(
@@ -245,6 +248,17 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Path("sessionId") sessionId: Long
     ): Response<List<ChatHistoryResponse>>
+
+    @GET("chat/messages/favorites")
+    suspend fun getFavoriteMessages(
+        @Header("Authorization") token: String
+    ): Response<List<ChatHistoryResponse>>
+
+    @PUT("chat/messages/{messageId}/favorite")
+    suspend fun updateMessageFavoriteStatus(
+        @Header("Authorization") token: String,
+        @Path("messageId") messageId: Long
+    ): Response<ResponseBody>
 
     @GET("tasks")
     suspend fun getTasks(): Response<List<TaskDTO>>

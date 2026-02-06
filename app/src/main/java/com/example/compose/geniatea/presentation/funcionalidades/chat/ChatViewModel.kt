@@ -82,6 +82,35 @@ class ChatViewModel: ViewModel() {
             is ChatAction.OnStyleChange -> {
                 _state.update { it.copy(chatStyle = action.style) }
             }
+            is ChatAction.OnMessageFavorite -> {
+                toggleMessageFavorite(action.messageId, action.context)
+            }
+        }
+    }
+
+    private fun toggleMessageFavorite(messageId: Long, context: Context) {
+        viewModelScope.launch {
+            try {
+                // Optimistic update
+                _state.update { currentState ->
+                    val messages = currentState.messages.map { msg ->
+                        if (msg.id == messageId) {
+                            msg.copy(isFavorite = !msg.isFavorite)
+                        } else {
+                            msg
+                        }
+                    }
+                    currentState.copy(messages = messages)
+                }
+
+                // Call backend
+                val token = StoreDataUser(context).getToken()
+                if (token != null) {
+                    BackendAPI.retrofitService.updateMessageFavoriteStatus("Bearer $token", messageId)
+                }
+            } catch (e: Exception) {
+               Log.e("ChatViewModel", "Error toggling favorite", e)
+            }
         }
     }
 
@@ -133,6 +162,7 @@ class ChatViewModel: ViewModel() {
                             val source = body.source()
                             var accumulatedText = ""
                             var isFirstMessage = true
+                            var newMessageId: Long = -1L
                             
                             while (!source.exhausted()) {
                                 val line = source.readUtf8Line()
@@ -145,16 +175,40 @@ class ChatViewModel: ViewModel() {
                                             sessionId = newSessionId
                                             Log.d("ChatViewModel", "Session ID updated: $sessionId")
                                         }
+                                    } else if (content.trimStart().startsWith("MESSAGE_ID:")) {
+                                        val msgId = content.substringAfter("MESSAGE_ID:").trim().toLongOrNull()
+                                        if (msgId != null) {
+                                            newMessageId = msgId
+                                            Log.d("ChatViewModel", "Message ID received: $newMessageId")
+                                            if (!isFirstMessage) {
+                                                 _state.update { currentState ->
+                                                    if (currentState.messages.isNotEmpty()) {
+                                                        val messages = currentState.messages.toMutableList()
+                                                        val lastIndex = messages.lastIndex
+                                                        val lastMsg = messages[lastIndex]
+                                                        if (lastMsg.id == -1L) {
+                                                            messages[lastIndex] = lastMsg.copy(id = newMessageId)
+                                                            currentState.copy(messages = messages)
+                                                        } else {
+                                                            currentState
+                                                        }
+                                                    } else {
+                                                        currentState
+                                                    }
+                                                }
+                                            }
+                                        }
                                     } else {
                                         // Normal content
                                         accumulatedText += content
 
-                    if (isFirstMessage) {
+                                        if (isFirstMessage) {
                                             val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy", Locale.getDefault()))
                                             val geniMessage = Message(
                                                 author = "Geni", // TODO: Use string resource for author
                                                 content = accumulatedText,
                                                 timestamp = time,
+                                                id = newMessageId
                                             )
                                             _state.update { currentState ->
                                                 currentState.copy(
@@ -300,7 +354,9 @@ class ChatViewModel: ViewModel() {
                                 author = chatHistoryResponse.sender,
                                 content = chatHistoryResponse.message,
                                 timestamp = chatHistoryResponse.createdAt,
-                                image = chatHistoryResponse.image
+                                image = chatHistoryResponse.image,
+                                isFavorite = chatHistoryResponse.favorite ?: false,
+                                id = chatHistoryResponse.messageId
                             )
                         } ?: emptyList()
                         

@@ -20,6 +20,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,7 +42,8 @@ fun HomeAppBar(
     modifier: Modifier = Modifier,
     scrollBehavior: TopAppBarScrollBehavior? = null,
     onNavIconPressed: () -> Unit = { },
-    onAccountPressed: () -> Unit = { }
+    onAccountPressed: () -> Unit = { },
+    onFavoritesPressed: () -> Unit = { }
     ) {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
@@ -48,6 +51,25 @@ fun HomeAppBar(
         ),
         modifier = modifier.padding(horizontal = 10.dp, vertical = 10.dp),
         actions = {
+            Button(
+                onClick = onFavoritesPressed,
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(5.dp),
+                shape = CircleShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+                contentPadding = PaddingValues(6.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = "Favoritos",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
             Button(
                 onClick = onAccountPressed,
                 modifier = Modifier
