@@ -90,7 +90,7 @@ fun AISettings(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
-                .padding(top = if (state.avatarSource == AvatarSource.GALLERY && state.avatarBitmap != null) 0.dp else innerPadding.calculateTopPadding())
+                .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
         ) {
             Column(
@@ -155,7 +155,7 @@ fun AISettingsHeader(
     avatarVideoUri: android.net.Uri?,
     onSourceChange: (AvatarSource) -> Unit
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
@@ -169,7 +169,7 @@ fun AISettingsHeader(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
-                    .clip(RoundedCornerShape(20.dp)),
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.Center
             )
@@ -179,14 +179,16 @@ fun AISettingsHeader(
                  modifier = Modifier
                      .fillMaxWidth()
                      .height(250.dp)
-                     .clip(RoundedCornerShape(20.dp))
+                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                 useCrop = true
              )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.geniv2avatarsettings), // Using geni as placeholder
                 contentDescription = "Avatar Preview",
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
                 contentScale = ContentScale.FillWidth
             )
         }
@@ -194,7 +196,6 @@ fun AISettingsHeader(
         // Toggle Buttons
         Row(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .padding(16.dp)
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(50))
@@ -209,13 +210,13 @@ fun AISettingsHeader(
                 modifier = Modifier.weight(1f)
             )
             SelectableButton(
-                text = "Foto de la galería",
+                text = "Foto",
                 isSelected = selectedSource == AvatarSource.GALLERY,
                 onClick = { onSourceChange(AvatarSource.GALLERY) },
                 modifier = Modifier.weight(1f)
             )
             SelectableButton(
-                text = "Video de la galería",
+                text = "Video",
                 isSelected = selectedSource == AvatarSource.VIDEO_GALLERY,
                 onClick = { onSourceChange(AvatarSource.VIDEO_GALLERY) },
                 modifier = Modifier.weight(1f)

@@ -57,7 +57,7 @@ fun TitleAppBar(
         CenterAlignedTopAppBar(
             modifier = Modifier.height(320.dp),
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface
+                containerColor = Color(0xFFE0E0E0)
             ),
             title = {
                  if (isSpeaking && videoUri != null) {
