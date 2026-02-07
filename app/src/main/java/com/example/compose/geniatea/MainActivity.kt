@@ -61,7 +61,25 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val dataStore = StoreDataUser(this@MainActivity)
             val isDarkMode = dataStore.getDarkMode().first()
-            val isUserLoggedIn = dataStore.isUserLoggedIn.first()
+            var isUserLoggedIn = dataStore.isUserLoggedIn.first()
+
+            if (isUserLoggedIn) {
+                val token = dataStore.getToken()
+                if (!token.isNullOrBlank()) {
+                    try {
+                        // Validate token. AuthInterceptor will handle refresh if needed.
+                        // If it returns 401, it means both access and refresh tokens failed.
+                        val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
+                        if (!response.isSuccessful && response.code() == 401) {
+                            Log.w("MainActivity", "Token invalidation detected. Logging out.")
+                            dataStore.logoutUser()
+                            isUserLoggedIn = false
+                        }
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Token validation error (fail-open): ${e.message}")
+                    }
+                }
+            }
             val themeVariant = dataStore.getThemeVariant().first()
 
             // Save values into ViewModel
