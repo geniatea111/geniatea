@@ -127,7 +127,7 @@ fun HistoryItem(session: ApiService.ChatSessionResponse, onAction: (HistoryActio
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = session.createdAt,
+                text = com.example.compose.geniatea.utils.Formats.formatFriendlyDate(session.createdAt),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )

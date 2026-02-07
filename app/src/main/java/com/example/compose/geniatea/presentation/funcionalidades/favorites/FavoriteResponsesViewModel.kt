@@ -43,7 +43,7 @@ class FavoriteResponsesViewModel : ViewModel() {
                         val favorites = response.body()?.map { msg ->
                             FavoriteItem(
                                 id = msg.messageId,
-                                date = msg.createdAt, // You might want to format this date
+                                date = com.example.compose.geniatea.utils.Formats.formatFriendlyDate(msg.createdAt),
                                 content = msg.message,
                                 previousMessage = msg.previousMessage,
                                 sessionId = msg.sessionId ?: -1L
