@@ -166,7 +166,7 @@ fun OnboardingStep5Screen(
                         .padding(horizontal = 16.dp, vertical = 32.dp)
                         .heightIn(min = 56.dp)
                 ) {
-                    Text("Finalizar", fontWeight = FontWeight.W700)
+                    Text("Continuar", fontWeight = FontWeight.W700)
                 }
             }
         }

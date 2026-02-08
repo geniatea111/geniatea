@@ -49,7 +49,17 @@ fun OnboardingScreen(viewModel: OnboardingViewModel, onExitOnboarding: () -> Uni
             OnboardingStep5Screen(
                 showPictograms = state.showPictograms,
                 onShowPictogramsChange = { viewModel.onAction(OnboardingAction.OnShowPictogramsChange(it)) },
-                onFinish = { viewModel.onAction(OnboardingAction.OnRegister) },
+                onFinish = { navController.navigate("step6") },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable("step6") {
+            OnboardingStep6Screen(
+                state = state,
+                onAvatarSourceChange = { viewModel.onAction(OnboardingAction.OnAvatarSourceChange(it)) },
+                onAvatarSelected = { uri, context -> viewModel.onAction(OnboardingAction.OnAvatarSelected(uri, context)) },
+                onAvatarVideoSelected = { uri, context -> viewModel.onAction(OnboardingAction.OnAvatarVideoSelected(uri, context)) },
+                onNext = { viewModel.onAction(OnboardingAction.OnRegister) },
                 onBack = { navController.popBackStack() }
             )
         }

@@ -159,23 +159,21 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             val token = storeData.getToken() ?: return@launch
             try {
-                // Fetch current preferences to update this specific field safely
-                val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
-                if (response.isSuccessful) {
-                    val currentPrefs = response.body()
-                    val newPrefs = currentPrefs?.copy(language = languageCode) ?: ApiService.UserPreferenceDTO(
-                        showPictograms = null,
-                        language = languageCode,
-                        showAvatar = null,
-                        clearLanguage = null,
-                        responseStyle = null,
-                        fontSize = null
-                    )
+                // Create partial DTO for language update only
+                val partialPrefs = ApiService.UserPreferenceDTO(
+                    showPictograms = null,
+                    language = languageCode,
+                    showAvatar = null,
+                    clearLanguage = null,
+                    responseStyle = null,
+                    fontSize = null,
+                    avatarUrl = null,
+                    avatarVideo = null
+                )
 
-                    val updateResponse = BackendAPI.retrofitService.updateUserPreferences("Bearer $token", newPrefs)
-                    if (updateResponse.isSuccessful) {
-                        storeData.saveLanguage(languageCode)
-                    }
+                val response = BackendAPI.retrofitService.updatePreference("Bearer $token", partialPrefs)
+                if (response.isSuccessful) {
+                    storeData.saveLanguage(languageCode)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

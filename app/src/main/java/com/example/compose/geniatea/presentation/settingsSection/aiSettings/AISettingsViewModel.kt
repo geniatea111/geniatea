@@ -90,21 +90,34 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
             AISettingsAction.OnBackPressed -> {
                 _actionEvent.value = Event(AISettingsAction.OnBackPressed)
             }
+
             is AISettingsAction.OnClearLanguageToggle -> {
                 _state.update { it.copy(isClearLanguage = action.isChecked) }
-                saveSettings("Lenguaje claro actualizado")
+                saveSettings(ApiService.UserPreferenceDTO(clearLanguage = action.isChecked, showPictograms = null, language = null, showAvatar = null, responseStyle = null, fontSize = null), "Lenguaje claro actualizado")
             }
             is AISettingsAction.OnShowPictogramsToggle -> {
                 _state.update { it.copy(showPictograms = action.isChecked) }
-                saveSettings("Pictogramas actualizados")
+                saveSettings(ApiService.UserPreferenceDTO(showPictograms = action.isChecked, language = null, showAvatar = null, clearLanguage = null, responseStyle = null, fontSize = null), "Pictogramas actualizados")
             }
             is AISettingsAction.OnResponseStyleChange -> {
                 _state.update { it.copy(responseStyle = action.value) }
-                saveSettings("Estilo de respuesta actualizado")
+                val styleString = when (action.value) {
+                    0f -> "concise"
+                    1f -> "normal"
+                    2f -> "learning"
+                    else -> "normal"
+                }
+                saveSettings(ApiService.UserPreferenceDTO(responseStyle = styleString, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, fontSize = null), "Estilo de respuesta actualizado")
             }
             is AISettingsAction.OnFontSizeChange -> {
                 _state.update { it.copy(fontSize = action.size) }
-                saveSettings("Tamaño de fuente actualizado")
+                val sizeString = when (action.size) {
+                    0 -> "S"
+                    1 -> "M"
+                    2 -> "L"
+                    else -> "M"
+                }
+                saveSettings(ApiService.UserPreferenceDTO(fontSize = sizeString, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, responseStyle = null), "Tamaño de fuente actualizado")
             }
             is AISettingsAction.OnAvatarSourceChange -> {
                 if (action.source == AvatarSource.GALLERY) {
@@ -116,10 +129,13 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                     _state.update { it.copy(avatarSource = action.source) }
                 } else {
                     _state.update { it.copy(avatarSource = action.source) }
-                    saveSettings("Fuente de avatar actualizada") 
+                    
                     // Remove both avatar and video
                     updateAvatar(null, "Avatar removido") 
                     updateAvatarVideo(null, "Video de avatar removido")
+
+                    // Also update preference about showAvatar = false (generic)
+                    saveSettings(ApiService.UserPreferenceDTO(showAvatar = false, showPictograms = null, language = null, clearLanguage = null, responseStyle = null, fontSize = null), "Fuente de avatar actualizada")
                 }
             }
             is AISettingsAction.ShowToast -> {
@@ -291,39 +307,19 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
     }
 
 
-    private fun saveSettings(changeMessage: String) {
+    private fun saveSettings(dto: ApiService.UserPreferenceDTO, changeMessage: String) {
         val token = userToken ?: return
-        val currentState = _state.value
         
         viewModelScope.launch {
             try {
-                val dto = ApiService.UserPreferenceDTO(
-                    showPictograms = currentState.showPictograms,
-                    language = currentState.language,
-                    showAvatar = currentState.avatarSource == AvatarSource.GALLERY || currentState.avatarSource == AvatarSource.VIDEO_GALLERY,
-                    clearLanguage = currentState.isClearLanguage,
-                    responseStyle = when (currentState.responseStyle) {
-                        0f -> "concise"
-                        1f -> "normal"
-                        2f -> "learning"
-                        else -> "normal"
-                    },
-                    fontSize = when (currentState.fontSize) {
-                        0 -> "S"
-                        1 -> "M"
-                        2 -> "L"
-                        else -> "M"
-                    }
-                )
-
-                val response = BackendAPI.retrofitService.updateUserPreferences("Bearer $token", dto)
+                val response = BackendAPI.retrofitService.updatePreference("Bearer $token", dto)
                 if (response.isSuccessful) {
                     // Update Local Persistence using Application Context
                      val store = storeDataUser
-                     store.savePictogramsEnabled(dto.showPictograms ?: false)
-                     store.saveShowAvatar(dto.showAvatar ?: false)
-                     store.saveResponseStyle(dto.responseStyle ?: "normal")
-                     store.saveFontSize(dto.fontSize ?: "M")
+                     dto.showPictograms?.let { store.savePictogramsEnabled(it) }
+                     dto.showAvatar?.let { store.saveShowAvatar(it) }
+                     dto.responseStyle?.let { store.saveResponseStyle(it) }
+                     dto.fontSize?.let { store.saveFontSize(it) }
 
                     _actionEvent.value = Event(AISettingsAction.ShowToast(changeMessage))
                 } else {

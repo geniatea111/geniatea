@@ -26,6 +26,7 @@ import kotlinx.coroutines.withContext
 import java.net.SocketTimeoutException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 
 sealed interface OnboardingNavigationEvent {
     data class OnRegisterSuccess(val user: User) : OnboardingNavigationEvent
@@ -51,6 +52,24 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
             is OnboardingAction.OnBirthDateChange -> _state.update { it.copy(birthDate = action.birthDate) }
             is OnboardingAction.OnDescriptionChange -> _state.update { it.copy(description = action.description) }
             is OnboardingAction.OnShowPictogramsChange -> _state.update { it.copy(showPictograms = action.show) }
+            is OnboardingAction.OnAvatarSourceChange -> _state.update { it.copy(avatarSource = action.source) }
+            is OnboardingAction.OnAvatarSelected -> {
+                val contentResolver = action.context.contentResolver
+                try {
+                    val inputStream = contentResolver.openInputStream(action.uri)
+                    val bytes = inputStream?.readBytes()
+                    inputStream?.close()
+                    if (bytes != null) {
+                        val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                        _state.update { it.copy(avatarBitmap = bitmap, avatarSource = com.example.compose.geniatea.presentation.settingsSection.aiSettings.AvatarSource.GALLERY) }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            is OnboardingAction.OnAvatarVideoSelected -> {
+                 _state.update { it.copy(avatarVideoUri = action.uri, avatarSource = com.example.compose.geniatea.presentation.settingsSection.aiSettings.AvatarSource.VIDEO_GALLERY) }
+            }
             is OnboardingAction.OnRegister -> updateUser()
         }
     }
@@ -62,7 +81,7 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
             try {
                 // 3. CORRECCIÓN PRINCIPAL:
                 // Llamamos a getUser() directamente. No usamos .first() porque getUser ya devuelve el objeto User?
-                val storedUser = dataStore.getUser()
+                var storedUser = dataStore.getUser()
 
                 if (storedUser != null) {
                     // 4. Usamos las propiedades del objeto User directamente.
@@ -99,7 +118,7 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
 
                     if (response.isSuccessful) {
                         // Actualizamos el usuario localmente con los nuevos datos si es necesario
-                        val updatedUser = storedUser.copy(
+                        var updatedUser = storedUser.copy(
                             name = _state.value.name,
                             gender = gender,
                             birthdate = formattedDate,
@@ -107,6 +126,91 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
                         )
                         // Guardamos los cambios en local también para mantener consistencia
                         dataStore.updateUser(updatedUser)
+
+                        // -------------------------------------------------------------------------
+                        // AVATAR / VIDEO UPLOAD LOGIC
+                        // -------------------------------------------------------------------------
+                        val currentAvatarSource = _state.value.avatarSource
+                        val userId = storedUser.id
+                        val token = storedUser.accessToken
+
+                        // Save preferences (Show Avatar = true if Gallery/Video selected)
+                        val showAvatar = (currentAvatarSource == com.example.compose.geniatea.presentation.settingsSection.aiSettings.AvatarSource.GALLERY || 
+                                          currentAvatarSource == com.example.compose.geniatea.presentation.settingsSection.aiSettings.AvatarSource.VIDEO_GALLERY)
+                        
+                        dataStore.saveShowAvatar(showAvatar)
+
+                        // If user selected generic 'Geni' (or None), we don't upload anything (or could delete?).
+                        // Assuming Onboarding is for new users, we just upload if something is selected.
+
+                        // -------------------------------------------------------------------------
+                        // PREPARE AVATAR PARTS
+                        // -------------------------------------------------------------------------
+                        // -------------------------------------------------------------------------
+                        // PREPARE AVATAR PARTS
+                        // -------------------------------------------------------------------------
+                        var avatarPart: okhttp3.MultipartBody.Part? = null
+                        var avatarVideoPart: okhttp3.MultipartBody.Part? = null
+
+                        // Check for Avatar Image
+                        val bitmap = _state.value.avatarBitmap
+                        if (bitmap != null) {
+                              val stream = java.io.ByteArrayOutputStream()
+                              bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 80, stream)
+                              val byteArray = stream.toByteArray()
+                              
+                              val requestFile = okhttp3.RequestBody.create(
+                                  "image/jpeg".toMediaTypeOrNull(),
+                                  byteArray
+                              )
+                              avatarPart = okhttp3.MultipartBody.Part.createFormData("avatar", "avatar.jpg", requestFile)
+                              
+                              // Save locally
+                              com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).saveAvatar(bitmap)
+                        }
+
+                        // Check for Avatar Video
+                        val uri = _state.value.avatarVideoUri
+                        if (uri != null) {
+                            val contentResolver = getApplication<Application>().contentResolver
+                            val type = contentResolver.getType(uri) ?: "video/*"
+                            val inputStream = contentResolver.openInputStream(uri)
+                            val bytes = inputStream?.readBytes()
+                            inputStream?.close()
+                            
+                            if (bytes != null) {
+                                val requestFile = okhttp3.RequestBody.create(
+                                    type.toMediaTypeOrNull(),
+                                    bytes
+                                )
+                                avatarVideoPart = okhttp3.MultipartBody.Part.createFormData("avatarVideo", "avatar_video.mp4", requestFile)
+                                // Save locally
+                                com.example.compose.geniatea.data.repository.AvatarRepository(getApplication()).saveAvatarVideo(uri)
+                            }
+                        }
+                        
+                        // -------------------------------------------------------------------------
+                        // CREATE PREFERENCES WITH AVATAR PARTS
+                        // -------------------------------------------------------------------------
+
+                        val prefsDto = ApiService.UserPreferenceDTO(
+                            showPictograms = _state.value.showPictograms,
+                            language = null, // handled by backend default
+                            showAvatar = showAvatar,
+                            clearLanguage = null,
+                            responseStyle = null,
+                            fontSize = null
+                        )
+                        
+                        withContext(Dispatchers.IO) {
+                             BackendAPI.retrofitService.createPreferences(
+                                 token = "Bearer $token", 
+                                 preferences = prefsDto,
+                                 avatar = avatarPart,
+                                 avatarVideo = avatarVideoPart
+                             )
+                        }
+
 
                         _navigationEvent.value = Event(OnboardingNavigationEvent.OnRegisterSuccess(updatedUser))
                     } else {

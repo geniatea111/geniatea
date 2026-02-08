@@ -291,8 +291,17 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Response<UserPreferenceDTO>
 
+    @Multipart
     @POST("preferences")
-    suspend fun updateUserPreferences(
+    suspend fun createPreferences(
+        @Header("Authorization") token: String,
+        @Part("preferences") preferences: UserPreferenceDTO,
+        @Part avatar: okhttp3.MultipartBody.Part? = null,
+        @Part avatarVideo: okhttp3.MultipartBody.Part? = null
+    ): Response<ResponseBody>
+
+    @PUT("preferences")
+    suspend fun updatePreference(
         @Header("Authorization") token: String,
         @Body preferences: UserPreferenceDTO
     ): Response<ResponseBody>
