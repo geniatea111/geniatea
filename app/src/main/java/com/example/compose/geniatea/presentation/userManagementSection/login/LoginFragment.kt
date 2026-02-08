@@ -71,7 +71,11 @@ class LoginFragment : Fragment() {
                         is LoginAction.OnLoginSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 storeDataUser.saveUser(action.user)
-                                findNavController().navigate(R.id.nav_home)
+                                if (action.user.onboardingCompleted) {
+                                    findNavController().navigate(R.id.nav_home)
+                                } else {
+                                    findNavController().navigate(R.id.nav_onboarding)
+                                }
                             }
                         }
                         is LoginAction.OnLoginError -> {

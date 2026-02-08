@@ -11,9 +11,10 @@ class User {
     var gender : String = ""
     var rol = "USER" // Default role is user, can be changed later
     var showPictograms: Boolean? = null
+    var onboardingCompleted: Boolean = false
     var isLoggedIn: Boolean = false
 
-    constructor(id: Long, token: String, refreshToken: String, name: String, email: String, username: String, birthdate: String , gender: String, rol : String, showPictograms: Boolean? = null) {
+    constructor(id: Long, token: String, refreshToken: String, name: String, email: String, username: String, birthdate: String , gender: String, rol : String, showPictograms: Boolean? = null, onboardingCompleted: Boolean = false) {
         this.id = id
         this.accessToken = token
         this.refreshToken = refreshToken
@@ -24,13 +25,15 @@ class User {
         this.gender = gender
         this.rol = rol
         this.showPictograms = showPictograms
+        this.onboardingCompleted = onboardingCompleted
     }
 
-    constructor(id: Long, accessToken: String, refreshToken: String, name: String) {
+    constructor(id: Long, accessToken: String, refreshToken: String, name: String, onboardingCompleted: Boolean = false) {
         this.id = id
         this.accessToken = accessToken
         this.refreshToken = refreshToken
         this.name = name
+        this.onboardingCompleted = onboardingCompleted
     }
 
     constructor(name: String, email: String, username: String, birthdate: String , gender: String, showPictograms: Boolean? = null) {
@@ -57,9 +60,10 @@ class User {
         gender: String = this.gender,
         rol: String = this.rol,
         showPictograms: Boolean? = this.showPictograms,
+        onboardingCompleted: Boolean = this.onboardingCompleted,
         isLoggedIn: Boolean = this.isLoggedIn
     ): User {
-        val newUser = User(id, accessToken, refreshToken, name, email, username, birthdate, gender, rol, showPictograms)
+        val newUser = User(id, accessToken, refreshToken, name, email, username, birthdate, gender, rol, showPictograms, onboardingCompleted)
         newUser.isLoggedIn = isLoggedIn
         return newUser
     }

@@ -37,6 +37,7 @@ class StoreDataUser(private val context: Context) {
         val RESPONSE_STYLE_KEY = stringPreferencesKey("response_style")
         val SHOW_AVATAR_KEY = booleanPreferencesKey("show_avatar")
         val LANGUAGE_KEY = stringPreferencesKey("language")
+        val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
     }
 
     suspend fun saveUser(user: User) {
@@ -51,6 +52,7 @@ class StoreDataUser(private val context: Context) {
             preferences[USER_GENDER_KEY] = user.gender
             preferences[USER_ROL_KEY] = user.rol
             preferences[PICTOGRAMS_ENABLED_KEY] = user.showPictograms ?: false
+            preferences[ONBOARDING_COMPLETED_KEY] = user.onboardingCompleted
             preferences[IS_LOGGED_IN] = true
         }
     }
@@ -113,7 +115,8 @@ class StoreDataUser(private val context: Context) {
                 birthdate = preferences[USER_BIRTHDATE_KEY] ?: "",
                 gender = preferences[USER_GENDER_KEY] ?: "",
                 rol = preferences[USER_ROL_KEY] ?: "",
-                showPictograms = preferences[PICTOGRAMS_ENABLED_KEY] ?: false
+                showPictograms = preferences[PICTOGRAMS_ENABLED_KEY] ?: false,
+                onboardingCompleted = preferences[ONBOARDING_COMPLETED_KEY] ?: false
             )
         } else {
             null
@@ -204,4 +207,12 @@ class StoreDataUser(private val context: Context) {
         .map { preferences ->
             preferences[IS_LOGGED_IN] ?: false
         }
+
+    suspend fun saveOnboardingCompleted(completed: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[ONBOARDING_COMPLETED_KEY] = completed
+        }
+    }
+
+    fun getOnboardingCompleted(): Flow<Boolean> = context.dataStore.data.map { it[ONBOARDING_COMPLETED_KEY] ?: false }
 }

@@ -45,6 +45,7 @@ class LoginViewModel : ViewModel() {
                             accessToken = response.body()?.accessToken ?: "",
                             refreshToken = response.body()?.refreshToken ?: "",
                             name = response.body()?.name ?: "",
+                            onboardingCompleted = response.body()?.onboardingCompleted ?: false
                         )
 
                         _navigationEvent.value = Event(LoginAction.OnLoginSuccess(user))
@@ -97,6 +98,7 @@ class LoginViewModel : ViewModel() {
                     accessToken = response.body()?.accessToken ?: "",
                     refreshToken = response.body()?.refreshToken ?: "",
                     name = response.body()?.name ?: "",
+                    onboardingCompleted = response.body()?.onboardingCompleted ?: false
                 )
 
                 Log.i("LoginViewModel", "Google Login successful: Token: ${account.idToken}")

@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val dataStore = StoreDataUser(this@MainActivity)
             val isDarkMode = dataStore.getDarkMode().first()
-            var isUserLoggedIn = dataStore.isUserLoggedIn.first()
+            var isUserLoggedIn: Boolean = dataStore.isUserLoggedIn.first()
 
             if (isUserLoggedIn) {
                 val token = dataStore.getToken()
@@ -114,9 +114,17 @@ class MainActivity : AppCompatActivity() {
                     AndroidViewBinding(ContentMainBinding::inflate) {
                         if (isUserLoggedIn && savedInstanceState == null) {
                             val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                            val isOnboardingCompleted = kotlinx.coroutines.runBlocking { dataStore.getOnboardingCompleted().first() }
+
                             navHostFragment?.navController?.let { navController ->
-                                if (navController.currentDestination?.id != R.id.nav_home) {
-                                    navController.navigate(R.id.nav_home)
+                                if (isOnboardingCompleted) {
+                                    if (navController.currentDestination?.id != R.id.nav_home) {
+                                        navController.navigate(R.id.nav_home)
+                                    }
+                                } else {
+                                     if (navController.currentDestination?.id != R.id.nav_onboarding) {
+                                        navController.navigate(R.id.nav_onboarding)
+                                    }
                                 }
                             }
                         }

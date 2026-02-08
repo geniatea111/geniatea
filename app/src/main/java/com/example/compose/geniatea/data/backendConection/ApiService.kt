@@ -90,7 +90,12 @@ interface ApiService {
         val id: Long,
         val accessToken: String,
         val refreshToken: String,
-        val name: String
+        val name: String,
+        val email: String,
+        val birthdate: String,
+        val gender : String,
+        val roles: List<String>,
+        val onboardingCompleted: Boolean
     )
 
     data class GetUserResponse(
@@ -108,6 +113,7 @@ interface ApiService {
         val accessToken: String,
         val refreshToken : String,
         val name: String,
+        val onboardingCompleted: Boolean
     )
 
     data class MessageResponse(

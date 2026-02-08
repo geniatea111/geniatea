@@ -50,6 +50,7 @@ class RegisterViewModel : ViewModel() {
                             accessToken = response.body()?.accessToken ?: "",
                             refreshToken = response.body()?.refreshToken ?: "",
                             name = response.body()?.name ?: "",
+                            onboardingCompleted = response.body()?.onboardingCompleted ?: false
                         )
                         _navigationEvent.value = Event(RegisterAction.OnRegisterSuccess(user))
                     } else {
