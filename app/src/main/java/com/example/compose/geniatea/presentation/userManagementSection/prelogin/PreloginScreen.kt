@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults.outlinedButtonColors
@@ -118,94 +121,100 @@ fun Content(onAction: (PreloginAction) -> Unit){
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.geniprelogin),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(bottom = 30.dp, top = 40.dp)
-                    .height(260.dp)
-                    .fillMaxWidth()
-            )
-
-            TwoFontText()
-        }
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .align(Alignment.BottomCenter)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(25.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ){
-            Button(
-                onClick = { onAction(PreloginAction.OnLoginPressed) },
-                modifier = Modifier
-                    .padding(bottom = 15.dp)
-                    .heightIn(min = 56.dp)
-                    .fillMaxWidth(),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(id = R.string.login),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = W700
+                Spacer(modifier = Modifier.height(40.dp))
+                Image(
+                    painter = painterResource(id = R.drawable.geniprelogin),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth()
                 )
+
+                TwoFontText()
             }
 
-            OutlinedButton(
-                onClick = { onAction(PreloginAction.OnRegisterPressed) },
+            Column(
                 modifier = Modifier
-                    .padding(bottom = 30.dp)
-                    .heightIn(min = 56.dp)
                     .fillMaxWidth(),
-                colors = outlinedButtonColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                ),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.crear_cuenta),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = W700
-                )
-            }
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ){
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = { onAction(PreloginAction.OnLoginPressed) },
+                    modifier = Modifier
+                        .padding(bottom = 15.dp)
+                        .heightIn(min = 56.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.login),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = W700
+                    )
+                }
 
-            Text(
-                buildAnnotatedString {
-                    append(stringResource(R.string.letra_pequena_prelogin1)+ " ")
-                    withLink(
+                OutlinedButton(
+                    onClick = { onAction(PreloginAction.OnRegisterPressed) },
+                    modifier = Modifier
+                        .padding(bottom = 30.dp)
+                        .heightIn(min = 56.dp)
+                        .fillMaxWidth(),
+                    colors = outlinedButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.crear_cuenta),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = W700
+                    )
+                }
+
+                Text(
+                    buildAnnotatedString {
+                        append(stringResource(R.string.letra_pequena_prelogin1)+ " ")
+                        withLink(
+                                LinkAnnotation.Clickable(
+                                    tag = "Terminos",
+                                    styles = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
+                                ){
+                                    onAction(PreloginAction.OnTermsOfServiceClicked)
+                                }) {
+                            append(stringResource(R.string.letra_pequena_prelogin2))
+                        }
+                        append(" " + stringResource(R.string.letra_pequena_prelogin3)+ " " )
+                        withLink(
                             LinkAnnotation.Clickable(
-                                tag = "Terminos",
+                                tag = "Privacidad",
                                 styles = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
                             ){
-                                onAction(PreloginAction.OnTermsOfServiceClicked)
+                                onAction(PreloginAction.OnPrivacyPolicyClicked)
                             }) {
-                        append(stringResource(R.string.letra_pequena_prelogin2))
-                    }
-                    append(" " + stringResource(R.string.letra_pequena_prelogin3)+ " " )
-                    withLink(
-                        LinkAnnotation.Clickable(
-                            tag = "Privacidad",
-                            styles = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
-                        ){
-                            onAction(PreloginAction.OnPrivacyPolicyClicked)
-                        }) {
-                        append(stringResource(R.string.letra_pequena_prelogin4))
-                    }
-                    append(" " + stringResource(R.string.letra_pequena_prelogin5))
-                },
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-            )
+                            append(stringResource(R.string.letra_pequena_prelogin4))
+                        }
+                        append(" " + stringResource(R.string.letra_pequena_prelogin5))
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(modifier = Modifier.height(24.dp))
+            }
         }
-
     }
 }
 

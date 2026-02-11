@@ -39,6 +39,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.example.compose.geniatea.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,9 +88,12 @@ fun OnboardingStep4Screen(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
+
                 Column(
                     modifier = Modifier
                         .weight(1f)
+                        .verticalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally

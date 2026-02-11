@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -103,47 +106,54 @@ fun LoginScreen(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp),
-                verticalArrangement = Arrangement.Center,
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 30.dp)
+                    .padding(bottom = 20.dp), 
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                UserInfoFields(state, onAction)
-                val stringErrorId = state.errorForm
-                Text(
-                    text = stringResource(id = stringErrorId ?: R.string.empty_string),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                Buttons(onAction)
-            }
-
-
-            TextButton(
-                onClick = { onAction(LoginAction.OnRegisterClicked) },
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .align(Alignment.BottomCenter)
-                    .wrapContentWidth(),
-            ) {
-                Row{
+                // Form Content Group
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(top = 50.dp) // Add some top padding to center visually approx
+                ) {
+                    UserInfoFields(state, onAction)
+                    val stringErrorId = state.errorForm
                     Text(
-                        text = stringResource(id = R.string.no_account1),
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = stringResource(id = stringErrorId ?: R.string.empty_string),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurface
+                        modifier = Modifier.padding(vertical = 8.dp)
                     )
-                    Text(
-                        text = stringResource(id = R.string.no_account2),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        textDecoration = TextDecoration.Underline,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(start = 4.dp)
-                    )
+                    Buttons(onAction)
+                }
 
+                // Footer
+                TextButton(
+                    onClick = { onAction(LoginAction.OnRegisterClicked) },
+                    modifier = Modifier
+                        .wrapContentWidth(),
+                ) {
+                    Row{
+                        Text(
+                            text = stringResource(id = R.string.no_account1),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = stringResource(id = R.string.no_account2),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+
+                    }
                 }
             }
         }

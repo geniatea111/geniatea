@@ -95,7 +95,7 @@ fun RegisterScreen(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .align(Alignment.Center)
-                    .padding(bottom = 40.dp)
+                    .padding(bottom = 20.dp)
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -109,26 +109,26 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(75.dp)) // top spacing
                 UserInfoFields(state, onAction)
 
-            }
+                Spacer(modifier = Modifier.height(30.dp))
 
-            Button(
-                onClick = { onAction(RegisterAction.OnRegisterClicked) },
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 30.dp)
-                    .align(Alignment.BottomCenter)
-                    .heightIn(min = 56.dp)
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.surface
-                ),
-            ) {
-                Text(
-                    text = stringResource(id = R.string.register),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = W700
-                )
+                Button(
+                    onClick = { onAction(RegisterAction.OnRegisterClicked) },
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp)
+                        .padding(bottom = 30.dp)
+                        .heightIn(min = 56.dp)
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.surface
+                    ),
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.register),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = W700
+                    )
+                }
             }
         }
     }

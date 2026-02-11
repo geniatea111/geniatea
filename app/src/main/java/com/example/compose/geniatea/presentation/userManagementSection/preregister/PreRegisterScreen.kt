@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -109,69 +112,74 @@ fun PreRegisterScreen(
 
             Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 30.dp),
-                verticalArrangement = Arrangement.Center,
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 30.dp)
+                    .padding(bottom = 20.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.ic_geniatea),
-                    colorFilter = tint(MaterialTheme.colorScheme.onPrimary),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .height(47.dp)
-                        .width(62.dp),
-                    contentScale = ContentScale.Crop
-                )
-
-                Text(
-                    text = "Solo necesitas tu correo para empezar",
-                    style = DtGetaiTypography.titleLarge,
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier
-                        .padding(top = 50.dp, bottom = 25.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-
-
-                UserInfoFields(state, onAction)
-                val stringErrorId = state.error
-                Text(
-                    text = stringResource(id = stringErrorId ?: R.string.empty_string),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.error,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-                Buttons(onAction)
-            }
-
-
-            TextButton(
-                onClick = { onAction(PreRegisterAction.OnContinueClicked) },
-                modifier = Modifier
-                    .padding(bottom = 20.dp)
-                    .align(Alignment.BottomCenter)
-                    .wrapContentWidth(),
-            ) {
-                Row{
-                    Text(
-                        text = stringResource(id = R.string.already_account1),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = stringResource(id = R.string.already_account2),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        textDecoration = TextDecoration.Underline,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(start = 4.dp)
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.padding(top = 50.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_geniatea),
+                        colorFilter = tint(MaterialTheme.colorScheme.onPrimary),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(47.dp)
+                            .width(62.dp),
+                        contentScale = ContentScale.Crop
                     )
 
+                    Text(
+                        text = "Solo necesitas tu correo para empezar",
+                        style = DtGetaiTypography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .padding(top = 50.dp, bottom = 25.dp)
+                            .fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+
+
+                    UserInfoFields(state, onAction)
+                    val stringErrorId = state.error
+                    Text(
+                        text = stringResource(id = stringErrorId ?: R.string.empty_string),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                    Buttons(onAction)
+                }
+                
+                TextButton(
+                    onClick = { onAction(PreRegisterAction.OnContinueClicked) },
+                    modifier = Modifier
+                        .wrapContentWidth(),
+                ) {
+                    Row{
+                        Text(
+                            text = stringResource(id = R.string.already_account1),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = stringResource(id = R.string.already_account2),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            textDecoration = TextDecoration.Underline,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+
+                    }
                 }
             }
         }
