@@ -61,7 +61,6 @@ fun OnboardingStep5Screen(
                     }
                 },
                 actions = {
-                    Spacer(modifier = Modifier.width(48.dp))
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent

@@ -59,8 +59,6 @@ fun OnboardingStep1Screen(
                     }
                 },
                 actions = {
-                    // This spacer is to balance the navigation icon and keep the title perfectly centered
-                    Spacer(modifier = Modifier.width(48.dp))
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                     containerColor = Color.Transparent
