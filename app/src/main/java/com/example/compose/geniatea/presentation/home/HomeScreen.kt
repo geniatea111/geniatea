@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -83,20 +86,20 @@ fun HomeScreen(
                 onFavoritesPressed = { onAction(HomeAction.OnFavoritesPressed) }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
     ) { innerPadding ->
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .imePadding()
+                .verticalScroll(rememberScrollState())
                 .padding(top = 0.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
         ) {
             Box(
                 modifier = Modifier
                     .padding(bottom = 16.dp)
                     .fillMaxWidth()
-                    .weight(1f)
                     .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
                     .paint(
                         painter = painterResource(id = R.drawable.background_home),

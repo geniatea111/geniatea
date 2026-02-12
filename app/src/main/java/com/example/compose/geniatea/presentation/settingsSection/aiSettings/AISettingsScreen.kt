@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HelpOutline
@@ -90,6 +91,7 @@ fun AISettings(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(bottom = 20.dp)
+                .imePadding()
                 .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
         ) {
