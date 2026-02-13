@@ -110,7 +110,7 @@ fun TitleAppBar(
         TopAppBar(
             //transparent
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f)
+                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 1f)
             ),
             actions = {
                 if (optionalButton) {

@@ -45,6 +45,8 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.LayoutDirection
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
@@ -90,7 +92,7 @@ fun AISettings(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
                 .imePadding()
                 .padding(top = innerPadding.calculateTopPadding())
                 .background(MaterialTheme.colorScheme.background),
@@ -99,9 +101,9 @@ fun AISettings(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.sdp())
             ) {
                 AISettingsHeader(
                     selectedSource = state.avatarSource,
@@ -155,12 +157,13 @@ fun AISettingsHeader(
     selectedSource: AvatarSource,
     avatarBitmap: android.graphics.Bitmap?,
     avatarVideoUri: android.net.Uri?,
-    onSourceChange: (AvatarSource) -> Unit
+    onSourceChange: (AvatarSource) -> Unit,
+    contentHeight: androidx.compose.ui.unit.Dp = 250.sdp()
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.sdp()))
             .background(Color(0xFFE8F0FE)) // Light blue background
     ) {
         // Illustration
@@ -170,8 +173,8 @@ fun AISettingsHeader(
                 contentDescription = "Avatar Preview",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp)
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                    .height(contentHeight)
+                    .clip(RoundedCornerShape(topStart = 20.sdp(), topEnd = 20.sdp())),
                 contentScale = ContentScale.Fit,
                 alignment = Alignment.Center
             )
@@ -180,8 +183,8 @@ fun AISettingsHeader(
                  uri = avatarVideoUri,
                  modifier = Modifier
                      .fillMaxWidth()
-                     .height(250.dp)
-                     .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
+                     .height(contentHeight)
+                     .clip(RoundedCornerShape(topStart = 20.sdp(), topEnd = 20.sdp())),
                  useCrop = true
              )
         } else {
@@ -190,19 +193,21 @@ fun AISettingsHeader(
                 contentDescription = "Avatar Preview",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp)),
-                contentScale = ContentScale.FillWidth
+                    .height(contentHeight)
+                    .clip(RoundedCornerShape(topStart = 20.sdp(), topEnd = 20.sdp())),
+                contentScale = ContentScale.Fit,
+                alignment = Alignment.Center
             )
         }
 
         // Toggle Buttons
         Row(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(16.sdp())
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(50))
                 .background(Color.White)
-                .padding(4.dp),
+                .padding(4.sdp()),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             SelectableButton(
@@ -239,7 +244,7 @@ fun SelectableButton(
             .clip(RoundedCornerShape(50))
             .background(if (isSelected) Color(0xFFD2E3FC) else Color.Transparent)
             .clickable { onClick() }
-            .padding(vertical = 12.dp),
+            .padding(vertical = 12.sdp()),
         contentAlignment = Alignment.Center
     ) {
         Text(

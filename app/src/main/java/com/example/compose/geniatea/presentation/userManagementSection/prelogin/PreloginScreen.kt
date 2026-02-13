@@ -57,6 +57,9 @@ import com.example.compose.geniatea.presentation.components.LogoAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.theme.subtitleApp
 
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
+
 @Composable
 fun PreloginRoot(
     viewModel: PreloginViewModel,
@@ -128,7 +131,7 @@ fun Content(onAction: (PreloginAction) -> Unit){
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(25.dp),
+                .padding(25.sdp()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -136,12 +139,12 @@ fun Content(onAction: (PreloginAction) -> Unit){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                Spacer(modifier = Modifier.height(40.dp))
+                Spacer(modifier = Modifier.height(10.sdp()))
                 Image(
                     painter = painterResource(id = R.drawable.geniprelogin),
                     contentDescription = null,
                     modifier = Modifier
-                        .height(200.dp)
+                        .height(200.sdp())
                         .fillMaxWidth()
                 )
 
@@ -154,17 +157,17 @@ fun Content(onAction: (PreloginAction) -> Unit){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ){
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.sdp()))
                 Button(
                     onClick = { onAction(PreloginAction.OnLoginPressed) },
                     modifier = Modifier
-                        .padding(bottom = 15.dp)
-                        .heightIn(min = 56.dp)
+                        .padding(bottom = 15.sdp())
+                        .heightIn(min = 56.sdp())
                         .fillMaxWidth(),
                 ) {
                     Text(
                         text = stringResource(id = R.string.login),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.ssp()),
                         fontWeight = W700
                     )
                 }
@@ -172,8 +175,8 @@ fun Content(onAction: (PreloginAction) -> Unit){
                 OutlinedButton(
                     onClick = { onAction(PreloginAction.OnRegisterPressed) },
                     modifier = Modifier
-                        .padding(bottom = 30.dp)
-                        .heightIn(min = 56.dp)
+                        .padding(bottom = 30.sdp())
+                        .heightIn(min = 56.sdp())
                         .fillMaxWidth(),
                     colors = outlinedButtonColors(
                         containerColor = MaterialTheme.colorScheme.surface,
@@ -182,7 +185,7 @@ fun Content(onAction: (PreloginAction) -> Unit){
                 ) {
                     Text(
                         text = stringResource(id = R.string.crear_cuenta),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.ssp()),
                         fontWeight = W700
                     )
                 }
@@ -211,10 +214,10 @@ fun Content(onAction: (PreloginAction) -> Unit){
                         }
                         append(" " + stringResource(R.string.letra_pequena_prelogin5))
                     },
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.ssp()),
                     textAlign = TextAlign.Center,
                 )
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.sdp()))
             }
         }
     }
@@ -227,23 +230,23 @@ fun TwoFontText() {
     val font2 = FontFamily(Font(R.font.wallop_regular))
 
     val text = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontFamily = font2, fontSize = 25.sp)) {
+        withStyle(style = SpanStyle(fontFamily = font2, fontSize = 25.ssp())) {
             append("Tu ")
         }
-        withStyle(style = SpanStyle(fontFamily = font1, fontSize = 25.sp)) {
+        withStyle(style = SpanStyle(fontFamily = font1, fontSize = 25.ssp())) {
             append("aliado inteligente ")
         }
-        withStyle(style = SpanStyle(fontFamily = font2, fontSize = 25.sp)) {
+        withStyle(style = SpanStyle(fontFamily = font2, fontSize = 25.ssp())) {
             append("para comprender, acompañar y avanzar juntos en el ")
         }
-        withStyle(style = SpanStyle(fontFamily = font1, fontSize = 25.sp)) {
+        withStyle(style = SpanStyle(fontFamily = font1, fontSize = 25.ssp())) {
             append("TEA")
         }
     }
 
     BasicText(
         text = text,
-        modifier = Modifier.padding(top = 20.dp),
+        modifier = Modifier.padding(top = 20.sdp()),
         style = TextStyle(
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurface

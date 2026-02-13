@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
 
 private data class PronounChoice(val title: String, val subtitle: String)
@@ -103,19 +105,19 @@ fun OnboardingStep2Screen(
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.sdp()),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "¿Cómo prefieres que te trate?",
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
-                        fontSize = 36.sp,
+                        fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
-                        lineHeight = 45.sp
+                        lineHeight = 45.ssp()
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(32.sdp()))
 
                     pronounChoices.forEach { choice ->
                         OutlinedButton(
@@ -130,8 +132,8 @@ fun OnboardingStep2Screen(
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 6.dp)
-                                .heightIn(min = 72.dp)
+                                .padding(vertical = 6.sdp())
+                                .heightIn(min = 72.sdp())
                         ) {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
@@ -160,8 +162,8 @@ fun OnboardingStep2Screen(
                     enabled = selectedPronoun.isNotBlank(),
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 32.dp)
-                        .heightIn(min = 56.dp)
+                        .padding(horizontal = 16.sdp(), vertical = 32.sdp())
+                        .heightIn(min = 56.sdp())
                 ) {
                     Text("Siguiente", fontWeight = FontWeight.W700)
                 }

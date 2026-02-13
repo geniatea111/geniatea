@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,26 +98,26 @@ fun OnboardingStep5Screen(
                     modifier = Modifier
                         .weight(1f)
                         .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 16.sdp()),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = "Mostrar pictogramas",
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
-                        fontSize = 36.sp,
+                        fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
-                        lineHeight = 45.sp
+                        lineHeight = 45.ssp()
                     )
 
                     Text(
                         text = "Incluye pictogramas que facilitan la comprensión y permiten usar funciones diseñadas especialmente para ellos",
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 16.dp),
+                        modifier = Modifier.padding(top = 16.sdp()),
                         style = MaterialTheme.typography.bodyLarge
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(32.sdp()))
 
                     // With pictograms button
                     OutlinedButton(
@@ -130,13 +132,13 @@ fun OnboardingStep5Screen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                            .heightIn(min = 90.dp)
+                            .padding(vertical = 6.sdp())
+                            .heightIn(min = 90.sdp())
                     ) {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(60.dp))
-                            Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(60.dp))
-                            Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(60.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.sdp())) {
+                            Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(60.sdp()))
+                            Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(60.sdp()))
+                            Icon(imageVector = Icons.Default.Image, contentDescription = null, modifier = Modifier.size(60.sdp()))
                         }
                     }
 
@@ -153,8 +155,8 @@ fun OnboardingStep5Screen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 6.dp)
-                            .heightIn(min = 56.dp)
+                            .padding(vertical = 6.sdp())
+                            .heightIn(min = 56.sdp())
                     ) {
                         Text(
                             text = "Sin pictogramas",
@@ -169,8 +171,8 @@ fun OnboardingStep5Screen(
                     onClick = onFinish,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 32.dp)
-                        .heightIn(min = 56.dp)
+                        .padding(horizontal = 16.sdp(), vertical = 32.sdp())
+                        .heightIn(min = 56.sdp())
                 ) {
                     Text("Continuar", fontWeight = FontWeight.W700)
                 }

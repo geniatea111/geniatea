@@ -40,6 +40,8 @@ import com.example.compose.geniatea.data.meRegister
 import com.example.compose.geniatea.presentation.components.TextField
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @RequiresApi(Build.VERSION_CODES.N)
 @Composable
@@ -80,6 +82,7 @@ fun RegisterScreen(
         Box( modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .padding(innerPadding) // Apply padding from Scaffold (TopBar)
         ){
             Image(
                 painter = painterResource(id = R.drawable.deco2),
@@ -95,7 +98,7 @@ fun RegisterScreen(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .align(Alignment.Center)
-                    .padding(bottom = 20.dp)
+                    .padding(bottom = 20.sdp())
                     .imePadding(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -103,20 +106,20 @@ fun RegisterScreen(
                     painter = painterResource(id = R.drawable.starempty),
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxHeight(0.20f),
-                    contentScale = ContentScale.Crop
+                        .height(80.sdp()), // Reduced height
+                    contentScale = ContentScale.Fit // Prevent cutting
                 )
-                Spacer(modifier = Modifier.height(75.dp)) // top spacing
+                Spacer(modifier = Modifier.height(16.sdp())) // Reduced top spacing
                 UserInfoFields(state, onAction)
 
-                Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(30.sdp()))
 
                 Button(
                     onClick = { onAction(RegisterAction.OnRegisterClicked) },
                     modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(bottom = 30.dp)
-                        .heightIn(min = 56.dp)
+                        .padding(horizontal = 20.sdp())
+                        .padding(bottom = 30.sdp())
+                        .heightIn(min = 56.sdp())
                         .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -143,9 +146,9 @@ private fun UserInfoFields(userData: RegisterScreenState, onAction: (RegisterAct
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(modifier = Modifier.padding(horizontal = 20.dp),
+        Column(modifier = Modifier.padding(horizontal = 20.sdp()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.sdp())
         ) {
             //Name(userData, onAction)
             Email(userData, onAction)
@@ -161,7 +164,7 @@ private fun UserInfoFields(userData: RegisterScreenState, onAction: (RegisterAct
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.sdp())
             )
         }
     }
@@ -190,7 +193,7 @@ private fun Username(userData: RegisterScreenState, onAction: (RegisterAction) -
         isError = userData.errorUsername,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = false,
     )
 }
@@ -204,7 +207,7 @@ private fun Email(userData: RegisterScreenState, onAction: (RegisterAction) -> U
         isError = userData.errorEmail,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = false,
     )
 }
@@ -386,7 +389,7 @@ private fun Password(userData: RegisterScreenState, onAction: (RegisterAction) -
         isError = userData.errorPassword,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = true,
     )
 }
@@ -400,7 +403,7 @@ private fun ConfirmPassword(userData: RegisterScreenState, onAction: (RegisterAc
         isError = userData.errorConfirmPassword,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = true,
     )
 }

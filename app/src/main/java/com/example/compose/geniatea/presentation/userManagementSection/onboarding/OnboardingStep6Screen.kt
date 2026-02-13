@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.settingsSection.aiSettings.AISettingsHeader
 import com.example.compose.geniatea.presentation.settingsSection.aiSettings.AvatarSource
@@ -81,7 +83,7 @@ fun OnboardingStep6Screen(
                 modifier = Modifier
                     .weight(1f)
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -89,22 +91,23 @@ fun OnboardingStep6Screen(
                     painter = painterResource(id = R.drawable.geni),
                     contentDescription = null,
                     modifier = Modifier
-                        .size(80.dp)
-                        .padding(bottom = 16.dp)
+                        .size(80.sdp())
+                        .padding(bottom = 16.sdp())
                 )
 
                 Text(
                     text = "Tu asistente virtual",
-                    fontSize = 24.sp,
+                    fontSize = 24.ssp(),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 32.dp)
+                    modifier = Modifier.padding(bottom = 32.sdp())
                 )
 
                 AISettingsHeader(
                     selectedSource = state.avatarSource,
                     avatarBitmap = state.avatarBitmap,
                     avatarVideoUri = state.avatarVideoUri,
+                    contentHeight = 120.sdp(),
                     onSourceChange = { source ->
                         onAvatarSourceChange(source)
                         if (source == AvatarSource.GALLERY) {
@@ -115,11 +118,11 @@ fun OnboardingStep6Screen(
                     }
                 )
                 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.sdp()))
                 
                 Text(
                     text = "Puedes cambiar esto más tarde en los ajustes.",
-                    fontSize = 14.sp,
+                    fontSize = 14.ssp(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
@@ -129,13 +132,13 @@ fun OnboardingStep6Screen(
                 onClick = onNext,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 32.dp)
-                    .heightIn(min = 56.dp),
+                    .padding(horizontal = 16.sdp(), vertical = 32.sdp())
+                    .heightIn(min = 56.sdp()),
                 enabled = !state.isLoading
             ) {
                  if (state.isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(24.sdp()),
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {

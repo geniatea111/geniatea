@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -42,6 +44,11 @@ import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.data.meProfile
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.presentation.components.TextField
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 
 @Composable
@@ -84,6 +91,7 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
                 .imePadding(),
             contentAlignment = Alignment.Center,
         ) {
@@ -110,8 +118,8 @@ fun LoginScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 30.dp)
-                    .padding(bottom = 20.dp), 
+                    .padding(horizontal = 30.sdp())
+                    .padding(bottom = 20.sdp()), 
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -119,7 +127,7 @@ fun LoginScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 50.dp) // Add some top padding to center visually approx
+                    modifier = Modifier.padding(top = 50.sdp()) // Add some top padding to center visually approx
                 ) {
                     UserInfoFields(state, onAction)
                     val stringErrorId = state.errorForm
@@ -128,7 +136,7 @@ fun LoginScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 8.sdp())
                     )
                     Buttons(onAction)
                 }
@@ -139,23 +147,18 @@ fun LoginScreen(
                     modifier = Modifier
                         .wrapContentWidth(),
                 ) {
-                    Row{
-                        Text(
-                            text = stringResource(id = R.string.no_account1),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = stringResource(id = R.string.no_account2),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
-
-                    }
+                    Text(
+                        text = buildAnnotatedString {
+                            append(stringResource(id = R.string.no_account1))
+                            append(" ")
+                            withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                                append(stringResource(id = R.string.no_account2))
+                            }
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }
@@ -172,7 +175,7 @@ fun Buttons(onAction: (LoginAction) -> Unit){
         Button(
             onClick = { onAction(LoginAction.OnLoginClicked) },
             modifier = Modifier
-                .height(50.dp)
+                .height(50.sdp())
                 .fillMaxWidth(),
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -191,25 +194,28 @@ fun Buttons(onAction: (LoginAction) -> Unit){
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 30.dp)
+                .padding(vertical = 30.sdp())
         )
 
         OutlinedButton(
             onClick = { onAction(LoginAction.OnLoginGoogleClicked) },
             modifier = Modifier
-                .height(50.dp)
+                .heightIn(min = 50.sdp())
                 .fillMaxWidth(),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.google_logo),
                 contentDescription = stringResource(id = R.string.google_login),
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier
+                    .size(24.sdp())
+                    .padding(end = 8.sdp())
             )
             Text(
                 text = stringResource(id = R.string.google_login),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = W700
+                fontWeight = W700,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -221,7 +227,7 @@ private fun UserInfoFields(userData: LoginScreenState, onAction: (LoginAction) -
     Column(modifier = Modifier
         .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically))
+        verticalArrangement = Arrangement.spacedBy(12.sdp(), Alignment.CenterVertically))
     {
         UsernameEmail(userData, onAction)
         Password(userData, onAction)

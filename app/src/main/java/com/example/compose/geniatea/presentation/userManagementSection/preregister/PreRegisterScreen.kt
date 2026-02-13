@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -46,7 +48,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.glance.ColorFilter
 import com.example.compose.geniatea.data.meEmail
 import com.example.compose.geniatea.data.meProfile
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import com.example.compose.geniatea.theme.DtGetaiTypography
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 
 @Composable
@@ -89,6 +96,7 @@ fun PreRegisterScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
+                .padding(innerPadding)
                 .imePadding(),
             contentAlignment = Alignment.Center,
         ) {
@@ -116,8 +124,8 @@ fun PreRegisterScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 30.dp)
-                    .padding(bottom = 20.dp),
+                    .padding(horizontal = 30.sdp())
+                    .padding(bottom = 20.sdp()),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -125,15 +133,15 @@ fun PreRegisterScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(top = 50.dp)
+                    modifier = Modifier.padding(top = 10.sdp())
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.ic_geniatea),
                         colorFilter = tint(MaterialTheme.colorScheme.onPrimary),
                         contentDescription = null,
                         modifier = Modifier
-                            .height(47.dp)
-                            .width(62.dp),
+                            .height(47.sdp())
+                            .width(62.sdp()),
                         contentScale = ContentScale.Crop
                     )
 
@@ -142,7 +150,7 @@ fun PreRegisterScreen(
                         style = DtGetaiTypography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
-                            .padding(top = 50.dp, bottom = 25.dp)
+                            .padding(top = 50.sdp(), bottom = 25.sdp())
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -155,7 +163,7 @@ fun PreRegisterScreen(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 8.dp)
+                        modifier = Modifier.padding(vertical = 8.sdp())
                     )
                     Buttons(onAction)
                 }
@@ -165,23 +173,18 @@ fun PreRegisterScreen(
                     modifier = Modifier
                         .wrapContentWidth(),
                 ) {
-                    Row{
-                        Text(
-                            text = stringResource(id = R.string.already_account1),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = stringResource(id = R.string.already_account2),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center,
-                            textDecoration = TextDecoration.Underline,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(start = 4.dp)
-                        )
-
-                    }
+                    Text(
+                        text = buildAnnotatedString {
+                            append(stringResource(id = R.string.already_account1))
+                            append(" ")
+                            withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
+                                append(stringResource(id = R.string.already_account2))
+                            }
+                        },
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
             }
         }
@@ -198,7 +201,7 @@ fun Buttons(onAction: (PreRegisterAction) -> Unit){
         Button(
             onClick = { onAction(PreRegisterAction.OnContinueClicked) },
             modifier = Modifier
-                .height(50.dp)
+                .height(50.sdp())
                 .fillMaxWidth(),
             colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -217,25 +220,28 @@ fun Buttons(onAction: (PreRegisterAction) -> Unit){
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 30.dp)
+                .padding(vertical = 30.sdp())
         )
 
         OutlinedButton(
             onClick = { onAction(PreRegisterAction.OnLoginGoogleClicked) },
             modifier = Modifier
-                .height(50.dp)
+                .heightIn(min = 50.sdp())
                 .fillMaxWidth(),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.google_logo),
                 contentDescription = stringResource(id = R.string.continue_google),
-                modifier = Modifier.padding(end = 8.dp)
+                modifier = Modifier
+                    .size(24.sdp())
+                    .padding(end = 8.sdp())
             )
             Text(
                 text = stringResource(id = R.string.continue_google),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = W700
+                fontWeight = W700,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -247,7 +253,7 @@ private fun UserInfoFields(userData: PreRegisterScreenState, onAction: (PreRegis
     Column(modifier = Modifier
         .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically))
+        verticalArrangement = Arrangement.spacedBy(12.sdp(), Alignment.CenterVertically))
     {
         UsernameEmail(userData, onAction)
     }
