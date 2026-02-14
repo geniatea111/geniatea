@@ -24,6 +24,7 @@ import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.presentation.components.WorkProgress
 import com.example.compose.geniatea.theme.GenIATEATheme
+import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.titleApp
 
 @Composable
@@ -73,7 +74,7 @@ fun ResourcesScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.sdp())
         ) {
 
             val saludo = state.content
@@ -82,7 +83,7 @@ fun ResourcesScreen(
                 text = saludo,
                 style = titleApp,
                 modifier = Modifier
-                    .padding(top = 20.dp)
+                    .padding(top = 20.sdp())
                     .align(Alignment.TopStart)
             )
 

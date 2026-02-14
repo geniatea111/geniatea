@@ -62,6 +62,8 @@ import com.example.compose.geniatea.R
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.google.android.material.color.MaterialColors.ALPHA_DISABLED
 import com.google.android.material.color.MaterialColors.ALPHA_FULL
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @Composable
 fun FormalizerRoot(
@@ -111,7 +113,7 @@ fun FormalizerScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.sdp())
         ) {
 
             Column(
@@ -133,7 +135,7 @@ fun FormalizerScreen(
                     onValueChange = { onAction(FormalizerAction.OnConsultaChange(it)) },
                     modifier = modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(200.sdp()),
                     placeholder = {
                         Text(
                             text = "Introduce el texto que quieres convertir",
@@ -144,7 +146,7 @@ fun FormalizerScreen(
                     },
 
                     singleLine = false,
-                    shape = RoundedCornerShape(30.dp),
+                    shape = RoundedCornerShape(30.sdp()),
 
                 )
 
@@ -152,7 +154,7 @@ fun FormalizerScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(top = 10.dp, bottom = 10.dp),
+                        .padding(top = 10.sdp(), bottom = 10.sdp()),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ){
@@ -167,8 +169,8 @@ fun FormalizerScreen(
                     Button(
                         onClick = { onAction(FormalizerAction.OnConvertPressed) },
                         modifier = Modifier
-                            .padding(start = 5.dp, top = 10.dp, bottom = 2.dp)
-                            .heightIn(min = 56.dp)
+                            .padding(start = 5.sdp(), top = 10.sdp(), bottom = 2.sdp())
+                            .heightIn(min = 56.sdp())
                     ) {
                         Text(
                             text = stringResource(id = R.string.convert),
@@ -187,7 +189,7 @@ fun FormalizerScreen(
                         onValueChange = { onAction(FormalizerAction.OnResultadoChange(it)) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp),
+                            .height(200.sdp()),
                         placeholder = {
                             Text(
                                 text = "Resultado",
@@ -197,7 +199,7 @@ fun FormalizerScreen(
                             )
                         },
                         singleLine = false,
-                        shape = RoundedCornerShape(30.dp),
+                        shape = RoundedCornerShape(30.sdp()),
                         readOnly = true
                     )
 
@@ -207,7 +209,7 @@ fun FormalizerScreen(
                             onClick = { onAction(FormalizerAction.OnCopyPressed(state.resultado)) },
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .padding(6.dp)
+                                .padding(6.sdp())
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.svg_copy),
@@ -245,12 +247,12 @@ fun <T> LargeDropdownMenu(
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = modifier.width(220.dp).height(IntrinsicSize.Min)) {
+    Box(modifier = modifier.width(220.sdp()).height(IntrinsicSize.Min)) {
         OutlinedTextField(
             label = { Text(label) },
             value = items.getOrNull(selectedIndex)?.let { selectedItemToString(it) } ?: "",
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(30.dp),
+            shape = RoundedCornerShape(30.sdp()),
             trailingIcon = {
                 val icon  = if (expanded) {
                     Icons.Filled.ArrowDropUp
@@ -279,7 +281,7 @@ fun <T> LargeDropdownMenu(
         ) {
             MaterialTheme {
                 Surface(
-                    shape = RoundedCornerShape(25.dp),
+                    shape = RoundedCornerShape(25.sdp()),
                 ) {
                     val listState = rememberLazyListState()
                     if (selectedIndex > -1) {
@@ -288,7 +290,7 @@ fun <T> LargeDropdownMenu(
                         }
                     }
 
-                    LazyColumn(modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp), state = listState) {
+                    LazyColumn(modifier = Modifier.fillMaxWidth().padding(vertical = 10.sdp()), state = listState) {
                         if (notSetLabel != null) {
                             item {
                                 LargeDropdownMenuItem(
@@ -311,7 +313,7 @@ fun <T> LargeDropdownMenu(
                             }
 
                             if (index < items.lastIndex) {
-                                Divider(modifier = Modifier.padding(horizontal = 10.dp))
+                                Divider(modifier = Modifier.padding(horizontal = 10.sdp()))
                             }
                         }
                     }
@@ -338,7 +340,7 @@ fun LargeDropdownMenuItem(
         Box(modifier = Modifier
             .clickable(enabled) { onClick() }
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 15.dp)) {
+            .padding(horizontal = 16.sdp(), vertical = 15.sdp())) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,

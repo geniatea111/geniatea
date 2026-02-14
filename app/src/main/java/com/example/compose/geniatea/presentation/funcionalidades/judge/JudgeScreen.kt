@@ -32,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @Composable
 fun JudgeRoot(
@@ -81,7 +83,7 @@ fun JudgeScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.sdp())
         ) {
 
             Column(
@@ -104,8 +106,8 @@ fun JudgeScreen(
                         onValueChange = { onAction(JudgeAction.OnConsultaChange(it)) },
                         modifier = modifier
                             .fillMaxWidth()
-                            .padding(bottom = 20.dp)
-                            .height(200.dp),
+                            .padding(bottom = 20.sdp())
+                            .height(200.sdp()),
                         placeholder = {
                             Text(
                                 text = "Introduce el texto que quieres convertir",
@@ -116,12 +118,13 @@ fun JudgeScreen(
                         },
 
                         singleLine = false,
-                        shape = RoundedCornerShape(30.dp))
+                        shape = RoundedCornerShape(30.sdp()))
+
 
                     Button(
                         onClick = { onAction(JudgeAction.OnJudgePressed) },
                         modifier = Modifier
-                            .padding(23.dp)
+                            .padding(23.sdp())
                             .align(Alignment.BottomCenter)
                     ) {
                         Text(
@@ -137,7 +140,7 @@ fun JudgeScreen(
                     onValueChange = { onAction(JudgeAction.OnResultadoChange(it)) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(200.sdp()),
                     placeholder = {
                         Text(
                             text = "Resultado",
@@ -147,7 +150,7 @@ fun JudgeScreen(
                         )
                     },
                     singleLine = false,
-                    shape = RoundedCornerShape(30.dp),
+                    shape = RoundedCornerShape(30.sdp()),
                     readOnly = true,
 
 

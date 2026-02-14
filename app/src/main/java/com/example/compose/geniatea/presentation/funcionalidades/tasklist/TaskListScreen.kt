@@ -59,6 +59,8 @@ import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.DMSansFont
 import com.example.compose.geniatea.theme.subtitleApp
 import com.example.compose.geniatea.theme.titleApp
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @Composable
 fun ResourcesRoot(
@@ -124,7 +126,7 @@ fun ResourcesScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .imePadding()
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 20.sdp())
             ) {
                 Box(modifier = Modifier.weight(1f)) {
                     when {
@@ -147,7 +149,7 @@ fun ResourcesScreen(
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(bottom = 10.dp)
+                                    .padding(bottom = 10.sdp())
                                     .verticalScroll(rememberScrollState())
                             ) {
                                 TaskList(
@@ -180,8 +182,8 @@ fun ResourcesScreen(
                     modifier = Modifier
                         .align(Alignment.End)
                         .fillMaxWidth()
-                        .padding(bottom = 20.dp)
-                        .height(50.dp)
+                        .padding(bottom = 20.sdp())
+                        .height(50.sdp())
                 ) {
                     Text(
                         text = "Nueva tarea",
@@ -207,7 +209,7 @@ fun emptyState(modifier: Modifier) {
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(200.sdp())
                 .align(Alignment.CenterHorizontally)
         )
 
@@ -216,7 +218,7 @@ fun emptyState(modifier: Modifier) {
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(top = 20.dp),
+                .padding(top = 20.sdp()),
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.outline
         )
@@ -226,7 +228,7 @@ fun emptyState(modifier: Modifier) {
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .padding(20.dp),
+                .padding(20.sdp()),
             textAlign = TextAlign.Center,
             fontWeight = W400,
             color = MaterialTheme.colorScheme.outline
@@ -242,7 +244,7 @@ fun TaskList(
 ) {
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.sdp()),
         modifier = Modifier.fillMaxWidth()
     ) {
         tasks.forEachIndexed { index, task ->
@@ -273,15 +275,15 @@ fun TaskListCompletadas(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 40.dp)
+                .padding(top = 40.sdp())
         ) {
             Text(
                 text = "Completadas",
                 style = titleApp,
-                modifier = Modifier.padding(bottom = 10.dp)
+                modifier = Modifier.padding(bottom = 10.sdp())
             )
 
-            Column(verticalArrangement = Arrangement.spacedBy(15.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(15.sdp())) {
                 completedTasks.forEach { (originalIndex, task) ->
                     TaskNodeItem(
                         node = task,
@@ -317,13 +319,13 @@ fun TaskNodeItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(35.dp))
+            .clip(RoundedCornerShape(35.sdp()))
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(
-                top = 20.dp,
-                bottom = 20.dp,
-                start = (20.dp + (depth * 15).dp),
-                end = 20.dp
+                top = 20.sdp(),
+                bottom = 20.sdp(),
+                start = (20.sdp() + (depth * 15).sdp()),
+                end = 20.sdp()
             )
             .alpha(alpha)
 
@@ -340,14 +342,14 @@ fun TaskNodeItem(
                     unselectedColor = MaterialTheme.colorScheme.primary
                 )
             )
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(8.sdp()))
             Text(
                 text = node.title,
                 style = TextStyle(
                     textDecoration = textDecoration,
                     fontFamily = DMSansFont,
                     fontWeight = W800,
-                    fontSize = 16.sp
+                    fontSize = 16.ssp()
                 ),
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.weight(1f)
@@ -367,7 +369,7 @@ fun TaskNodeItem(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 10.dp)
+                    .padding(top = 10.sdp())
             ) {
                 node.subtasks.forEachIndexed { index, subtask ->
                     TaskNodeItem(

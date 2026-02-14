@@ -44,6 +44,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @Composable
 fun FavoriteResponsesRoot(
@@ -85,7 +87,7 @@ fun FavoriteResponsesScreen(
                     Text(
                         text = "Consultas favoritas",
                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
-                        fontSize = 22.sp
+                        fontSize = 22.ssp()
                     )
                 },
                 navigationIcon = {
@@ -93,7 +95,7 @@ fun FavoriteResponsesScreen(
                         Icon(
                             imageVector = Icons.Default.ArrowBackIosNew,
                             contentDescription = "Back",
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(20.sdp())
                         )
                     }
                 },
@@ -109,15 +111,15 @@ fun FavoriteResponsesScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 24.sdp())
         ) {
             if (state.favorites.isEmpty() && !state.isLoading) {
                 EmptyState()
             } else {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(top = 16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.sdp()),
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(top = 16.sdp())
                 ) {
                     items(state.favorites) { item ->
                         FavoriteItemCard(item = item, onAction = onAction)
@@ -140,8 +142,8 @@ fun EmptyState() {
             imageVector = Icons.Default.Favorite,
             contentDescription = null,
             modifier = Modifier
-                .size(80.dp)
-                .padding(bottom = 16.dp),
+                .size(80.sdp())
+                .padding(bottom = 16.sdp()),
             tint = Color(0xFF6495ED) // Cornflower blue ish
         )
         
@@ -150,17 +152,17 @@ fun EmptyState() {
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = Color.Gray,
-            fontSize = 18.sp
+            fontSize = 18.ssp()
         )
         
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.sdp()))
         
         Text(
             text = "Guarda tus consultas haciendo clic\nen el icono \u2661",
             style = MaterialTheme.typography.bodyMedium,
             color = Color.Gray,
             textAlign = TextAlign.Center,
-            lineHeight = 24.sp
+            lineHeight = 24.ssp()
         )
     }
 }
@@ -173,10 +175,10 @@ fun FavoriteItemCard(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.sdp()))
             .background(Color(0xFFE8F0FE)) // Light Blue
             .clickable { onAction(FavoriteAction.OnItemClick(item.sessionId)) }
-            .padding(20.dp)
+            .padding(20.sdp())
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -192,7 +194,7 @@ fun FavoriteItemCard(
                     color = Color.Gray
                 )
                 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.sdp()))
                 
                 if (!item.previousMessage.isNullOrBlank()) {
                     Text(
@@ -200,12 +202,12 @@ fun FavoriteItemCard(
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.sdp()))
                     HorizontalDivider(
-                        thickness = 1.dp,
+                        thickness = 1.sdp(),
                         color = Color.White.copy(alpha = 0.5f)
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.sdp()))
                 }
 
                 Text(
@@ -216,12 +218,12 @@ fun FavoriteItemCard(
                 )
             }
             
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(16.sdp()))
             
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = "Go to chat",
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(16.sdp()),
                 tint = Color.Gray
             )
         }

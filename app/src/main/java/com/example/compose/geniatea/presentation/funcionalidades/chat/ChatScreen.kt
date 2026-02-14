@@ -85,6 +85,8 @@ import com.example.compose.geniatea.theme.GenIATEATheme
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @Composable
 fun ChatRoot(
@@ -150,14 +152,14 @@ fun ChatScreen(
                 .padding(bottom = paddingValues.calculateBottomPadding())
                 .padding(top = paddingValues.calculateTopPadding())
                 .background(color = Color.Transparent)
-                .border(width = 2.dp, color = Color.Transparent),
+                .border(width = 2.sdp(), color = Color.Transparent),
         ) {
             if( uiState.messages.isEmpty() ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(16.sdp()),
                     contentAlignment = Alignment.Center,
                 ){
                     Column(
@@ -169,7 +171,7 @@ fun ChatScreen(
                         Image(
                             painter = painterResource(id = R.drawable.geniv2),
                             contentDescription = stringResource(id = R.string.empty_chat),
-                            modifier = Modifier.size(120.dp).padding(bottom = 20.dp)
+                            modifier = Modifier.size(120.sdp()).padding(bottom = 20.sdp())
                         )
                         Text(
                             text = stringResource(id = R.string.no_messages),
@@ -191,9 +193,9 @@ fun ChatScreen(
 
 
             val bottomPaddingInput = if(isImeVisible){
-                10.dp
+                10.sdp()
             }else{
-                25.dp
+                25.sdp()
             }
 
             UserInput(
@@ -206,7 +208,7 @@ fun ChatScreen(
                         }
                     }
                 },
-                modifier = Modifier.imePadding().padding(top = 10.dp, start = 15.dp, end = 15.dp, bottom = bottomPaddingInput),
+                modifier = Modifier.imePadding().padding(top = 10.sdp(), start = 15.sdp(), end = 15.sdp(), bottom = bottomPaddingInput),
             )
         }
     }
@@ -256,17 +258,17 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(8.dp),
+                            .padding(8.sdp()),
                         contentAlignment = Alignment.CenterStart // Align to left
                     ) {
                         Surface(
-                            shape = ChatBubbleShapeGeni,
+                            shape = ChatBubbleShapeGeni(),
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.5f),
-                            modifier = Modifier.padding(start = 0.dp) // Maintain consistent padding
+                            modifier = Modifier.padding(start = 0.sdp()) // Maintain consistent padding
                         ) {
                             TypingIndicator(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                                dotSize = 8.dp,
+                                modifier = Modifier.padding(horizontal = 16.sdp(), vertical = 12.sdp()),
+                                dotSize = 8.sdp(),
                                 dotColor = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -293,12 +295,11 @@ fun Messages(messages: List<Message>, scrollState: LazyListState, modifier: Modi
                     }
                 }
             },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp),
+            modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.sdp()),
         )
     }
 }
 
-private val JumpToBottomThreshold = 56.dp
 
 
 @Composable
@@ -309,12 +310,12 @@ fun Message(
 ) {
 
     Row(
-        modifier = Modifier.padding(top = 8.dp)
+        modifier = Modifier.padding(top = 8.sdp())
     ) {
         AuthorAndTextMessage(
             msg = msg,
             isUserMe = isUserMe,
-            modifier = Modifier.padding(end = 16.dp, start = 16.dp).weight(1f, fill = true),
+            modifier = Modifier.padding(end = 16.sdp(), start = 16.sdp()).weight(1f, fill = true),
             onAction
         )
     }
@@ -333,24 +334,27 @@ fun AuthorAndTextMessage(
     ) {
 
         ChatItemBubble(msg, isUserMe, onAction)
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(8.sdp()))
     }
 }
 
-private val ChatBubbleShapeGeni = RoundedCornerShape(4.dp, 20.dp, 20.dp, 20.dp)
-private val ChatBubbleShapeMe = RoundedCornerShape(20.dp, 4.dp, 20.dp, 20.dp)
+@Composable
+private fun ChatBubbleShapeGeni() = RoundedCornerShape(4.sdp(), 20.sdp(), 20.sdp(), 20.sdp())
+
+@Composable
+private fun ChatBubbleShapeMe() = RoundedCornerShape(20.sdp(), 4.sdp(), 20.sdp(), 20.sdp())
 
 @Composable
 fun DayHeader(dayString: String) {
     Row(
         modifier = Modifier
-            .padding(vertical = 8.dp, horizontal = 16.dp)
-            .height(16.dp),
+            .padding(vertical = 8.sdp(), horizontal = 16.sdp())
+            .height(16.sdp()),
     ) {
         DayHeaderLine()
         Text(
             text = dayString,
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 16.sdp()),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -372,9 +376,9 @@ private fun RowScope.DayHeaderLine() {
 fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -> Unit = {}) {
 
     val chatBubbleShape = if (isUserMe) {
-        ChatBubbleShapeMe
+        ChatBubbleShapeMe()
     } else {
-        ChatBubbleShapeGeni
+        ChatBubbleShapeGeni()
     }
 
     val backgroundBubbleColor = if (isUserMe) {
@@ -386,43 +390,43 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
     Column{
         if(!isUserMe){
             Row (
-                modifier = Modifier.align(Alignment.End).padding(end = 45.dp),
+                modifier = Modifier.align(Alignment.End).padding(end = 45.sdp()),
             ){
                 IconButton(
                     onClick = { onAction(ChatAction.OnSoundPressed(message.content)) },
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(32.sdp())
 
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.svg_sound),
                         contentDescription = stringResource(id = R.string.home),
-                        modifier = Modifier.size(24.dp).alpha(0.6f),
+                        modifier = Modifier.size(24.sdp()).alpha(0.6f),
                     )
                 }
 
                 IconButton(
                     onClick = { /* Handle translate click */ },
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(32.sdp())
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.svg_translate),
                         contentDescription = stringResource(id = R.string.home),
-                        modifier = Modifier.size(24.dp).alpha(0.6f),
+                        modifier = Modifier.size(24.sdp()).alpha(0.6f),
                     )
                 }
 
                 IconButton(
                     onClick = { onAction(ChatAction.OnCopyPressed(message.content)) },
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(32.sdp())
 
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.svg_copy),
                         contentDescription = stringResource(id = R.string.home),
-                        modifier = Modifier.size(24.dp).alpha(0.6f),
+                        modifier = Modifier.size(24.sdp()).alpha(0.6f),
                     )
                 }
 
@@ -430,14 +434,14 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                 IconButton(
                     onClick = { onAction(ChatAction.OnMessageFavorite(message.id, context)) },
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(32.sdp())
                 ) {
                     val icon = if (message.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder
                     
                     Icon(
                         imageVector = icon,
                         contentDescription = stringResource(id = R.string.home), // Should ideally be "Favorite"
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(24.sdp()),
                         tint = if (message.isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
@@ -468,7 +472,7 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                          Image(
                             bitmap = bitmap,
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.size(160.dp),
+                            modifier = Modifier.size(160.sdp()),
                             contentDescription = stringResource(id = R.string.attached_image),
                         )
                     }
@@ -477,12 +481,12 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                     Image(
                         painter = painter,
                         contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(160.dp),
+                        modifier = Modifier.size(160.sdp()),
                         contentDescription = stringResource(id = R.string.attached_image),
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(4.sdp()))
         }
 
         val pictograms = message.pictograms
@@ -492,27 +496,27 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                 shape = chatBubbleShape,
                 modifier = Modifier
                     .align(if (isUserMe) Alignment.End else Alignment.Start)
-                    .padding(start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp)
+                    .padding(start = if (isUserMe) 40.sdp() else 0.sdp(), end = if (isUserMe) 0.sdp() else 40.sdp())
             ) {
                 FlowRow(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                    modifier = Modifier.padding(16.sdp()),
+                    horizontalArrangement = Arrangement.spacedBy(8.sdp()),
+                    verticalArrangement = Arrangement.spacedBy(8.sdp())
                 ) {
                     pictograms.forEach { pictogram ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.width(80.dp)
+                        modifier = Modifier.width(80.sdp())
                     ) {
                         Surface(
-                            shape = RoundedCornerShape(8.dp),
+                            shape = RoundedCornerShape(8.sdp()),
                             color = Color.White,
-                            modifier = Modifier.size(80.dp)
+                            modifier = Modifier.size(80.sdp())
                         ) {
                             Image(
                                 painter = rememberAsyncImagePainter(model = pictogram.url),
                                 contentDescription = pictogram.word,
-                                modifier = Modifier.padding(4.dp),
+                                modifier = Modifier.padding(4.sdp()),
                                 contentScale = ContentScale.Fit
                             )
                         }
@@ -520,7 +524,7 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                             text = pictogram.word,
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(top = 4.dp),
+                            modifier = Modifier.padding(top = 4.sdp()),
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             maxLines = 2,
                             overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
@@ -534,7 +538,7 @@ fun ChatItemBubble(message: Message, isUserMe: Boolean, onAction: (ChatAction) -
                 shape = chatBubbleShape,
                 modifier = Modifier
                     .align(if (isUserMe) Alignment.End else Alignment.Start)
-                    .padding(start = if (isUserMe) 40.dp else 0.dp, end = if (isUserMe) 0.dp else 40.dp)
+                    .padding(start = if (isUserMe) 40.sdp() else 0.sdp(), end = if (isUserMe) 0.sdp() else 40.sdp())
             ) {
                 ClickableMessage(
                     message = message,
@@ -555,7 +559,7 @@ fun ClickableMessage(message: Message, isUserMe: Boolean) {
         text = message.content,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.bodyLarge,
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(16.sdp()),
     )
 }
 
