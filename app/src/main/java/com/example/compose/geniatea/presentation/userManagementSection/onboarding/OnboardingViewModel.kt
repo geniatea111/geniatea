@@ -126,6 +126,7 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
                         )
                         // Guardamos los cambios en local también para mantener consistencia
                         dataStore.updateUser(updatedUser)
+                        dataStore.saveOnboardingCompleted(true)
 
                         // -------------------------------------------------------------------------
                         // AVATAR / VIDEO UPLOAD LOGIC
