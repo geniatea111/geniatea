@@ -82,3 +82,14 @@ fun Int.ssp(): TextUnit {
     }
     return (this * scale).sp
 }
+@Composable
+fun Double.ssp(): TextUnit {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.toFloat()
+    val scale = if (screenWidth <= 360) {
+        (screenWidth / REFERENCE_WIDTH) * 0.85f
+    } else {
+        screenWidth / REFERENCE_WIDTH
+    }
+    return (this * scale).sp
+}

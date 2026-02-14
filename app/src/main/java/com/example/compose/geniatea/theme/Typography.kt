@@ -15,8 +15,9 @@
  */
 
 package com.example.compose.geniatea.theme
-
+ 
 import androidx.compose.material3.Typography
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -26,6 +27,119 @@ import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.example.compose.geniatea.R
+
+@Composable
+fun getResponsiveGenIATEATypography(): Typography {
+    return Typography(
+        displayLarge = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Light,
+            fontSize = 57.ssp(),
+            lineHeight = 64.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        displayMedium = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Light,
+            fontSize = 45.ssp(),
+            lineHeight = 52.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        displaySmall = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Normal,
+            fontSize = 36.ssp(),
+            lineHeight = 44.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        headlineLarge = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 32.ssp(),
+            lineHeight = 40.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        headlineMedium = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 28.ssp(),
+            lineHeight = 36.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        headlineSmall = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 24.ssp(),
+            lineHeight = 32.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        titleLarge = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 21.ssp(),
+            lineHeight = 28.ssp(),
+            letterSpacing = 0.ssp(),
+        ),
+        titleMedium = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.ssp(),
+            lineHeight = 24.ssp(),
+            letterSpacing = 0.15.ssp(),
+        ),
+        titleSmall = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Bold,
+            fontSize = 14.ssp(),
+            lineHeight = 20.ssp(),
+            letterSpacing = 0.1.ssp(),
+        ),
+        bodyLarge = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Normal,
+            fontSize = 16.ssp(),
+            lineHeight = 24.ssp(),
+            letterSpacing = 0.15.ssp(),
+        ),
+        bodyMedium = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Medium,
+            fontSize = 14.ssp(),
+            lineHeight = 22.ssp(),
+            letterSpacing = 0.25.ssp(),
+        ),
+        bodySmall = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.Normal,
+            fontSize = 12.ssp(),
+            lineHeight = 16.ssp(),
+            letterSpacing = 0.4.ssp(),
+        ),
+        labelLarge = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.ssp(),
+            lineHeight = 20.ssp(),
+            letterSpacing = 0.1.ssp(),
+        ),
+        labelMedium = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 12.ssp(),
+            lineHeight = 16.ssp(),
+            letterSpacing = 0.5.ssp(),
+        ),
+        labelSmall = TextStyle(
+            fontFamily = DMSansFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 11.ssp(),
+            lineHeight = 16.ssp(),
+            letterSpacing = 0.5.ssp(),
+        ),
+    )
+}
+
+
 
 val provider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",

@@ -38,6 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.theme.titleApp
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.paint
@@ -94,13 +96,14 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .imePadding()
                 .verticalScroll(rememberScrollState())
-                .padding(top = 0.dp, start = 24.dp, end = 24.dp, bottom = 24.dp)
+                .padding(top = 0.sdp(), start = 24.sdp(), end = 24.sdp(), bottom = 24.sdp())
         ) {
             Box(
                 modifier = Modifier
-                    .padding(bottom = 16.dp)
+                    .height(300.sdp())
+                    .padding(bottom = 16.sdp())
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp, 20.dp, 20.dp, 20.dp))
+                    .clip(RoundedCornerShape(20.sdp(), 20.sdp(), 20.sdp(), 20.sdp()))
                     .paint(
                         painter = painterResource(id = R.drawable.background_home),
                         contentScale = ContentScale.Crop,
@@ -110,16 +113,16 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(0.dp, 0.dp, 20.dp, 20.dp))
-                        .padding(top = 40.dp, bottom = 40.dp)
-                        .padding(horizontal = 24.dp),
+                        .clip(RoundedCornerShape(0.sdp(), 0.sdp(), 20.sdp(), 20.sdp()))
+                        .padding(top = 8.sdp(), bottom = 8.sdp())
+                        .padding(horizontal = 24.sdp()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = state.saludo,
                         style = titleApp,
                         color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 24.sp,
+                        fontSize = 21.ssp(),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center
                     )
@@ -129,18 +132,18 @@ fun HomeScreen(
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
-                            .padding(top = 10.dp, bottom = 40.dp)
+                            .padding(top = 4.sdp(), bottom = 8.sdp())
                             .fillMaxWidth(),
-                        fontSize = 18.sp,
+                        fontSize = 15.ssp(),
                         textAlign = TextAlign.Center
 
                     )
 
                     Button(
                         modifier = Modifier
-                            .heightIn(min = 60.dp)
+                            .heightIn(min = 45.sdp())
                             .fillMaxWidth()
-                            .padding(horizontal = 30.dp),
+                            .padding(horizontal = 30.sdp()),
                         onClick = { onAction(HomeAction.OnChatPressed) },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.surface,
@@ -170,10 +173,10 @@ fun RecentConversationsCard(conversations: List<Conversation>, onAction: (HomeAc
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(bottom = 16.dp)
-            .clip(RoundedCornerShape(24.dp))
+            .padding(bottom = 16.sdp())
+            .clip(RoundedCornerShape(24.sdp()))
             .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(16.dp)
+            .padding(16.sdp())
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -194,11 +197,11 @@ fun RecentConversationsCard(conversations: List<Conversation>, onAction: (HomeAc
                 painter = painterResource(id = R.drawable.chevron_right),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(20.sdp())
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.sdp()))
 
         if (conversations.isEmpty()) {
             Text(
@@ -206,11 +209,11 @@ fun RecentConversationsCard(conversations: List<Conversation>, onAction: (HomeAc
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 16.sdp()),
                 textAlign = TextAlign.Center
             )
         } else {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(8.sdp())) {
                 conversations.take(2).forEach { conversation ->
                     RecentConversationItem(conversation = conversation, onAction = onAction)
                 }
@@ -225,12 +228,12 @@ fun RecentConversationItem(conversation: Conversation, onAction: (HomeAction) ->
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onAction(HomeAction.OnRecentChatPressed(conversation.id, conversation.title)) }
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.sdp()),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(40.sdp())
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.surface),
             contentAlignment = Alignment.Center
@@ -238,12 +241,12 @@ fun RecentConversationItem(conversation: Conversation, onAction: (HomeAction) ->
             Icon(
                 imageVector = Icons.Default.ChatBubble,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.sdp()),
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(16.sdp()))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -261,7 +264,7 @@ fun RecentConversationItem(conversation: Conversation, onAction: (HomeAction) ->
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(24.sdp()),
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         )
     }
@@ -274,34 +277,34 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyLi
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.sdp())
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.sdp())
         ) {
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(25.dp))
+                    .clip(RoundedCornerShape(25.sdp()))
                     .background(MaterialTheme.colorScheme.primaryContainer)
-                    .heightIn(max = 300.dp)
-                    .padding(20.dp)
+                    .heightIn(max = 300.sdp())
+                    .padding(20.sdp())
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.sdp())
                 ) {
                     Button(
                         onClick = { onAction(HomeAction.OnTaskListPressed) },
                         modifier = Modifier
-                            .padding(bottom = 10.dp)
+                            .padding(bottom = 10.sdp())
                             .fillMaxWidth(1f)
-                            .height(30.dp),
-                        shape = RoundedCornerShape(20.dp),
+                            .height(30.sdp()),
+                        shape = RoundedCornerShape(20.sdp()),
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = MaterialTheme.colorScheme.onSurface,
                             containerColor = MaterialTheme.colorScheme.primaryContainer
@@ -321,7 +324,7 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyLi
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.onSurface,
                                 modifier = Modifier
-                                    .padding(start = 10.dp)
+                                    .padding(start = 10.sdp())
                             )
                         }
                     }
@@ -330,8 +333,8 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyLi
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(max = 250.dp), // adjust height as needed
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                                .heightIn(max = 250.sdp()), // adjust height as needed
+                            verticalArrangement = Arrangement.spacedBy(10.sdp())
                         ) {
                             items(tasks.size) { index ->
                                 task(text = tasks[index])
@@ -341,10 +344,10 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyLi
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .heightIn(min = 50.dp)
-                                .clip(RoundedCornerShape(50.dp))
+                                .heightIn(min = 50.sdp())
+                                .clip(RoundedCornerShape(50.sdp()))
                                 .background(MaterialTheme.colorScheme.surface)
-                                .padding(15.dp),
+                                .padding(15.sdp()),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
@@ -366,36 +369,35 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyLi
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.sdp())
         ) {
             Button(
                 onClick = { onAction(HomeAction.OnJudgePressed) },
                 modifier = Modifier
                     .weight(1f)
-                    .height(55.dp),
-                shape = RoundedCornerShape(30.dp),
+                    .heightIn(min = 55.sdp()),
+                shape = RoundedCornerShape(30.sdp()),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.primaryContainer
-
                 ),
+                contentPadding = PaddingValues(horizontal = 12.sdp(), vertical = 8.sdp())
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         modifier = Modifier
+                            .align(Alignment.CenterStart)
                             .fillMaxWidth()
-                            .weight(1f),
+                            .padding(start = 16.sdp(), end = 32.sdp()),
                         text = "Intención",
                         textAlign = TextAlign.Start,
-                        fontWeight = W700
+                        fontSize = 13.ssp()
                     )
                     Icon(
                         painter = painterResource(id = R.drawable.chevron_right),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
             }
@@ -404,30 +406,29 @@ fun optionsButtons(onAction: (HomeAction) -> Unit, tasks: List<String> = emptyLi
                 onClick = { onAction(HomeAction.OnFormalizerPressed) },
                 modifier = Modifier
                     .weight(1f)
-                    .height(55.dp),
-                shape = RoundedCornerShape(30.dp),
+                    .heightIn(min = 55.sdp()),
+                shape = RoundedCornerShape(30.sdp()),
                 colors = ButtonDefaults.outlinedButtonColors(
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 ),
+                contentPadding = PaddingValues(horizontal = 12.sdp(), vertical = 8.sdp())
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         modifier = Modifier
+                            .align(Alignment.CenterStart)
                             .fillMaxWidth()
-                            .weight(1f),
+                            .padding(start = 16.sdp(), end = 32.sdp()),
                         text = "Reescribir",
                         textAlign = TextAlign.Start,
-                        fontWeight = W700
+                        fontSize = 13.ssp()
                     )
                     Icon(
                         painter = painterResource(id = R.drawable.chevron_right),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .padding(start = 10.dp)
+                        modifier = Modifier.align(Alignment.CenterEnd)
                     )
                 }
             }
@@ -440,10 +441,10 @@ fun task(text: String) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 50.dp)
-            .clip(RoundedCornerShape(50.dp))
+            .heightIn(min = 50.sdp())
+            .clip(RoundedCornerShape(50.sdp()))
             .background(MaterialTheme.colorScheme.surface)
-            .padding(15.dp),
+            .padding(15.sdp()),
         contentAlignment = Alignment.CenterStart
     ) {
         Text(

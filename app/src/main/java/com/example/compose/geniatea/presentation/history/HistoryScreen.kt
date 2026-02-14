@@ -40,6 +40,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.compose.geniatea.data.backendConection.ApiService
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,8 +85,8 @@ fun HistoryScreen(viewModel: HistoryViewModel, onAction: (HistoryAction) -> Unit
                 }
                 else -> {
                     LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        contentPadding = PaddingValues(16.sdp()),
+                        verticalArrangement = Arrangement.spacedBy(8.sdp())
                     ) {
                         items(state.sessions) { session ->
                             HistoryItem(session = session, onAction = onAction)
@@ -102,12 +104,12 @@ fun HistoryItem(session: ApiService.ChatSessionResponse, onAction: (HistoryActio
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onAction(HistoryAction.OnSessionClicked(session.sessionId)) }
-            .padding(8.dp),
+            .padding(8.sdp()),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(40.dp)
+                .size(40.sdp())
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
@@ -115,12 +117,12 @@ fun HistoryItem(session: ApiService.ChatSessionResponse, onAction: (HistoryActio
             Icon(
                 imageVector = Icons.Default.ChatBubble,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.sdp()),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(16.sdp()))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -138,7 +140,7 @@ fun HistoryItem(session: ApiService.ChatSessionResponse, onAction: (HistoryActio
         Icon(
             imageVector = Icons.Default.ChevronRight,
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(24.sdp()),
             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
         )
     }

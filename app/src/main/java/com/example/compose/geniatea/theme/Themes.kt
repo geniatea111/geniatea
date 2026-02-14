@@ -241,7 +241,7 @@ fun GenIATEATheme(
     CompositionLocalProvider(LocalExtraColors provides extraColors, androidx.compose.ui.platform.LocalDensity provides scaledDensity) {
         MaterialTheme(
             colorScheme = myColorScheme,
-            typography = GenIATEATypography,
+            typography = getResponsiveGenIATEATypography(),
             content = content,
         )
     }
