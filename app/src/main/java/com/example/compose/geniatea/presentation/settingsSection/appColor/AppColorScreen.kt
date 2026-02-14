@@ -26,6 +26,8 @@ import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
 import com.example.compose.geniatea.presentation.components.WorkProgress
 
+import com.example.compose.geniatea.theme.sdp
+
 @Composable
 fun AppIconRoot(
     viewModel: AppColorViewModel,
@@ -55,21 +57,21 @@ fun AppIconScreen(
                 onNavIconPressed = { onAction(AppColorAction.OnBackPressed) }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
                 .background(MaterialTheme.colorScheme.background),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(onClick = {onAction(AppColorAction.OnBluePressed)}) {

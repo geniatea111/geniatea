@@ -41,6 +41,7 @@ import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.compose.geniatea.presentation.components.CustomDialogLanguage
+import com.example.compose.geniatea.theme.sdp
 
 @Composable
 fun PreferencesRoot(
@@ -82,7 +83,7 @@ fun AboutScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
                 .background(MaterialTheme.colorScheme.background),
         ) {
             var showDialog by remember { mutableStateOf(false) }
@@ -91,8 +92,8 @@ fun AboutScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 20.dp),
+                    .padding(horizontal = 16.sdp())
+                    .padding(top = 20.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 ButtonConfig(
@@ -157,18 +158,18 @@ fun ButtonConfig(
     OutlinedButton(
         onClick = { onClick() },
         modifier = Modifier
-            .height(55.dp)
+            .height(55.sdp())
             .fillMaxWidth()
-            .offset(y = offsetValue.dp),
+            .offset(y = offsetValue.sdp()),
         shape = shape,
-        contentPadding = PaddingValues(16.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        contentPadding = PaddingValues(16.sdp()),
+        border = BorderStroke(1.sdp(), MaterialTheme.colorScheme.outlineVariant),
     ) {
         Icon(
             painter =  painterResource(id = icon),
             tint = MaterialTheme.colorScheme.primary,
             contentDescription = null,
-            modifier = Modifier.padding(end = 10.dp),
+            modifier = Modifier.padding(end = 10.sdp()),
         )
         Text(
             text = text,

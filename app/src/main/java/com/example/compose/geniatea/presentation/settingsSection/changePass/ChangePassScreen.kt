@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.compose.geniatea.presentation.components.TextField
 import com.example.compose.geniatea.data.meChangePass
+import com.example.compose.geniatea.theme.sdp
 
 @Composable
 fun ChangePassRoot(
@@ -69,7 +70,7 @@ fun ChangePassScreen(
                 onNavIconPressed = { onAction(ChangePassAction.OnBackPressed) },
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -83,14 +84,14 @@ fun ChangePassScreen(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
                     .align(Alignment.Center)
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(20.dp)) // top spacing
+                Spacer(modifier = Modifier.height(20.sdp())) // top spacing
                 Passwords(state, onAction)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.sdp()))
                 Buttons(onAction)
-                Spacer(modifier = Modifier.height(32.dp)) // bottom spacing
+                Spacer(modifier = Modifier.height(32.sdp())) // bottom spacing
             }
         }
     }
@@ -107,7 +108,7 @@ fun Buttons(onAction: (ChangePassAction) -> Unit){
         Button(
             onClick = { onAction(ChangePassAction.OnChangePassClicked) },
             modifier = Modifier
-                .heightIn(min = 45.dp)
+                .heightIn(min = 45.sdp())
                 .fillMaxWidth()
         ) {
             Text(
@@ -129,11 +130,11 @@ private fun Passwords(userData: ChangePassScreenState, onAction: (ChangePassActi
     ) {
         Column(modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.sdp())
         ) {
 
             CurrentPassword(userData, onAction)
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.sdp()))
             Password(userData, onAction)
             ConfirmPassword(userData, onAction)
 
@@ -143,7 +144,7 @@ private fun Passwords(userData: ChangePassScreenState, onAction: (ChangePassActi
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.sdp())
             )
         }
     }
@@ -158,7 +159,7 @@ private fun CurrentPassword(userData: ChangePassScreenState, onAction: (ChangePa
         isError = userData.errorCurrentPassword,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = true,
     )
 }
@@ -172,7 +173,7 @@ private fun Password(userData: ChangePassScreenState, onAction: (ChangePassActio
         isError = userData.errorNewPassword,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = true,
     )
 }
@@ -186,7 +187,7 @@ private fun ConfirmPassword(userData: ChangePassScreenState, onAction: (ChangePa
         isError = userData.errorConfirmNewPassword,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = true,
     )
 }

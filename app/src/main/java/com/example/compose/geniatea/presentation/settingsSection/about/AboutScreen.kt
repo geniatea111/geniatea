@@ -25,6 +25,8 @@ import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
 import androidx.compose.ui.text.style.TextAlign
 
+import com.example.compose.geniatea.theme.sdp
+
 @Composable
 fun AboutRoot(
     viewModel: AboutViewModel,
@@ -54,21 +56,21 @@ fun AboutScreen(
                 onNavIconPressed = { onAction(AboutAction.OnBackPressed) }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
                 .background(MaterialTheme.colorScheme.background),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -81,7 +83,7 @@ fun AboutScreen(
                     textAlign = TextAlign.Justify,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.sdp())
                 )
 
                 Text(

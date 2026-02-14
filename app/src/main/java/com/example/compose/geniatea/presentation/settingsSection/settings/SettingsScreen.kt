@@ -62,6 +62,8 @@ import com.example.compose.geniatea.presentation.userManagementSection.preregist
 import com.example.compose.geniatea.theme.DtGetaiFont
 import com.example.compose.geniatea.theme.DtGetaiTypography
 import com.example.compose.geniatea.theme.GenIATEATheme
+import com.example.compose.geniatea.theme.sdp
+import com.example.compose.geniatea.theme.ssp
 
 
 @RequiresApi(Build.VERSION_CODES.N)
@@ -101,7 +103,7 @@ fun SettingsScreen(
                 onNavIconPressed = { onAction(SettingsAction.OnBackPressed) }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
 
         var showDialog by remember { mutableStateOf(false) }
@@ -111,43 +113,46 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
 
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = 20.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                Box(
                   modifier = Modifier
-                      .clip(RoundedCornerShape(20.dp))
+                      .clip(RoundedCornerShape(20.sdp()))
                       .background(MaterialTheme.colorScheme.primaryContainer)
-                      .paint(
-                          painter = painterResource(id = R.drawable.deco2),
-                          contentScale = ContentScale.Crop,
-                            alignment = Alignment.CenterEnd
-
-                      )
+                      .background(MaterialTheme.colorScheme.primaryContainer)
                       .fillMaxWidth()
                ){
+                   Image(
+                       painter = painterResource(id = R.drawable.deco2),
+                       contentDescription = null,
+                       contentScale = ContentScale.Crop,
+                       alignment = Alignment.CenterEnd,
+                       modifier = Modifier.matchParentSize()
+                   )
 
                    Row(
                        modifier = Modifier
-                           .padding(20.dp)
+                           .padding(20.sdp())
                            .fillMaxWidth(),
                        verticalAlignment = Alignment.CenterVertically
                    ){
                        Column(
-                           modifier = Modifier.weight(1f).padding(top = 5.dp)
+                           modifier = Modifier.weight(1f).padding(top = 5.sdp())
                        ){
                            Text(
                                text = if (state.name.isNotEmpty()) state.name else "Usuario",
                                style =  DtGetaiTypography.titleLarge,
-                               fontSize = 17.sp
+                               fontSize = 17.ssp()
+                               
 
                            )
 
@@ -174,8 +179,8 @@ fun SettingsScreen(
                 Button(
                     onClick = { showDialog = showDialog.not() },
                     modifier = Modifier
-                        .padding(vertical = 20.dp)
-                        .height(50.dp)
+                        .padding(vertical = 20.sdp())
+                        .height(50.sdp())
                         .fillMaxWidth(),
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -185,7 +190,7 @@ fun SettingsScreen(
                     Icon (
                         painter = painterResource(id = R.drawable.svg_logout),
                         contentDescription = null,
-                        modifier = Modifier.padding(end = 10.dp)
+                        modifier = Modifier.padding(end = 10.sdp())
                     )
 
                     Text(
@@ -226,7 +231,7 @@ fun generalSection(onAction: (SettingsAction) -> Unit = {}) {
     Text(
         text = stringResource(id = R.string.general),
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(bottom = 8.dp).fillMaxWidth(),
+        modifier = Modifier.padding(bottom = 8.sdp()).fillMaxWidth(),
         color = MaterialTheme.colorScheme.onSurface
     )
 
@@ -269,7 +274,7 @@ fun personalizationSection(onAction: (SettingsAction) -> Unit = {}, state: Setti
     Text(
         text = stringResource(id = R.string.personalization),
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp).fillMaxWidth(),
+        modifier = Modifier.padding(top = 20.sdp(), bottom = 8.sdp()).fillMaxWidth(),
         color = MaterialTheme.colorScheme.onSurface
     )
 
@@ -319,7 +324,7 @@ fun appSection(onAction: (SettingsAction) -> Unit = {}){
     Text(
         text = stringResource(id = R.string.application),
         style = MaterialTheme.typography.titleMedium,
-        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp).fillMaxWidth(),
+        modifier = Modifier.padding(top = 20.sdp(), bottom = 8.sdp()).fillMaxWidth(),
         color = MaterialTheme.colorScheme.onSurface
     )
     ButtonConfig(
@@ -350,12 +355,12 @@ fun ButtonConfig(
     OutlinedButton(
         onClick = { onClick() },
         modifier = Modifier
-            .height(55.dp)
+            .height(55.sdp())
             .fillMaxWidth()
-            .offset(y = offsetValue.dp),
+            .offset(y = offsetValue.sdp()),
         shape = shape,
-        contentPadding = PaddingValues(16.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceContainerLow),
+        contentPadding = PaddingValues(16.sdp()),
+        border = BorderStroke(1.sdp(), MaterialTheme.colorScheme.surfaceContainerLow),
         colors = outlinedButtonColors(
             containerColor = MaterialTheme.colorScheme.surface,
         )
@@ -364,7 +369,7 @@ fun ButtonConfig(
             painter =  painterResource(id = icon),
             tint = MaterialTheme.colorScheme.primary,
             contentDescription = null,
-            modifier = Modifier.padding(end = 10.dp),
+            modifier = Modifier.padding(end = 10.sdp()),
         )
         Text(
             text = text,

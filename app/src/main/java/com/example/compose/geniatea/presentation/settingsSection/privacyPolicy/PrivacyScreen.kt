@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.compose.geniatea.R
 import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
+import com.example.compose.geniatea.theme.sdp
 
 
 @Composable
@@ -54,21 +55,21 @@ fun PrivacyScreen(
                 onNavIconPressed = { onAction(PrivacyAction.OnBackPressed) }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
                 .background(MaterialTheme.colorScheme.background),
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -81,7 +82,7 @@ fun PrivacyScreen(
                     textAlign = TextAlign.Justify,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 16.dp)
+                        .padding(vertical = 16.sdp())
                 )
 
                 Text(

@@ -61,6 +61,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import com.example.compose.geniatea.theme.sdp
 
 @Composable
 fun AccountRoot(
@@ -95,14 +96,14 @@ fun AccountSettingsScreen(
                 onNavIconPressed = { onAction(AccountAction.OnBackPressed) }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .imePadding()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.sdp())
                 .background(MaterialTheme.colorScheme.background),
         ) {
 
@@ -111,9 +112,9 @@ fun AccountSettingsScreen(
                     .fillMaxWidth()
                   //  .align(Alignment.Center)
                     .verticalScroll(rememberScrollState())
-                    .padding(start = 20.dp, end = 20.dp, top = 25.dp),
+                    .padding(start = 20.sdp(), end = 20.sdp(), top = 25.sdp()),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(12.sdp())
 
             ) {
 
@@ -138,7 +139,7 @@ fun AccountSettingsScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.error,
                     textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    modifier = Modifier.padding(vertical = 8.sdp())
                 )
             }
             Buttons(onAction)
@@ -153,26 +154,26 @@ fun Buttons(onAction: (AccountAction) -> Unit){
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp),
+            .padding(bottom = 20.sdp()),
         contentAlignment = Alignment.BottomCenter,
     ){
         Column(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.sdp())
                 .fillMaxSize()
         ) {
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(10.sdp(), Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(
                     onClick = { onAction(AccountAction.OnUpdatePressed) },
                     modifier = Modifier
-                        .heightIn(min = 45.dp)
+                        .heightIn(min = 45.sdp())
                         .weight(0.8f)
                 ) {
                     Text(
@@ -185,7 +186,7 @@ fun Buttons(onAction: (AccountAction) -> Unit){
                 FilledTonalButton(
                     onClick = { showDialog = true },
                     modifier = Modifier
-                        .heightIn(min = 45.dp)
+                        .heightIn(min = 45.sdp())
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.svg_trash),
@@ -194,12 +195,12 @@ fun Buttons(onAction: (AccountAction) -> Unit){
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(10.sdp()))
 
             OutlinedButton(
                 onClick = { onAction(AccountAction.OnPasswordUpdatePressed) },
                 modifier = Modifier
-                    .heightIn(min = 45.dp)
+                    .heightIn(min = 45.sdp())
                     .fillMaxWidth()
             ) {
                 Text(
@@ -244,7 +245,7 @@ private fun Name(userData: AccountState, onAction: (AccountAction) -> Unit = {})
         isError = userData.errorName,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = false,
     )
 }
@@ -258,7 +259,7 @@ private fun Username(userData: AccountState) {
         isError = userData.errorUsername,
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = false,
         enabled = false
     )
@@ -273,7 +274,7 @@ private fun Email(userData: AccountState) {
         label = stringResource(id = R.string.email),
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp),
+            .heightIn(min = 56.sdp()),
         isPasswordField = false,
         enabled = false,
     )
@@ -302,7 +303,7 @@ private fun Birthdate(userData: AccountState, onAction: (AccountAction) -> Unit 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 64.dp)
+            .heightIn(min = 64.sdp())
             .clickable { showModal = true }
     ) {
         OutlinedTextField(
@@ -327,7 +328,7 @@ private fun Birthdate(userData: AccountState, onAction: (AccountAction) -> Unit 
                     )
             },
             isError = userData.errorBirthDate,
-            shape = RoundedCornerShape(50.dp),
+            shape = RoundedCornerShape(50.sdp()),
             colors =
                 if (userData.errorBirthDate)
                     ExposedDropdownMenuDefaults.outlinedTextFieldColors(
@@ -419,7 +420,7 @@ fun DynamicSelectTextField(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
             isError = genderError,
-            shape = RoundedCornerShape(50.dp),
+            shape = RoundedCornerShape(50.sdp()),
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(),
@@ -442,7 +443,7 @@ fun DynamicSelectTextField(
             onDismissRequest = { expanded = false },
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.background),
-            shape = RoundedCornerShape(20.dp)
+            shape = RoundedCornerShape(20.sdp())
         ) {
             options.forEach { option: String ->
                 DropdownMenuItem(
@@ -452,7 +453,7 @@ fun DynamicSelectTextField(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .wrapContentHeight()
-                                .padding(horizontal = 5.dp),
+                                .padding(horizontal = 5.sdp()),
                             style = MaterialTheme.typography.bodyMedium,
                         ) },
                     onClick = {

@@ -46,6 +46,7 @@ import com.example.compose.geniatea.presentation.components.TitleAppBar
 import com.example.compose.geniatea.theme.GenIATEATheme
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.compose.geniatea.theme.sdp
 //import org.osmdroid.util.GeoPoint
 //import org.osmdroid.views.MapView
 
@@ -96,14 +97,14 @@ fun LocationScreen(
             Modifier.fillMaxSize().padding(paddingValues)
                 .imePadding()
                 .background(color = Color.Transparent)
-                .border(width = 2.dp, color = Color.Transparent),
+                .border(width = 2.sdp(), color = Color.Transparent),
         ) {
             if( uiState.locations.isEmpty() ) {
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(16.sdp()),
                     contentAlignment = Alignment.Center,
                 ){
                     Column(
@@ -115,7 +116,7 @@ fun LocationScreen(
                         Image(
                             painter = painterResource(id = R.drawable.ic_empty_chat),
                             contentDescription = stringResource(id = R.string.empty_chat),
-                            modifier = Modifier.size(80.dp).padding(bottom = 20.dp)
+                            modifier = Modifier.size(80.sdp()).padding(bottom = 20.sdp())
                         )
                         Text(
                             text = stringResource(id = R.string.no_messages),
@@ -154,9 +155,9 @@ fun LocationScreen(
             Button(
                 onClick = { onAction(LocationAction.OnAddLocation) },
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 15.dp)
+                    .padding(horizontal = 16.sdp(), vertical = 15.sdp())
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .height(48.sdp())
             ) {
                 Text(
                     text = stringResource(id = R.string.add_address),
@@ -178,9 +179,9 @@ fun Locations(locations: List<Location>, modifier: Modifier = Modifier, onAction
         modifier = modifier
             .fillMaxWidth()
             .verticalScroll(scrollState)
-            .padding(16.dp),
+            .padding(16.sdp()),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(8.sdp())
     ) {
         for (loc in locations) {
             LocationItem(location = loc, modifier = Modifier.fillMaxWidth(), onAction = onAction)
@@ -193,22 +194,22 @@ fun LocationItem(location: Location, modifier: Modifier = Modifier, onAction: (L
     Surface(
         modifier = modifier
             .fillMaxWidth(),
-        shape = RoundedCornerShape(30.dp, 30.dp, 30.dp, 30.dp),
+        shape = RoundedCornerShape(30.sdp(), 30.sdp(), 30.sdp(), 30.sdp()),
         color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.surfaceContainer)
+        border = BorderStroke(1.sdp(), MaterialTheme.colorScheme.surfaceContainer)
 
     ){
         //row with name and two icons ( edit and delete)
         Column{
             Row(
                 modifier = Modifier
-                    .padding(10.dp)
+                    .padding(10.sdp())
             ){
                 BasicTextField(
                     value = location.name,
                     onValueChange = {},
                     readOnly = true,
-                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 8.dp),
+                    modifier = Modifier.weight(1f).align(Alignment.CenterVertically).padding(start = 8.sdp()),
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyLarge.copy(
                         color = MaterialTheme.colorScheme.onSurface,
@@ -232,27 +233,27 @@ fun LocationItem(location: Location, modifier: Modifier = Modifier, onAction: (L
 
                 OutlinedIconButton(
                     onClick = { /*TODO*/ },
-                    border = BorderStroke(0.dp, Color.Transparent),
-                    modifier = Modifier.size(36.dp).align(Alignment.CenterVertically),
+                    border = BorderStroke(0.sdp(), Color.Transparent),
+                    modifier = Modifier.size(36.sdp()).align(Alignment.CenterVertically),
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.svg_edit),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.sdp())
                     )
                 }
 
                 OutlinedIconButton(
                     onClick = { /*TODO*/ },
-                    border = BorderStroke(0.dp, Color.Transparent),
-                    modifier = Modifier.size(36.dp).align(Alignment.CenterVertically),
+                    border = BorderStroke(0.sdp(), Color.Transparent),
+                    modifier = Modifier.size(36.sdp()).align(Alignment.CenterVertically),
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.svg_trash),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(24.sdp())
                     )
                 }
 

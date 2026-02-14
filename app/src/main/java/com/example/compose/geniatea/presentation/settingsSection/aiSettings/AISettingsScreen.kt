@@ -87,7 +87,7 @@ fun AISettings(
                 onNavIconPressed = { onNavIconPressed() }
             )
         },
-        contentWindowInsets = WindowInsets(0.dp),
+        contentWindowInsets = WindowInsets(0.sdp()),
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -266,9 +266,9 @@ fun ClearLanguageToggle(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.sdp()))
             .background(Color(0xFFF5F5F5))
-            .padding(16.dp),
+            .padding(16.sdp()),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -276,16 +276,16 @@ fun ClearLanguageToggle(
             Text(
                 text = text,
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp
+                fontSize = 16.ssp()
             )
             if (tooltipText != null) {
                 var showTooltip by remember { androidx.compose.runtime.mutableStateOf(false) }
                 var iconPosition by remember { androidx.compose.runtime.mutableStateOf(Offset.Zero) }
                 val density = LocalDensity.current
                 val configuration = androidx.compose.ui.platform.LocalConfiguration.current
-                val screenWidthDp = configuration.screenWidthDp.dp
+                val screenWidthDp = configuration.screenWidthDp.sdp()
                 val screenWidthPx = with(density) { screenWidthDp.toPx() }
-                val margin = 16.dp
+                val margin = 16.sdp()
                 val marginPx = with(density) { margin.toPx() }
 
                 Box {
@@ -293,8 +293,8 @@ fun ClearLanguageToggle(
                         imageVector = Icons.Default.HelpOutline,
                         contentDescription = "Help",
                         modifier = Modifier
-                            .size(20.dp)
-                            .padding(start = 4.dp)
+                            .size(20.sdp())
+                            .padding(start = 4.sdp())
                             .onGloballyPositioned { coordinates ->
                                 iconPosition = coordinates.positionInRoot()
                             }
@@ -307,14 +307,14 @@ fun ClearLanguageToggle(
                         
                         Popup(
                             alignment = Alignment.TopStart,
-                            offset = IntOffset(x = offsetX, y = with(density){ 30.dp.toPx().toInt() }),
+                            offset = IntOffset(x = offsetX, y = with(density){ 30.sdp().toPx().toInt() }),
                             onDismissRequest = { showTooltip = false },
                             properties = PopupProperties(focusable = true)
                         ) {
-                            val arrowHeight = with(density) { 12.dp.toPx() } // slightly larger for visibility
-                            val arrowWidth = with(density) { 24.dp.toPx() }
-                            val cornerRadius = with(density) { 16.dp.toPx() }
-                            val iconWidthPx = with(density) { 20.dp.toPx() }
+                            val arrowHeight = with(density) { 12.sdp().toPx() } // slightly larger for visibility
+                            val arrowWidth = with(density) { 24.sdp().toPx() }
+                            val cornerRadius = with(density) { 16.sdp().toPx() }
+                            val iconWidthPx = with(density) { 20.sdp().toPx() }
                             // Calculate arrow tip X relative to the popup content 
                             val arrowTipX = (iconPosition.x + (iconWidthPx / 2)) - marginPx
 
@@ -364,24 +364,24 @@ fun ClearLanguageToggle(
                                 Surface(
                                     shape = bubbleShape,
                                     color = Color.White,
-                                    shadowElevation = 4.dp,
+                                    shadowElevation = 4.sdp(),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.padding(
-                                            start = 16.dp, 
-                                            end = 16.dp, 
-                                            bottom = 16.dp, 
-                                            top = 16.dp + 12.dp // Add arrow height to top padding so text isn't covered
-                                        ) 
+                                            start = 16.sdp(), 
+                                            end = 16.sdp(), 
+                                            bottom = 16.sdp(), 
+                                            top = 16.sdp() + 12.sdp() // Add arrow height to top padding so text isn't covered
+                                        )  
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.HelpOutline,
                                             contentDescription = null,
                                             modifier = Modifier
-                                                .size(24.dp)
-                                                .padding(end = 8.dp),
+                                                .size(24.sdp())
+                                                .padding(end = 8.sdp()),
                                             tint = Color.Black
                                         )
                                         Text(
@@ -417,16 +417,16 @@ fun ResponseStyleSlider(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.sdp()))
             .background(Color(0xFFF5F5F5))
-            .padding(16.dp)
+            .padding(16.sdp())
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "Estilo de respuesta",
                 fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(bottom = 8.dp)
+                fontSize = 16.ssp(),
+                modifier = Modifier.padding(bottom = 8.sdp())
             )
         }
         
@@ -442,10 +442,10 @@ fun ResponseStyleSlider(
             thumb = {
                 Box(
                     modifier = Modifier
-                        .size(24.dp)
+                        .size(24.sdp())
                         .clip(androidx.compose.foundation.shape.CircleShape)
                         .background(Color(0xFF333333))
-                        .padding(4.dp)
+                        .padding(4.sdp())
                         .clip(androidx.compose.foundation.shape.CircleShape)
                         .background(Color.White)
                 )
@@ -453,7 +453,7 @@ fun ResponseStyleSlider(
             track = { sliderState ->
                 val activeColor = Color(0xFF333333)
                 val inactiveColor = Color.White
-                val trackHeight = 4.dp
+                val trackHeight = 4.sdp()
 
                 Canvas(modifier = Modifier
                     .fillMaxWidth()
@@ -513,9 +513,9 @@ fun ResponseStyleSlider(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Conciso", fontSize = 16.sp, color = Color.Gray)
-            Text(text = "Estándar", fontSize = 16.sp, color = Color.Gray)
-            Text(text = "Extenso", fontSize = 16.sp, color = Color.Gray)
+            Text(text = "Conciso", fontSize = 16.ssp(), color = Color.Gray)
+            Text(text = "Estándar", fontSize = 16.ssp(), color = Color.Gray)
+            Text(text = "Extenso", fontSize = 16.ssp(), color = Color.Gray)
         }
     }
 }
@@ -528,24 +528,24 @@ fun FontSizeSelector(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(20.dp))
+            .clip(RoundedCornerShape(20.sdp()))
             .background(Color(0xFFF5F5F5))
-            .padding(16.dp)
+            .padding(16.sdp())
     ) {
         Text(
             text = "Tamaño de la letra",
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(bottom = 12.dp)
+            fontSize = 16.ssp(),
+            modifier = Modifier.padding(bottom = 12.sdp())
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min) // Ensure all children have the same height
-                .clip(RoundedCornerShape(12.dp))
+                .clip(RoundedCornerShape(12.sdp()))
                 .background(Color.White)
-                .border(1.dp, Color.LightGray, RoundedCornerShape(12.dp)),
+                .border(1.sdp(), Color.LightGray, RoundedCornerShape(12.sdp())),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             FontSizeOption(label = "Aa", size = 14, isSelected = selectedSize == 0, onClick = { onSizeChange(0) }, modifier = Modifier.weight(1f).fillMaxHeight())
@@ -556,18 +556,18 @@ fun FontSizeSelector(
         Text(
             text = "Esta es una frase de prueba para comprobar cómo se ve el tamaño de la letra en el chat.",
             fontSize = when(selectedSize) {
-                0 -> 14.sp
-                1 -> 16.sp // Estándar app
-                2 -> 20.sp
-                else -> 16.sp
+                0 -> 14.ssp()
+                1 -> 16.ssp() // Estándar app
+                2 -> 20.ssp()
+                else -> 16.ssp()
             },
             color = Color.Gray,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.sdp()),
             lineHeight = when(selectedSize) {
-                0 -> 18.sp
-                1 -> 24.sp
-                2 -> 28.sp
-                else -> 24.sp
+                0 -> 18.ssp()
+                1 -> 24.ssp()
+                2 -> 28.ssp()
+                else -> 24.ssp()
             }
         )
     }
@@ -585,12 +585,12 @@ fun FontSizeOption(
         modifier = modifier
             .clickable { onClick() }
             .background(if (isSelected) Color(0xFFE8F0FE) else Color.Transparent)
-            .padding(vertical = 12.dp),
+            .padding(vertical = 12.sdp()),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            fontSize = size.sp,
+            fontSize = size.ssp(),
             fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
             color = Color.Black
         )
