@@ -69,6 +69,11 @@ class HomeViewModel() : ViewModel() {
         }
     }
 
+    fun refreshData() {
+        getRecentConversations()
+        getPendingTasks()
+    }
+
     private fun fetchParameters(context: Context) {
         viewModelScope.launch {
             val store = StoreDataUser(context)
