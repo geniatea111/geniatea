@@ -123,7 +123,7 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             TitleAppBar(
-                title = if (uiState.topic.isNotEmpty()) uiState.topic else stringResource(id = R.string.home),
+                title = if (uiState.topic.isNotEmpty()) uiState.topic else "",
                 onNavIconPressed = { onNavIconPressed() },
                 avatar = uiState.userAvatar,
                 isSpeaking = uiState.isSpeaking,

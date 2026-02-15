@@ -70,8 +70,8 @@ class MainActivity : AppCompatActivity() {
                         // Validate token. AuthInterceptor will handle refresh if needed.
                         // If it returns 401, it means both access and refresh tokens failed.
                         val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
-                        if (!response.isSuccessful && response.code() == 401) {
-                            Log.w("MainActivity", "Token invalidation detected. Logging out.")
+                        if (!response.isSuccessful) {
+                            Log.w("MainActivity", "Token invalidation or user check failed (code: ${response.code()}). Logging out.")
                             dataStore.logoutUser()
                             isUserLoggedIn = false
                         }
