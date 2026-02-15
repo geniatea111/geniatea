@@ -103,6 +103,7 @@ class PreRegisterViewModel : ViewModel() {
                     accessToken = response.body()?.accessToken ?: "",
                     refreshToken = response.body()?.refreshToken ?: "",
                     name = response.body()?.name ?: "",
+                    onboardingCompleted = response.body()?.onboardingCompleted ?: false
                 )
 
                 Log.i("PreRegisterViewModel", "Google Login successful: Token: ${account.idToken}")

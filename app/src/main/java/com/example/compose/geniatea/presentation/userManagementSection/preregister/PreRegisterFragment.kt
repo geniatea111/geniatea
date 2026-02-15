@@ -64,13 +64,20 @@ class PreRegisterFragment : Fragment() {
                         is PreRegisterAction.OnContinueClicked -> viewModel.continueClicked(requireContext())
                         is PreRegisterAction.OnEmailSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
-                                findNavController().navigate(R.id.nav_register)
+                                val bundle = Bundle().apply {
+                                    putString("email", action.user.email)
+                                }
+                                findNavController().navigate(R.id.nav_register, bundle)
                             }
                         }
                         is PreRegisterAction.OnGoogleLoginSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 storeDataUser.saveUser(action.user)
-                                findNavController().navigate(R.id.nav_home)
+                                if (action.user.onboardingCompleted) {
+                                    findNavController().navigate(R.id.nav_home)
+                                } else {
+                                    findNavController().navigate(R.id.nav_onboarding)
+                                }
                             }
                         }
                         is PreRegisterAction.OnGoogleLoginError -> {

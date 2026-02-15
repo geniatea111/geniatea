@@ -26,10 +26,15 @@ class RegisterFragment : Fragment() {
     private val viewModel: RegisterViewModel by viewModels()
     private val settingsViewModel: SettingsViewModel by activityViewModels()
     private val appColorViewModel: AppColorViewModel by activityViewModels()
-
+    
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
         val storeDataUser = StoreDataUser(requireContext())
+
+        val emailArgs = arguments?.getString("email")
+        if (!emailArgs.isNullOrBlank()) {
+            viewModel.onAction(RegisterAction.OnEmailChange(emailArgs))
+        }
 
         rootView.findViewById<ComposeView>(R.id.toolbar_compose_view).apply {
 

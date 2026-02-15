@@ -113,6 +113,10 @@
         android:id="@+id/nav_register"
         android:name="com.example.compose.geniatea.presentation.userManagementSection.register.RegisterFragment"
         android:label="Conversation" >
+        <argument
+            android:name="email"
+            app:argType="string"
+            android:defaultValue="" />
         <action
             android:id="@+id/action_nav_register_to_nav_onboarding"
             app:destination="@id/nav_onboarding" />
