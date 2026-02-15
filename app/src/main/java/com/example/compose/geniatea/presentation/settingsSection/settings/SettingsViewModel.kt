@@ -46,6 +46,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                _fontSize.value = it
            }
        }
+        viewModelScope.launch {
+            storeData.getContinuousVoiceMode().collect {
+                _state.value = _state.value.copy(isContinuousVoiceEnabled = it)
+            }
+        }
     }
 
     fun onAction(action: SettingsAction) {
@@ -78,6 +83,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 // Guardamos en persistencia
                 setAnimationsEnabled(newValue)
                 _actionEvent.value = Event(SettingsAction.OnAnimationsToggle(newValue))
+            }
+
+            is SettingsAction.OnContinuousVoiceToggle -> {
+                val newValue = !_state.value.isContinuousVoiceEnabled
+                _state.value = _state.value.copy(isContinuousVoiceEnabled = newValue)
+                saveContinuousVoiceMode(newValue)
+                _actionEvent.value = Event(SettingsAction.OnContinuousVoiceToggle(newValue))
             }
 
 
@@ -120,6 +132,13 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             storeData.saveAnimationsEnabled(isEnabled)
             // El estado _state ya se actualizó en onAction, pero por seguridad:
             _state.value = _state.value.copy(isAnimationsEnabled = isEnabled)
+        }
+    }
+
+    fun saveContinuousVoiceMode(isEnabled: Boolean) {
+        viewModelScope.launch {
+            storeData.saveContinuousVoiceMode(isEnabled)
+            _state.value = _state.value.copy(isContinuousVoiceEnabled = isEnabled)
         }
     }
 

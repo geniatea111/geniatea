@@ -21,6 +21,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -80,6 +81,7 @@ class ChatFragment : Fragment() {
         }
         
         viewModel.loadAvatar(requireContext())
+        viewModel.loadContinuousVoicePreference(requireContext())
 
         rootView.findViewById<ComposeView>(R.id.toolbar_compose_view).apply {
 
@@ -218,14 +220,54 @@ class ChatFragment : Fragment() {
     }
 
 
-    @RequiresPermission(Manifest.permission.RECORD_AUDIO)
-    private fun startRecording() { // mirar si se puede cambiar esto con vosk
+    private var speechRecognizer: SpeechRecognizer? = null
+    private var isContinuousListening = false
 
-        val speechRecognizer: SpeechRecognizer? = SpeechRecognizer.createSpeechRecognizer(requireContext())
+    override fun onResume() {
+        super.onResume()
+        // Check if we should start listening automatically
+        lifecycleScope.launch {
+            viewModel.state.collect { state ->
+                if (state.isContinuousVoiceEnabled && !isContinuousListening) {
+                     startContinuousListening()
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopRecording()
+    }
+
+
+    private fun startRecording() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            startListeningInternal(continuous = false)
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    private fun startContinuousListening() {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            startListeningInternal(continuous = true)
+        }
+    }
+
+    private fun startListeningInternal(continuous: Boolean) {
+        if (speechRecognizer != null) {
+            speechRecognizer?.destroy()
+        }
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireContext())
+        isContinuousListening = continuous
 
         val speechRecognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        // Avoid partial results to reduce noise in continuous mode if not needed
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
 
         speechRecognizer?.setRecognitionListener(
             object : RecognitionListener {
@@ -237,24 +279,63 @@ class ChatFragment : Fragment() {
 
                 override fun onBufferReceived(bytes: ByteArray) {}
 
-                override fun onEndOfSpeech() {}
+                override fun onEndOfSpeech() {
+                    Log.i("ChatFragment", "End of speech")
+                }
 
-                override fun onError(i: Int) {}
+                override fun onError(i: Int) {
+                    Log.e("ChatFragment", "Speech error: $i")
+                     // Restart if continuous
+                    if (isContinuousListening) {
+                         // Add a small delay to avoid rapid looping on error
+                        view?.postDelayed({
+                            if (isContinuousListening && isResumed) {
+                                startContinuousListening()
+                            }
+                        }, 1000)
+                    }
+                }
 
                 override fun onResults(bundle: Bundle) {
                     val matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    if (matches != null)
-                        if (matches.isNotEmpty()) {
-                            val recognizedText = matches[0]
-                            viewModel.onAction(ChatAction.OnMessageChange(TextFieldValue(recognizedText)))
+                    if (matches != null && matches.isNotEmpty()) {
+                        val recognizedText = matches[0]
+                        Log.i("ChatFragment", "Recognized: $recognizedText")
 
-                            Log.i("ChatFragment", "Speech recognition result: ${viewModel.state.value.currentMessage.text}")
+                        if (isContinuousListening) {
+                            // Keyword detection
+                            if (recognizedText.contains("Genia", ignoreCase = true) || 
+                                recognizedText.contains("genia", ignoreCase = true)) {
+                                
+                                // Remove the keyword and trim
+                                var query = recognizedText.replace("Genia", "", ignoreCase = true).trim()
+                                
+                                // Clean up potential prefixes (I, i, |, -, ,, etc.) using robust Regex
+                                // We remove any character at the start that is NOT a letter, number, or inverted question/exclamation mark
+                                query = query.replace(Regex("^[^\\p{L}\\p{N}¿¡]+\\s*"), "")
 
+                                if (query.isNotEmpty() && !query.equals("I", ignoreCase = true) && !query.equals("|", ignoreCase = true)) {
+                                    val currentText = viewModel.state.value.currentMessage.text
+                                    val newText = if (currentText.isEmpty()) query else "$currentText $query"
+                                    
+                                    viewModel.onAction(ChatAction.OnMessageChange(TextFieldValue(newText, selection = TextRange(newText.length))))
+                                    // Auto-send removed per user request
+                                }
+                            }
+                            
+                            // Restart listening
+                            startContinuousListening()
+                            
                         } else {
-                            Log.w("ChatFragment", "No speech recognized")
+                            // Normal mode
+                            viewModel.onAction(ChatAction.OnMessageChange(TextFieldValue(recognizedText)))
                         }
-                    else {
-                        Log.w("ChatFragment", "No matches found in results")
+
+                    } else {
+                        Log.w("ChatFragment", "No matches found")
+                         if (isContinuousListening) {
+                            startContinuousListening()
+                        }
                     }
                 }
 
@@ -265,20 +346,17 @@ class ChatFragment : Fragment() {
         )
 
         speechRecognizer?.startListening(speechRecognizerIntent)
-        Log.i("ChatFragment", "Speech recognition started")
+        Log.i("ChatFragment", "Speech recognition started (Continuous: $continuous)")
     }
 
     private fun stopRecording() {
-        val speechRecognizer: SpeechRecognizer? = SpeechRecognizer.createSpeechRecognizer(requireContext())
-
+        isContinuousListening = false
         if (speechRecognizer != null) {
-            speechRecognizer.stopListening()
-            speechRecognizer.destroy()
+            speechRecognizer?.stopListening()
+            speechRecognizer?.destroy()
+            speechRecognizer = null
             Log.i("ChatFragment", "Speech recognition stopped")
-        } else {
-            Log.w("ChatFragment", "Speech recognizer is not initialized")
         }
-
     }
 
 }

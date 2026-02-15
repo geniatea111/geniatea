@@ -46,6 +46,15 @@ class ChatViewModel: ViewModel() {
         _state.update { it.copy(topic = topic) }
     }
 
+    fun loadContinuousVoicePreference(context: Context) {
+        viewModelScope.launch {
+            val storeDataUser = StoreDataUser(context)
+            storeDataUser.getContinuousVoiceMode().collect { enabled ->
+                _state.update { it.copy(isContinuousVoiceEnabled = enabled) }
+            }
+        }
+    }
+
     fun onAction(action: ChatAction) {
         when (action) {
             ChatAction.OnBackPressed -> _actionEvent.value = Event(ChatAction.OnBackPressed)

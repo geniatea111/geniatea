@@ -38,6 +38,7 @@ class StoreDataUser(private val context: Context) {
         val SHOW_AVATAR_KEY = booleanPreferencesKey("show_avatar")
         val LANGUAGE_KEY = stringPreferencesKey("language")
         val ONBOARDING_COMPLETED_KEY = booleanPreferencesKey("onboarding_completed")
+        val CONTINUOUS_VOICE_MODE_KEY = booleanPreferencesKey("continuous_voice_mode")
     }
 
     suspend fun saveUser(user: User) {
@@ -215,4 +216,12 @@ class StoreDataUser(private val context: Context) {
     }
 
     fun getOnboardingCompleted(): Flow<Boolean> = context.dataStore.data.map { it[ONBOARDING_COMPLETED_KEY] ?: false }
+
+    fun getContinuousVoiceMode(): Flow<Boolean> = context.dataStore.data.map { it[CONTINUOUS_VOICE_MODE_KEY] ?: false }
+
+    suspend fun saveContinuousVoiceMode(isEnabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[CONTINUOUS_VOICE_MODE_KEY] = isEnabled
+        }
+    }
 }

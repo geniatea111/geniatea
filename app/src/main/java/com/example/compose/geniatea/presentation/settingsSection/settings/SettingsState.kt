@@ -5,5 +5,6 @@ data class SettingsScreenState(
     val isPictosEnabled: Boolean = true,
     val isAnimationsEnabled: Boolean = true,
     val name: String = "",
-    val username: String = ""
+    val username: String = "",
+    val isContinuousVoiceEnabled: Boolean = false
 )

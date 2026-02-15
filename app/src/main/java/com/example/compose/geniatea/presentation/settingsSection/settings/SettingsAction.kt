@@ -15,4 +15,5 @@ interface SettingsAction {
     data class OnLanguagePress(val language : String) : SettingsAction
     data object OnAppIconPressed : SettingsAction
     data object OnAppColorPressed : SettingsAction
+    data class OnContinuousVoiceToggle(val isChecked: Boolean) : SettingsAction
 }
