@@ -28,6 +28,7 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
 
     private var userToken: String? = null
     private var userId: Long? = null
+    private var saveKeywordJob: kotlinx.coroutines.Job? = null
 
     // Helper to get store
     private val storeDataUser: StoreDataUser
@@ -45,6 +46,19 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                 if (response.isSuccessful) {
                     val prefs = response.body()
                     prefs?.let {DTO ->
+
+                        // Sync backend voice settings to local store if present
+                        if (DTO.continuousVoice != null) {
+                            store.saveContinuousVoiceMode(DTO.continuousVoice)
+                        }
+                        if (DTO.voiceKeyword != null) {
+                            store.saveContinuousVoiceKeyword(DTO.voiceKeyword)
+                        }
+
+                        // Load local preferences (now synced)
+                        val continuousVoiceEnabled = if (DTO.continuousVoice != null) DTO.continuousVoice else store.getContinuousVoiceMode().first()
+                        val continuousVoiceKeyword = if (DTO.voiceKeyword != null) DTO.voiceKeyword else store.getContinuousVoiceKeyword().first()
+
                          _state.update { currentState ->
                             currentState.copy(
                                 isClearLanguage = DTO.clearLanguage ?: false,
@@ -65,20 +79,12 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                                     else -> 1f
                                 },
                                 showPictograms = DTO.showPictograms ?: false,
-                                language = DTO.language
+                                language = DTO.language,
+                                isContinuousVoiceEnabled = continuousVoiceEnabled,
+                                continuousVoiceKeyword = continuousVoiceKeyword
                             )
                         }
 
-                        // Load local preferences for continuous voice
-                        val continuousVoiceEnabled = store.getContinuousVoiceMode().first()
-                        val continuousVoiceKeyword = store.getContinuousVoiceKeyword().first()
-                        
-                        _state.update { 
-                            it.copy(
-                                isContinuousVoiceEnabled = continuousVoiceEnabled,
-                                continuousVoiceKeyword = continuousVoiceKeyword
-                            ) 
-                        }
 
                         if (DTO.showAvatar == true) {
                             if (!DTO.avatarVideo.isNullOrEmpty()) {
@@ -105,11 +111,11 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
 
             is AISettingsAction.OnClearLanguageToggle -> {
                 _state.update { it.copy(isClearLanguage = action.isChecked) }
-                saveSettings(ApiService.UserPreferenceDTO(clearLanguage = action.isChecked, showPictograms = null, language = null, showAvatar = null, responseStyle = null, fontSize = null), "Lenguaje claro actualizado")
+                saveSettings(ApiService.UserPreferenceDTO(clearLanguage = action.isChecked, showPictograms = null, language = null, showAvatar = null, responseStyle = null, fontSize = null, continuousVoice = null, voiceKeyword = null), "Lenguaje claro actualizado")
             }
             is AISettingsAction.OnShowPictogramsToggle -> {
                 _state.update { it.copy(showPictograms = action.isChecked) }
-                saveSettings(ApiService.UserPreferenceDTO(showPictograms = action.isChecked, language = null, showAvatar = null, clearLanguage = null, responseStyle = null, fontSize = null), "Pictogramas actualizados")
+                saveSettings(ApiService.UserPreferenceDTO(showPictograms = action.isChecked, language = null, showAvatar = null, clearLanguage = null, responseStyle = null, fontSize = null, continuousVoice = null, voiceKeyword = null), "Pictogramas actualizados")
             }
             is AISettingsAction.OnResponseStyleChange -> {
                 _state.update { it.copy(responseStyle = action.value) }
@@ -119,7 +125,7 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                     2f -> "learning"
                     else -> "normal"
                 }
-                saveSettings(ApiService.UserPreferenceDTO(responseStyle = styleString, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, fontSize = null), "Estilo de respuesta actualizado")
+                saveSettings(ApiService.UserPreferenceDTO(responseStyle = styleString, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, fontSize = null, continuousVoice = null, voiceKeyword = null), "Estilo de respuesta actualizado")
             }
             is AISettingsAction.OnFontSizeChange -> {
                 _state.update { it.copy(fontSize = action.size) }
@@ -129,7 +135,7 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                     2 -> "L"
                     else -> "M"
                 }
-                saveSettings(ApiService.UserPreferenceDTO(fontSize = sizeString, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, responseStyle = null), "Tamaño de fuente actualizado")
+                saveSettings(ApiService.UserPreferenceDTO(fontSize = sizeString, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, responseStyle = null, continuousVoice = null, voiceKeyword = null), "Tamaño de fuente actualizado")
             }
             is AISettingsAction.OnAvatarSourceChange -> {
                 if (action.source == AvatarSource.GALLERY) {
@@ -147,7 +153,7 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                     updateAvatarVideo(null, "Video de avatar removido")
 
                     // Also update preference about showAvatar = false (generic)
-                    saveSettings(ApiService.UserPreferenceDTO(showAvatar = false, showPictograms = null, language = null, clearLanguage = null, responseStyle = null, fontSize = null), "Fuente de avatar actualizada")
+                    saveSettings(ApiService.UserPreferenceDTO(showAvatar = false, showPictograms = null, language = null, clearLanguage = null, responseStyle = null, fontSize = null, continuousVoice = null, voiceKeyword = null), "Fuente de avatar actualizada")
                 }
             }
             is AISettingsAction.ShowToast -> {
@@ -157,14 +163,16 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
             AISettingsAction.OpenVideoGallery -> { }
             is AISettingsAction.OnContinuousVoiceToggle -> {
                 _state.update { it.copy(isContinuousVoiceEnabled = action.enabled) }
-                viewModelScope.launch {
-                    storeDataUser.saveContinuousVoiceMode(action.enabled)
-                }
+                // Save to backend and local
+                saveSettings(ApiService.UserPreferenceDTO(continuousVoice = action.enabled, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, responseStyle = null, fontSize = null, voiceKeyword = null), "Reconocimiento de voz actualizado")
             }
             is AISettingsAction.OnKeywordChange -> {
                 _state.update { it.copy(continuousVoiceKeyword = action.keyword) }
-                viewModelScope.launch {
-                    storeDataUser.saveContinuousVoiceKeyword(action.keyword)
+                 // Debounce save
+                saveKeywordJob?.cancel()
+                saveKeywordJob = viewModelScope.launch {
+                    kotlinx.coroutines.delay(1000) // Wait 1 second
+                    saveSettings(ApiService.UserPreferenceDTO(voiceKeyword = action.keyword, showPictograms = null, language = null, showAvatar = null, clearLanguage = null, responseStyle = null, fontSize = null, continuousVoice = null), "Palabra clave actualizada")
                 }
             }
         }
@@ -344,6 +352,8 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                      dto.showAvatar?.let { store.saveShowAvatar(it) }
                      dto.responseStyle?.let { store.saveResponseStyle(it) }
                      dto.fontSize?.let { store.saveFontSize(it) }
+                     dto.continuousVoice?.let { store.saveContinuousVoiceMode(it) }
+                     dto.voiceKeyword?.let { store.saveContinuousVoiceKeyword(it) }
 
                     _actionEvent.value = Event(AISettingsAction.ShowToast(changeMessage))
                 } else {

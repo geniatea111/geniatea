@@ -289,7 +289,9 @@ interface ApiService {
         val responseStyle: String?,
         val fontSize: String?,
         val avatarUrl: String? = null,
-        val avatarVideo: String? = null
+        val avatarVideo: String? = null,
+        val continuousVoice: Boolean? = null,
+        val voiceKeyword: String? = null
     )
 
     @GET("preferences")

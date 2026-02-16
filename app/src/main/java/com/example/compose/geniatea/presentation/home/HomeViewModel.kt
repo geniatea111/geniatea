@@ -144,6 +144,14 @@ class HomeViewModel() : ViewModel() {
                              // But if they switched to Geni, showAvatar would be false (gallery is false).
                              // Let's rely on showAvatar boolean for UI.
                         }
+
+                        // Sync voice settings
+                        if (prefs.continuousVoice != null) {
+                            store.saveContinuousVoiceMode(prefs.continuousVoice)
+                        }
+                        if (prefs.voiceKeyword != null) {
+                            store.saveContinuousVoiceKeyword(prefs.voiceKeyword)
+                        }
                     }
                 }
             } catch (e: Exception) {

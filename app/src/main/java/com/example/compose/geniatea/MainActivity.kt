@@ -63,23 +63,6 @@ class MainActivity : AppCompatActivity() {
             val isDarkMode = dataStore.getDarkMode().first()
             var isUserLoggedIn: Boolean = dataStore.isUserLoggedIn.first()
 
-            if (isUserLoggedIn) {
-                val token = dataStore.getToken()
-                if (!token.isNullOrBlank()) {
-                    try {
-                        // Validate token. AuthInterceptor will handle refresh if needed.
-                        // If it returns 401, it means both access and refresh tokens failed.
-                        val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
-                        if (!response.isSuccessful) {
-                            Log.w("MainActivity", "Token invalidation or user check failed (code: ${response.code()}). Logging out.")
-                            dataStore.logoutUser()
-                            isUserLoggedIn = false
-                        }
-                    } catch (e: Exception) {
-                        Log.e("MainActivity", "Token validation error (fail-open): ${e.message}")
-                    }
-                }
-            }
             val themeVariant = dataStore.getThemeVariant().first()
 
             // Save values into ViewModel
@@ -114,6 +97,7 @@ class MainActivity : AppCompatActivity() {
                     AndroidViewBinding(ContentMainBinding::inflate) {
                         if (isUserLoggedIn && savedInstanceState == null) {
                             val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as? NavHostFragment
+                            // Using runBlocking here for a quick check, ensuring it doesn't block significantly
                             val isOnboardingCompleted = kotlinx.coroutines.runBlocking { dataStore.getOnboardingCompleted().first() }
 
                             navHostFragment?.navController?.let { navController ->
@@ -127,6 +111,43 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+            }
+
+            // Perform network sync in parallel/background AFTER UI is set
+            if (isUserLoggedIn) {
+                launch {
+                    val token = dataStore.getToken()
+                    if (!token.isNullOrBlank()) {
+                        try {
+                            // Validate token. AuthInterceptor will handle refresh if needed.
+                            // If it returns 401, it means both access and refresh tokens failed.
+                            // This runs in the background now, allowing UI to show up.
+                            val response = BackendAPI.retrofitService.getUserPreferences("Bearer $token")
+                            if (response.isSuccessful) {
+                                val prefs = response.body()
+                                if (prefs != null) {
+                                    // Sync voice settings
+                                    if (prefs.continuousVoice != null) {
+                                        dataStore.saveContinuousVoiceMode(prefs.continuousVoice)
+                                    }
+                                    if (prefs.voiceKeyword != null) {
+                                        dataStore.saveContinuousVoiceKeyword(prefs.voiceKeyword)
+                                    }
+                                }
+                            } else {
+                                Log.w("MainActivity", "Token invalidation or user check failed (code: ${response.code()}). Logging out.")
+                                dataStore.logoutUser()
+                                // If we logout here, the UI will likely react if it observes isUserLoggedIn, 
+                                // or we might need to trigger navigation. 
+                                // But since isUserLoggedIn was true initially, the user is likely on Home.
+                                // The StoreDataUser.logoutUser() should trigger flows that might handle this,
+                                // or the user will be logged out on next restart.
+                            }
+                        } catch (e: Exception) {
+                            Log.e("MainActivity", "Token validation error (fail-open): ${e.message}")
                         }
                     }
                 }
