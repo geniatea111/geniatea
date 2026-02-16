@@ -129,52 +129,82 @@ fun AISettings(
                     onValueChange = { onAction(AISettingsAction.OnResponseStyleChange(it)) }
                 )
 
-                Spacer(modifier = Modifier.height(16.sdp()))
-
-                // Continuous Voice Recognition
-                Text(
-                    text = "Reconocimiento de voz continuo",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontSize = 14.ssp(),
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground
-                    ),
-                    modifier = Modifier.padding(bottom = 0.sdp())
-                )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(12.sdp()))
-                        .background(Color.White)
-                        .clickable { onAction(AISettingsAction.OnContinuousVoiceToggle(!state.isContinuousVoiceEnabled)) }
-                        .padding(horizontal = 16.sdp(), vertical = 8.sdp())
+                        .clip(RoundedCornerShape(20.sdp()))
+                        .background(Color(0xFFF5F5F5))
+                        .padding(16.sdp())
                 ) {
-                    Text(
-                        text = if (state.isContinuousVoiceEnabled) "Activado" else "Desactivado",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.ssp()),
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = state.isContinuousVoiceEnabled,
-                        onCheckedChange = { onAction(AISettingsAction.OnContinuousVoiceToggle(it)) }
-                    )
-                }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onAction(AISettingsAction.OnContinuousVoiceToggle(!state.isContinuousVoiceEnabled)) },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "Reconocimiento de voz",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.ssp()
+                        )
+                        Switch(
+                            checked = state.isContinuousVoiceEnabled,
+                            onCheckedChange = { onAction(AISettingsAction.OnContinuousVoiceToggle(it)) },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color.White,
+                                checkedTrackColor = Color(0xFF5F6368)
+                            )
+                        )
+                    }
 
-                if (state.isContinuousVoiceEnabled) {
-                    Text(
-                        text = "Palabra clave para activar:",
-                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.ssp(), fontWeight = FontWeight.SemiBold),
-                        modifier = Modifier.padding(bottom = 4.sdp())
-                    )
-                    OutlinedTextField(
-                        value = state.continuousVoiceKeyword,
-                        onValueChange = { onAction(AISettingsAction.OnKeywordChange(it)) },
-                        modifier = Modifier.fillMaxWidth(),
-                        singleLine = true,
-                        placeholder = { Text("Ej: Genia") }
-                    )
+                    if (state.isContinuousVoiceEnabled) {
+                        Spacer(modifier = Modifier.height(16.sdp()))
+                        Text(
+                            text = "Palabra clave para activar:",
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontSize = 14.ssp(),
+                                fontWeight = FontWeight.Normal,
+                                color = Color.Gray
+                            ),
+                            modifier = Modifier.padding(bottom = 8.sdp())
+                        )
+
+                        // Input styled like Chat UserInput
+                        androidx.compose.foundation.text.BasicTextField(
+                            value = state.continuousVoiceKeyword,
+                            onValueChange = { onAction(AISettingsAction.OnKeywordChange(it)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.sdp())
+                                .border(
+                                    border = androidx.compose.foundation.BorderStroke(
+                                        width = 1.sdp(),
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                                    ),
+                                    shape = RoundedCornerShape(25.sdp())
+                                )
+                                .background(Color.White, RoundedCornerShape(25.sdp()))
+                                .padding(horizontal = 20.sdp()), // Padding inside the border
+                            textStyle = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.onSurface
+                            ),
+                            singleLine = true,
+                            decorationBox = { innerTextField ->
+                                Box(contentAlignment = Alignment.CenterStart) {
+                                    if (state.continuousVoiceKeyword.isEmpty()) {
+                                        Text(
+                                            text = "Ej: Genia",
+                                            style = MaterialTheme.typography.bodyLarge.copy(
+                                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                                            )
+                                        )
+                                    }
+                                    innerTextField()
+                                }
+                            }
+                        )
+                    }
                 }
 
                 FontSizeSelector(
