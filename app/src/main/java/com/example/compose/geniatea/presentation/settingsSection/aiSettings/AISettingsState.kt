@@ -12,5 +12,7 @@ data class AISettingsState(
     val showPictograms: Boolean = false,
     val avatarBitmap: android.graphics.Bitmap? = null,
     val avatarVideoUri: android.net.Uri? = null,
-    val language: String? = null
+    val language: String? = null,
+    val isContinuousVoiceEnabled: Boolean = false,
+    val continuousVoiceKeyword: String = "Genia"
 )

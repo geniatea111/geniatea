@@ -50,7 +50,8 @@ class ChatViewModel: ViewModel() {
         viewModelScope.launch {
             val storeDataUser = StoreDataUser(context)
             storeDataUser.getContinuousVoiceMode().collect { enabled ->
-                _state.update { it.copy(isContinuousVoiceEnabled = enabled) }
+                val keyword = storeDataUser.getContinuousVoiceKeyword().first()
+                _state.update { it.copy(isContinuousVoiceEnabled = enabled, continuousVoiceKeyword = keyword) }
             }
         }
     }

@@ -302,20 +302,10 @@ fun personalizationSection(onAction: (SettingsAction) -> Unit = {}, state: Setti
     )
 
     ButtonConfig(
-        icon = R.drawable.svg_sound, // Using sound icon as a placeholder, or mic if available
-        text = "Reconocimiento de voz continuo", // TODO: string resource
-        onClick = { onAction(SettingsAction.OnContinuousVoiceToggle(state.isContinuousVoiceEnabled)) },
-        offsetValue = (-3),
-        shape = RoundedCornerShape(0),
-        isSwitchButton = true,
-        checked = state.isContinuousVoiceEnabled
-    )
-
-    ButtonConfig(
         icon = R.drawable.svg_logo,
         text = stringResource(id = R.string.icon_app),
         onClick = { onAction(SettingsAction.OnAppIconPressed) },
-        offsetValue = (-4),
+        offsetValue = (-3),
         shape = RoundedCornerShape(0)
     )
 
@@ -323,7 +313,7 @@ fun personalizationSection(onAction: (SettingsAction) -> Unit = {}, state: Setti
         icon = R.drawable.svg_palette,
         text = stringResource(id = R.string.color_app),
         onClick = { onAction(SettingsAction.OnAppColorPressed) },
-        offsetValue = (-5),
+        offsetValue = (-4),
         shape = RoundedCornerShape(topEndPercent = 0, topStartPercent = 0, bottomEndPercent = 30, bottomStartPercent = 30)
     )
 }

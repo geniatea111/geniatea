@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 
 
 import android.content.Context
@@ -66,6 +67,17 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
                                 showPictograms = DTO.showPictograms ?: false,
                                 language = DTO.language
                             )
+                        }
+
+                        // Load local preferences for continuous voice
+                        val continuousVoiceEnabled = store.getContinuousVoiceMode().first()
+                        val continuousVoiceKeyword = store.getContinuousVoiceKeyword().first()
+                        
+                        _state.update { 
+                            it.copy(
+                                isContinuousVoiceEnabled = continuousVoiceEnabled,
+                                continuousVoiceKeyword = continuousVoiceKeyword
+                            ) 
                         }
 
                         if (DTO.showAvatar == true) {
@@ -143,6 +155,18 @@ class AISettingsViewModel(application: android.app.Application): androidx.lifecy
             }
             AISettingsAction.OpenGallery -> { }
             AISettingsAction.OpenVideoGallery -> { }
+            is AISettingsAction.OnContinuousVoiceToggle -> {
+                _state.update { it.copy(isContinuousVoiceEnabled = action.enabled) }
+                viewModelScope.launch {
+                    storeDataUser.saveContinuousVoiceMode(action.enabled)
+                }
+            }
+            is AISettingsAction.OnKeywordChange -> {
+                _state.update { it.copy(continuousVoiceKeyword = action.keyword) }
+                viewModelScope.launch {
+                    storeDataUser.saveContinuousVoiceKeyword(action.keyword)
+                }
+            }
         }
     }
 

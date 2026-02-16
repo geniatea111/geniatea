@@ -15,7 +15,8 @@ data class ChatState(
     val avatarVideoUri: Uri? = null,
     val isSpeaking: Boolean = false,
     val isGenerating: Boolean = false,
-    val isContinuousVoiceEnabled: Boolean = false
+    val isContinuousVoiceEnabled: Boolean = false,
+    val continuousVoiceKeyword: String = "Genia"
 )
 
 @Immutable

@@ -129,6 +129,54 @@ fun AISettings(
                     onValueChange = { onAction(AISettingsAction.OnResponseStyleChange(it)) }
                 )
 
+                Spacer(modifier = Modifier.height(16.sdp()))
+
+                // Continuous Voice Recognition
+                Text(
+                    text = "Reconocimiento de voz continuo",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontSize = 14.ssp(),
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    ),
+                    modifier = Modifier.padding(bottom = 0.sdp())
+                )
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(12.sdp()))
+                        .background(Color.White)
+                        .clickable { onAction(AISettingsAction.OnContinuousVoiceToggle(!state.isContinuousVoiceEnabled)) }
+                        .padding(horizontal = 16.sdp(), vertical = 8.sdp())
+                ) {
+                    Text(
+                        text = if (state.isContinuousVoiceEnabled) "Activado" else "Desactivado",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.ssp()),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = state.isContinuousVoiceEnabled,
+                        onCheckedChange = { onAction(AISettingsAction.OnContinuousVoiceToggle(it)) }
+                    )
+                }
+
+                if (state.isContinuousVoiceEnabled) {
+                    Text(
+                        text = "Palabra clave para activar:",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.ssp(), fontWeight = FontWeight.SemiBold),
+                        modifier = Modifier.padding(bottom = 4.sdp())
+                    )
+                    OutlinedTextField(
+                        value = state.continuousVoiceKeyword,
+                        onValueChange = { onAction(AISettingsAction.OnKeywordChange(it)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        placeholder = { Text("Ej: Genia") }
+                    )
+                }
+
                 FontSizeSelector(
                     selectedSize = state.fontSize,
                     onSizeChange = { onAction(AISettingsAction.OnFontSizeChange(it)) }

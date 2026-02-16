@@ -304,20 +304,20 @@ class ChatFragment : Fragment() {
 
                         if (isContinuousListening) {
                             // Keyword detection
-                            if (recognizedText.contains("Genia", ignoreCase = true) || 
-                                recognizedText.contains("genia", ignoreCase = true)) {
+                            val keyword = viewModel.state.value.continuousVoiceKeyword
+                            if (recognizedText.contains(keyword, ignoreCase = true)) {
                                 
                                 // Remove the keyword and trim
-                                var query = recognizedText.replace("Genia", "", ignoreCase = true).trim()
+                                var query = recognizedText.replace(keyword, "", ignoreCase = true).trim()
                                 
-                                // Clean up potential prefixes (I, i, |, -, ,, etc.) using robust Regex
-                                // We remove any character at the start that is NOT a letter, number, or inverted question/exclamation mark
-                                query = query.replace(Regex("^[^\\p{L}\\p{N}¿¡]+\\s*"), "")
+                                // Clean up potential prefixes (I, i, |) using Regex for robustness
+                                // Fix for user reported issue: aggressive prefix cleaning
+                                query = query.replace(Regex("^[|iI]\\\\s*"), "")
 
                                 if (query.isNotEmpty() && !query.equals("I", ignoreCase = true) && !query.equals("|", ignoreCase = true)) {
                                     val currentText = viewModel.state.value.currentMessage.text
                                     val newText = if (currentText.isEmpty()) query else "$currentText $query"
-                                    
+
                                     viewModel.onAction(ChatAction.OnMessageChange(TextFieldValue(newText, selection = TextRange(newText.length))))
                                     // Auto-send removed per user request
                                 }
