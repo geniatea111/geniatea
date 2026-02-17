@@ -59,7 +59,6 @@ fun OnboardingStep2Screen(
     val pronounChoices = listOf(
         PronounChoice("Hombre", "Él/lo"),
         PronounChoice("Mujer", "Ella/la"),
-        PronounChoice("No binario", "Elle/le"),
         PronounChoice("Prefiero no decirlo", "")
     )
 

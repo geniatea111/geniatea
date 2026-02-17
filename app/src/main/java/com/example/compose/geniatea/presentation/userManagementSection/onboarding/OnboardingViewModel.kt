@@ -111,7 +111,8 @@ class OnboardingViewModel(application: Application) : AndroidViewModel(applicati
                                 name = _state.value.name,
                                 gender = gender,
                                 birthdate = formattedDate,
-                                showPictograms = _state.value.showPictograms
+                                showPictograms = _state.value.showPictograms,
+                                description = _state.value.description
                             )
                         )
                     }

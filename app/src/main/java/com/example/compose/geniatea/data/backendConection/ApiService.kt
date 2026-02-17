@@ -40,7 +40,8 @@ interface ApiService {
         val gender: String,
         val birthdate: String,
         val roles: Set<String>? = null,
-        val showPictograms: Boolean? = null
+        val showPictograms: Boolean? = null,
+        val description: String? = null
     )
 
     data class UpdatePasswordRequest(
