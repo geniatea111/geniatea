@@ -627,7 +627,11 @@ fun nota(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) {
             ) {
                 BasicTextField(
                     value = state.taskNote,
-                    onValueChange = { onAction(TaskListAction.OnNoteChanged(it)) },
+                    onValueChange = {
+                        if (it.length <= 255) {
+                            onAction(TaskListAction.OnNoteChanged(it))
+                        }
+                    },
                     singleLine = false,
                     textStyle = MaterialTheme.typography.bodyLarge,
                     modifier = Modifier.fillMaxWidth().align(Alignment.TopStart)
@@ -643,6 +647,15 @@ fun nota(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) {
                     )
                 }
             }
+            Text(
+                text = "${state.taskNote.length}/255",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                ),
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(bottom = 8.dp)
+            )
 
         }
     }
