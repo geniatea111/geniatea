@@ -269,9 +269,20 @@ class ChatFragment : Fragment() {
         // Avoid partial results to reduce noise in continuous mode if not needed
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
 
+        // Extend silence timeout
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 5000L)
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 5000L)
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 15000L)
+
         speechRecognizer?.setRecognitionListener(
             object : RecognitionListener {
-                override fun onReadyForSpeech(bundle: Bundle) {}
+                override fun onReadyForSpeech(bundle: Bundle) {
+                     // Unmute ONLY music when ready, with a small delay
+                     // We keep System/Notification muted to suppress "error" sounds
+                     android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                         unmuteMusicOnly()
+                     }, 300) 
+                }
 
                 override fun onBeginningOfSpeech() {}
 
@@ -285,6 +296,7 @@ class ChatFragment : Fragment() {
 
                 override fun onError(i: Int) {
                     Log.e("ChatFragment", "Speech error: $i")
+                    muteAll() // Ensure everything is muted immediately on error to try and catch the beep
                      // Restart if continuous
                     if (isContinuousListening) {
                          // Add a small delay to avoid rapid looping on error
@@ -293,10 +305,15 @@ class ChatFragment : Fragment() {
                                 startContinuousListening()
                             }
                         }, 1000)
+                    } else {
+                        unmuteAll() // If not continuous, restore everything
                     }
                 }
 
                 override fun onResults(bundle: Bundle) {
+                    // Success! We can unmute music (it should be already)
+                    // If we are continuous, we will restart, which will mute again.
+                    
                     val matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
                     if (matches != null && matches.isNotEmpty()) {
                         val recognizedText = matches[0]
@@ -329,12 +346,15 @@ class ChatFragment : Fragment() {
                         } else {
                             // Normal mode
                             viewModel.onAction(ChatAction.OnMessageChange(TextFieldValue(recognizedText)))
+                            unmuteAll() 
                         }
 
                     } else {
                         Log.w("ChatFragment", "No matches found")
                          if (isContinuousListening) {
                             startContinuousListening()
+                        } else {
+                            unmuteAll()
                         }
                     }
                 }
@@ -345,8 +365,53 @@ class ChatFragment : Fragment() {
             }
         )
 
-        speechRecognizer?.startListening(speechRecognizerIntent)
+        muteAll()
+        try {
+            speechRecognizer?.startListening(speechRecognizerIntent)
+        } catch (e: Exception) {
+            unmuteAll()
+            e.printStackTrace()
+        }
+        
         Log.i("ChatFragment", "Speech recognition started (Continuous: $continuous)")
+    }
+
+    private fun muteAll() {
+        try {
+            val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_NOTIFICATION, android.media.AudioManager.ADJUST_MUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_ALARM, android.media.AudioManager.ADJUST_MUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_MUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_SYSTEM, android.media.AudioManager.ADJUST_MUTE, 0)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun unmuteMusicOnly() {
+        try {
+            val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            // Only unmute music for TTS
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_UNMUTE, 0)
+            // Ensure others stay muted
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_NOTIFICATION, android.media.AudioManager.ADJUST_MUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_ALARM, android.media.AudioManager.ADJUST_MUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_SYSTEM, android.media.AudioManager.ADJUST_MUTE, 0)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+    
+    private fun unmuteAll() {
+        try {
+            val audioManager = requireContext().getSystemService(Context.AUDIO_SERVICE) as android.media.AudioManager
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_NOTIFICATION, android.media.AudioManager.ADJUST_UNMUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_ALARM, android.media.AudioManager.ADJUST_UNMUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_MUSIC, android.media.AudioManager.ADJUST_UNMUTE, 0)
+            audioManager.adjustStreamVolume(android.media.AudioManager.STREAM_SYSTEM, android.media.AudioManager.ADJUST_UNMUTE, 0)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     private fun stopRecording() {
@@ -357,6 +422,8 @@ class ChatFragment : Fragment() {
             speechRecognizer = null
             Log.i("ChatFragment", "Speech recognition stopped")
         }
+        unmuteAll() // Restore volumes
     }
+
 
 }
