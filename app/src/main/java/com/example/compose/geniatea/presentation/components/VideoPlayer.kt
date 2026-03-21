@@ -46,16 +46,16 @@ fun VideoPlayer(
                                 mediaPlayer.setVolume(0f, 0f)
                             }
                             mediaPlayer.setOnPreparedListener { mp ->
-                                if (useCrop) {
-                                    applyScaleMatrix(this@apply, mp.videoWidth, mp.videoHeight)
-                                }
+                                this@apply.tag = useCrop
+                                applyScaleMatrix(this@apply, mp.videoWidth, mp.videoHeight)
                                 if (autoPlay) {
                                     mp.start()
                                 }
                             }
                             // Also update matrix when video size changes or view size changes
                             mediaPlayer.setOnVideoSizeChangedListener { mp, vidW, vidH ->
-                                if (useCrop) applyScaleMatrix(this@apply, vidW, vidH)
+                                this@apply.tag = useCrop
+                                applyScaleMatrix(this@apply, vidW, vidH)
                             }
                             mediaPlayer.prepareAsync()
                         } catch (e: Exception) {
@@ -64,7 +64,8 @@ fun VideoPlayer(
                     }
 
                     override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {
-                        if (useCrop && mediaPlayer.videoWidth > 0 && mediaPlayer.videoHeight > 0) {
+                        if (mediaPlayer.videoWidth > 0 && mediaPlayer.videoHeight > 0) {
+                             this@apply.tag = useCrop
                              applyScaleMatrix(this@apply, mediaPlayer.videoWidth, mediaPlayer.videoHeight)
                         }
                     }
@@ -77,9 +78,10 @@ fun VideoPlayer(
                 }
             }
         },
-        update = { 
-             // Typically we don't update complex logic here for MediaPlayer to avoid re-prepare loops.
-             // But if URI changes, we might need logic. Assuming URI stable for now or key will reconstruct.
+        update = {
+             // In case useCrop changes externally
+             it.tag = useCrop
+             // we could recalculate matrix here if we knew video size, but we are depending on the listener
         },
         modifier = modifier
     )
@@ -97,7 +99,12 @@ private fun applyScaleMatrix(textureView: TextureView, videoWidth: Int, videoHei
     val scaleY = viewHeight / videoHeight
 
     // For Center Crop, we want the LARGER scale factor ensuring both dims are filled
-    val scale = kotlin.math.max(scaleX, scaleY)
+    // For Fit, we want the SMALLER scale factor to ensure it fits entirely
+    // We can infer useCrop from whether we want to crop or fit. 
+    // Wait, applyScaleMatrix doesn't have the crop parameter right now. I should just pass `crop = true` as default or modify it. 
+    // Actually, I'll calculate it assuming we want to use crop conditionally if passed.
+    val crop = (textureView.tag as? Boolean) ?: false // We'll set tag when calling
+    val scale = if (crop) kotlin.math.max(scaleX, scaleY) else kotlin.math.min(scaleX, scaleY)
 
     // Calculate the new dimensions
     val scaledWidth = videoWidth * scale
@@ -108,7 +115,7 @@ private fun applyScaleMatrix(textureView: TextureView, videoWidth: Int, videoHei
     
     // Standard Center Crop Matrix Logic:
     val pivotX = viewWidth / 2f
-    val pivotY = viewHeight / 2f
+    val pivotY = viewHeight / 2f // Align to center
 
     val sx = scaledWidth / viewWidth
     val sy = scaledHeight / viewHeight

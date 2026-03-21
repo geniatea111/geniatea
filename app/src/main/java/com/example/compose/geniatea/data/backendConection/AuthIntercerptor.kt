@@ -62,12 +62,15 @@ class AuthInterceptor(private val context: Context) : Interceptor {
                         return chain.proceed(newRequest)
                     } else {
                         Log.e("AuthInterceptor", "Refresh response body is null ❌")
+                        runBlocking { store.logoutUser() }
                     }
                 } else {
                     Log.e("AuthInterceptor", "Refresh failed → ${refreshResponse?.errorBody()?.string()}")
+                    runBlocking { store.logoutUser() }
                 }
             } else {
                 Log.e("AuthInterceptor", "No refresh token available ❌")
+                runBlocking { store.logoutUser() }
             }
 
             // If refresh fails → return explicit 401

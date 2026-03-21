@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
 import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
@@ -54,7 +55,12 @@ fun OnboardingStep4Screen(
     onNext: () -> Unit,
     onBack: () -> Unit
 ) {
-    val descriptions = listOf("Adulto con TEA", "Estudiante con TEA", "Familiar de persona con TEA", "Otro")
+    val descriptions = listOf(
+        stringResource(id = R.string.option_adult), 
+        stringResource(id = R.string.option_student), 
+        stringResource(id = R.string.option_family), 
+        stringResource(id = R.string.option_other)
+    )
 
     Scaffold(
         topBar = {
@@ -103,7 +109,7 @@ fun OnboardingStep4Screen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "¿Cómo te describirías?",
+                        text = stringResource(id = R.string.titleOnboarding1),
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
                         fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
@@ -146,7 +152,7 @@ fun OnboardingStep4Screen(
                         .padding(horizontal = 16.sdp(), vertical = 32.sdp())
                         .heightIn(min = 56.sdp())
                 ) {
-                    Text("Siguiente", fontWeight = FontWeight.W700)
+                    Text(stringResource(id = R.string.continues), fontWeight = FontWeight.W700)
                 }
             }
         }

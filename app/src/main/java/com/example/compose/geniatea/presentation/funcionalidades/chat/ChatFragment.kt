@@ -47,7 +47,7 @@ class ChatFragment : Fragment() {
         ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         if (!isGranted) {
-            Toast.makeText(requireContext(), "Permiso de micrófono denegado", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.mic_permission_denied), Toast.LENGTH_SHORT).show()
         }
     }
 

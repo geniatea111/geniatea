@@ -19,8 +19,7 @@ import com.example.compose.geniatea.utils.Formats.Companion.formatGender
 import com.example.compose.geniatea.utils.Formats.Companion.formatGenderToBack
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-
-
+import java.io.IOException
 
 class AccountViewModel: ViewModel() {
 
@@ -74,11 +73,11 @@ class AccountViewModel: ViewModel() {
                 Log.e("AccountViewModel", "Error retrieving user data [${response.code()}]: $error")
             }
         } catch (e: java.net.SocketTimeoutException) {
-            Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
-        } catch (e: java.net.UnknownHostException) {
-            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.connection_not_available), Toast.LENGTH_SHORT).show()
+        } catch (e: IOException) {
+            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -126,11 +125,11 @@ class AccountViewModel: ViewModel() {
                     }
                 }
             } catch (e: java.net.SocketTimeoutException) {
-                Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
-            } catch (e: java.net.UnknownHostException) {
-                Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.connection_not_available), Toast.LENGTH_SHORT).show()
+            } catch (e: IOException) {
+                Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
             }
         }
     }

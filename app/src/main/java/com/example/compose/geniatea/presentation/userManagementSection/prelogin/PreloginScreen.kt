@@ -231,16 +231,16 @@ fun TwoFontText() {
 
     val text = buildAnnotatedString {
         withStyle(style = SpanStyle(fontFamily = font2, fontSize = 25.ssp())) {
-            append("Tu ")
+            append(stringResource(id = R.string.prelogin_greeting_1))
         }
         withStyle(style = SpanStyle(fontFamily = font1, fontSize = 25.ssp())) {
-            append("aliado inteligente ")
+            append(stringResource(id = R.string.prelogin_greeting_2))
         }
         withStyle(style = SpanStyle(fontFamily = font2, fontSize = 25.ssp())) {
-            append("para comprender, acompañar y avanzar juntos en el ")
+            append(stringResource(id = R.string.prelogin_greeting_3))
         }
         withStyle(style = SpanStyle(fontFamily = font1, fontSize = 25.ssp())) {
-            append("TEA")
+            append(stringResource(id = R.string.prelogin_greeting_4))
         }
     }
 

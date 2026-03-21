@@ -389,7 +389,7 @@ class ChatViewModel: ViewModel() {
                 }
             } catch (e: Exception) {
                 Log.e("ChatViewModel", "Error loading chat session: ${e.localizedMessage}")
-                Toast.makeText(context, "Error loading chat session", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.error_loading_chat_session), Toast.LENGTH_LONG).show()
             }
         }
     }

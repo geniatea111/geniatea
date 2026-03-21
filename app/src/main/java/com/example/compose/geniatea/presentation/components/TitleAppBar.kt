@@ -6,6 +6,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.background
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.Image
 import android.graphics.Bitmap
@@ -39,6 +49,8 @@ import com.example.compose.geniatea.theme.GenIATEATheme
 import androidx.compose.material3.CenterAlignedTopAppBar
 
 import android.net.Uri
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,58 +66,72 @@ fun TitleAppBar(
     videoUri: Uri? = null
 ) {
     if (avatar != null) {
-        CenterAlignedTopAppBar(
-            modifier = Modifier.height(320.dp),
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = Color(0xFFE0E0E0)
-            ),
-            title = {
-                 if (isSpeaking && videoUri != null) {
-                     VideoPlayer(
-                         uri = videoUri,
-                         modifier = Modifier
-                             .width(300.dp)
-                             .height(320.dp)
-                             .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
-                         isMuted = true,
-                         useCrop = true
-                     )
-                 } else {
-                     Image(
-                        bitmap = avatar.asImageBitmap(),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .windowInsetsPadding(WindowInsets.statusBars)
+                .padding(horizontal = 40.dp)
+                .padding(top = 16.dp, bottom = 8.dp)
+                .heightIn(max = 200.dp)
+        ) {
+            if (isSpeaking && videoUri != null) {
+                 VideoPlayer(
+                     uri = videoUri,
+                     modifier = Modifier
+                         .fillMaxWidth()
+                         .clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)),
+                     isMuted = true,
+                     useCrop = false
+                 )
+            } else {
+                 Image(
+                    bitmap = avatar.asImageBitmap(),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .clip(androidx.compose.foundation.shape.RoundedCornerShape(24.dp)),
+                    contentScale = ContentScale.Fit,
+                    alignment = Alignment.Center
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                IconButton(
+                    onClick = onNavIconPressed,
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(Color.White.copy(alpha = 0.9f), CircleShape)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_back),
+                        tint = Color.Black,
                         contentDescription = null,
-                        modifier = Modifier
-                            .width(300.dp)
-                            .height(320.dp)
-                            .clip(androidx.compose.foundation.shape.RoundedCornerShape(16.dp)),
-                        contentScale = ContentScale.Crop
                     )
-                 }
-            },
-            actions = {
+                }
+
                 if (optionalButton) {
                     IconButton(
                         onClick = onOptionalButtonPressed,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = Modifier
+                            .size(40.dp)
+                            .background(Color.White.copy(alpha = 0.9f), CircleShape)
                     ) {
                         Icon(
                             painter = painterResource(id = iconButton),
+                            tint = Color.Black,
                             contentDescription = stringResource(id = R.string.more_options)
                         )
                     }
                 }
-            },
-            scrollBehavior = scrollBehavior,
-            navigationIcon = {
-                IconButton(onClick = onNavIconPressed){
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_back),
-                        tint = MaterialTheme.colorScheme.outline,
-                        contentDescription = null,
-                    )
-                }
             }
-        )
+        }
     } else {
         TopAppBar(
             //transparent

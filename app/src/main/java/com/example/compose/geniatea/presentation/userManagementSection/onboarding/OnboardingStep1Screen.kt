@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
 import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
@@ -102,7 +103,7 @@ fun OnboardingStep1Screen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "¿Cómo te llamas?",
+                        text = stringResource(id = R.string.what_is_your_name),
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
                         fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
@@ -114,7 +115,7 @@ fun OnboardingStep1Screen(
                     OutlinedTextField(
                         value = name,
                         onValueChange = onNameChange,
-                        placeholder = { Text("Ej: Noelia") },
+                        placeholder = { Text(stringResource(id = R.string.name_example)) },
                         shape = RoundedCornerShape(50),
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
@@ -134,7 +135,7 @@ fun OnboardingStep1Screen(
                         .padding(horizontal = 16.sdp(), vertical = 32.sdp())
                         .heightIn(min = 56.sdp())
                 ) {
-                    Text("Siguiente", fontWeight = FontWeight.W700)
+                    Text(stringResource(id = R.string.continues), fontWeight = FontWeight.W700)
                 }
             }
         }

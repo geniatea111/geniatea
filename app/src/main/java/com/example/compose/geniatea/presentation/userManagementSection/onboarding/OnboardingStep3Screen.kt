@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
 import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
@@ -108,7 +109,7 @@ fun OnboardingStep3Screen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "¿Cuándo naciste?",
+                        text = stringResource(id = R.string.when_were_you_born),
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
                         fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
@@ -152,7 +153,7 @@ fun OnboardingStep3Screen(
                         .padding(horizontal = 16.sdp(), vertical = 32.sdp())
                         .heightIn(min = 56.sdp())
                 ) {
-                    Text("Siguiente", fontWeight = FontWeight.W700)
+                    Text(stringResource(id = R.string.continues), fontWeight = FontWeight.W700)
                 }
             }
         }
@@ -161,8 +162,8 @@ fun OnboardingStep3Screen(
     MaterialDialog(
         dialogState = dateDialogState,
         buttons = {
-            positiveButton("Aceptar")
-            negativeButton("Cancelar")
+            positiveButton(stringResource(id = R.string.ok))
+            negativeButton(stringResource(id = R.string.cancel))
         }
     ) {
         datepicker {

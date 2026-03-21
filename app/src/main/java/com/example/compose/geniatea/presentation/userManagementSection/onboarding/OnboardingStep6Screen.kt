@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
 import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
@@ -96,7 +97,7 @@ fun OnboardingStep6Screen(
                 )
 
                 Text(
-                    text = "Tu asistente virtual",
+                    text = stringResource(id = R.string.titleOnboarding4),
                     fontSize = 24.ssp(),
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -121,7 +122,7 @@ fun OnboardingStep6Screen(
                 Spacer(modifier = Modifier.height(24.sdp()))
                 
                 Text(
-                    text = "Puedes cambiar esto más tarde en los ajustes.",
+                    text = stringResource(id = R.string.you_can_change_this_later),
                     fontSize = 14.ssp(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -142,7 +143,7 @@ fun OnboardingStep6Screen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text(text = "Finalizar", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
+                    Text(text = stringResource(id = R.string.finish), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         }

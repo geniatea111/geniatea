@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
 import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
@@ -103,7 +104,7 @@ fun OnboardingStep5Screen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Mostrar pictogramas",
+                        text = stringResource(id = R.string.show_pictograms),
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
                         fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
@@ -111,7 +112,7 @@ fun OnboardingStep5Screen(
                     )
 
                     Text(
-                        text = "Incluye pictogramas que facilitan la comprensión y permiten usar funciones diseñadas especialmente para ellos",
+                        text = stringResource(id = R.string.show_pictograms_desc),
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(top = 16.sdp()),
                         style = MaterialTheme.typography.bodyLarge
@@ -159,7 +160,7 @@ fun OnboardingStep5Screen(
                             .heightIn(min = 56.sdp())
                     ) {
                         Text(
-                            text = "Sin pictogramas",
+                            text = stringResource(id = R.string.without_pictograms),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -174,7 +175,7 @@ fun OnboardingStep5Screen(
                         .padding(horizontal = 16.sdp(), vertical = 32.sdp())
                         .heightIn(min = 56.sdp())
                 ) {
-                    Text("Continuar", fontWeight = FontWeight.W700)
+                    Text(stringResource(id = R.string.continues), fontWeight = FontWeight.W700)
                 }
             }
         }

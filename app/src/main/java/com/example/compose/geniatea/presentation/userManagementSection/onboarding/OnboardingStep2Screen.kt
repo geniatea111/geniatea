@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.res.stringResource
 import com.example.compose.geniatea.theme.sdp
 import com.example.compose.geniatea.theme.ssp
 import com.example.compose.geniatea.R
@@ -57,9 +58,9 @@ fun OnboardingStep2Screen(
     onBack: () -> Unit
 ) {
     val pronounChoices = listOf(
-        PronounChoice("Hombre", "Él/lo"),
-        PronounChoice("Mujer", "Ella/la"),
-        PronounChoice("Prefiero no decirlo", "")
+        PronounChoice(stringResource(id = R.string.male), stringResource(id = R.string.pronoun_he)),
+        PronounChoice(stringResource(id = R.string.female), stringResource(id = R.string.pronoun_she)),
+        PronounChoice(stringResource(id = R.string.xGender), "")
     )
 
     Scaffold(
@@ -109,7 +110,7 @@ fun OnboardingStep2Screen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "¿Cómo prefieres que te trate?",
+                        text = stringResource(id = R.string.how_do_you_prefer_to_be_treated),
                         fontFamily = FontFamily(Font(R.font.dt_getai)),
                         fontSize = 36.ssp(),
                         textAlign = TextAlign.Center,
@@ -164,7 +165,7 @@ fun OnboardingStep2Screen(
                         .padding(horizontal = 16.sdp(), vertical = 32.sdp())
                         .heightIn(min = 56.sdp())
                 ) {
-                    Text("Siguiente", fontWeight = FontWeight.W700)
+                    Text(stringResource(id = R.string.continues), fontWeight = FontWeight.W700)
                 }
             }
         }

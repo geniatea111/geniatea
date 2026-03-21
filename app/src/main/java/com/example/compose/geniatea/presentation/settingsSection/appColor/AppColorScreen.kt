@@ -75,11 +75,11 @@ fun AppIconScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Button(onClick = {onAction(AppColorAction.OnBluePressed)}) {
-                    Text(text = "Azul Theme")
+                    Text(text = stringResource(id = R.string.blue_theme))
                 }
 
                 Button(onClick = {onAction(AppColorAction.OnPinkPressed)}) {
-                    Text(text = "Rosa Theme")
+                    Text(text = stringResource(id = R.string.pink_theme))
                 }
 
             }

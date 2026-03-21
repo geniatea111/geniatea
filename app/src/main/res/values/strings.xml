@@ -204,6 +204,49 @@
     <string name="icon_app">Icono de la aplicación</string>
     <string name="animations">Animaciones</string>
     <string name="chat_header_greeting">¿En qué puedo ayudarte?</string>
+    <string name="when_were_you_born">¿Cuándo naciste?</string>
+    <string name="show_pictograms_desc">Incluye pictogramas que facilitan la comprensión y permiten usar funciones diseñadas especialmente para ellos</string>
+    <string name="without_pictograms">Sin pictogramas</string>
+    <string name="connection_not_available">Conexión no disponible en este momento</string>
+    <string name="no_internet_connection">Sin conexión a internet</string>
+    <string name="something_went_wrong">Algo salió mal</string>
+    <string name="server_error">Error del servidor</string>
+    
+    <!-- AISettingsScreen Strings -->
+    <string name="clear_language">Lenguaje claro</string>
+    <string name="clear_language_tooltip">Texto simple y conciso. Evita ambigüedades, dobles sentidos, ironías y metáforas.</string>
+    <string name="voice_recognition">Reconocimiento de voz</string>
+    <string name="activation_keyword">Palabra clave para activar:</string>
+    <string name="keyword_example">Ej: Genia</string>
+    <string name="response_style">Estilo de respuesta</string>
+    <string name="style_concise">Conciso</string>
+    <string name="style_standard">Estándar</string>
+    <string name="style_extensive">Extenso</string>
+    <string name="font_size">Tamaño de la letra</string>
+    <string name="font_size_test_phrase">Esta es una frase de prueba para comprobar cómo se ve el tamaño de la letra en el chat.</string>
+    <string name="photo">Foto</string>
+    <string name="video">Video</string>
+    <string name="blue_theme">Azul Theme</string>
+    <string name="pink_theme">Rosa Theme</string>
 
+    <!-- Onboarding missing strings -->
+    <string name="what_is_your_name">¿Cómo te llamas?</string>
+    <string name="name_example">Ej: Noelia</string>
+    <string name="pronoun_he">Él/lo</string>
+    <string name="pronoun_she">Ella/la</string>
+    <string name="how_do_you_prefer_to_be_treated">¿Cómo prefieres que te trate?</string>
+    <string name="you_can_change_this_later">Puedes cambiar esto más tarde en los ajustes.</string>
+    <string name="finish">Finalizar</string>
 
+    <string name="prelogin_greeting_1">Tu </string>
+    <string name="prelogin_greeting_2">aliado inteligente </string>
+    <string name="prelogin_greeting_3">para comprender, acompañar y avanzar juntos en el </string>
+    <string name="prelogin_greeting_4">TEA</string>
+
+    <string name="info_updated_successfully">Información actualizada correctamente</string>
+    <string name="error_updating_info">Error al actualizar la información. Prueba más tarde</string>
+    <string name="account_deleted_successfully">Cuenta eliminada correctamente</string>
+    <string name="error_deleting_account">Error al eliminar la cuenta. Prueba más tarde</string>
+    <string name="error_loading_chat_session">Error cargando sesión de chat</string>
+    <string name="mic_permission_denied">Permiso de micrófono denegado</string>
 </resources>

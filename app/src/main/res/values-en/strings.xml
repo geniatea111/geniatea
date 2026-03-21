@@ -40,7 +40,7 @@
     <string name="judge">Judge</string>
     <string name="resources">Resources</string>
     <string name="touch_and_hold_to_record">Press and hold to record</string>
-    <string name="record_message">Grabar mensaje de voz</string>
+    <string name="record_message">Record voice message</string>
     <string name="gender">Genre</string>
     <string name="male">Man</string>
     <string name="female">Woman</string>
@@ -49,11 +49,11 @@
     <string name="preferences">Preferences</string>
     <string name="about">About the app</string>
     <string name="privacy_policy">Privacy Policy</string>
-    <string name="add_address">Añadir nueva dirección</string>
+    <string name="add_address">Add new address</string>
     <string name="notifications">Notifications</string>
     <string name="confirm_new_password">Confirm new password</string>
     <string name="usernameEmail">Username or email</string>
-    <string name="add_widget_to_home_page">Agregar widget a la página de inicio</string>
+    <string name="add_widget_to_home_page">Add widget to Home Screen</string>
     <string name="username_icon_description">Username</string>
     <string name="username">Username</string>
     <string name="no_account1">Don\'t have an account?</string>
@@ -67,7 +67,7 @@
     <string name="account">Account</string>
     <string name="account_data">Account details</string>
     <string name="dark_mode">Dark mode</string>
-    <string name="ia_settings">Ajustes del chat</string>
+    <string name="ia_settings">Chat settings</string>
     <string name="addresses">My addresses</string>
     <string name="message">Message</string>
     <string name="convert">Convert</string>
@@ -156,5 +156,49 @@
     <string name="show_pictograms">Show pictograms</string>
     <string name="color_app">App color</string>
     <string name="icon_app">App icon</string>
-    <string name="animations">Animations</string>
+    <string name="when_were_you_born">When were you born?</string>
+    <string name="show_pictograms_desc">Includes pictograms that facilitate understanding and allow using functions designed specifically for them</string>
+    <string name="without_pictograms">Without pictograms</string>
+    <string name="connection_not_available">Connection not available right now</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="server_error">Server error</string>
+
+    <!-- AISettingsScreen Strings -->
+    <string name="clear_language">Clear language</string>
+    <string name="clear_language_tooltip">Simple and concise text. Avoids ambiguity, double meanings, irony, and metaphors.</string>
+    <string name="voice_recognition">Voice recognition</string>
+    <string name="activation_keyword">Activation keyword:</string>
+    <string name="keyword_example">Ex: Genia</string>
+    <string name="response_style">Response style</string>
+    <string name="style_concise">Concise</string>
+    <string name="style_standard">Standard</string>
+    <string name="style_extensive">Extensive</string>
+    <string name="font_size">Font size</string>
+    <string name="font_size_test_phrase">This is a test phrase to check how the font size looks in the chat.</string>
+    <string name="photo">Photo</string>
+    <string name="video">Video</string>
+    <string name="blue_theme">Blue Theme</string>
+    <string name="pink_theme">Pink Theme</string>
+
+    <!-- Onboarding missing strings -->
+    <string name="what_is_your_name">What is your name?</string>
+    <string name="name_example">Ex: Noah</string>
+    <string name="pronoun_he">He/him</string>
+    <string name="pronoun_she">She/her</string>
+    <string name="how_do_you_prefer_to_be_treated">How do you prefer to be addressed?</string>
+    <string name="you_can_change_this_later">You can change this later in settings.</string>
+    <string name="finish">Finish</string>
+
+    <string name="prelogin_greeting_1">Your </string>
+    <string name="prelogin_greeting_2">intelligent ally </string>
+    <string name="prelogin_greeting_3">to understand, accompany, and advance together in </string>
+    <string name="prelogin_greeting_4">ASD</string>
+
+    <string name="info_updated_successfully">Information updated successfully</string>
+    <string name="error_updating_info">Error updating information. Try again later</string>
+    <string name="account_deleted_successfully">Account deleted successfully</string>
+    <string name="error_deleting_account">Error deleting account. Try again later</string>
+    <string name="error_loading_chat_session">Error loading chat session</string>
+    <string name="mic_permission_denied">Microphone permission denied</string>
 </resources>

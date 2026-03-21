@@ -115,13 +115,13 @@ fun AISettings(
                 ClearLanguageToggle(
                     isChecked = state.showPictograms,
                     onToggle = { onAction(AISettingsAction.OnShowPictogramsToggle(it)) },
-                    text = "Mostrar pictogramas"
+                    text = stringResource(id = R.string.show_pictograms)
                 )
 
                 ClearLanguageToggle(
                     isChecked = state.isClearLanguage,
                     onToggle = { onAction(AISettingsAction.OnClearLanguageToggle(it)) },
-                    tooltipText = "Texto simple y conciso. Evita ambigüedades, dobles sentidos, ironías y metáforas."
+                    tooltipText = stringResource(id = R.string.clear_language_tooltip)
                 )
 
                 ResponseStyleSlider(
@@ -144,7 +144,7 @@ fun AISettings(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Reconocimiento de voz",
+                            text = stringResource(id = R.string.voice_recognition),
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.ssp()
                         )
@@ -161,7 +161,7 @@ fun AISettings(
                     if (state.isContinuousVoiceEnabled) {
                         Spacer(modifier = Modifier.height(16.sdp()))
                         Text(
-                            text = "Palabra clave para activar:",
+                            text = stringResource(id = R.string.activation_keyword),
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontSize = 14.ssp(),
                                 fontWeight = FontWeight.Normal,
@@ -194,7 +194,7 @@ fun AISettings(
                                 Box(contentAlignment = Alignment.CenterStart) {
                                     if (state.continuousVoiceKeyword.isEmpty()) {
                                         Text(
-                                            text = "Ej: Genia",
+                                            text = stringResource(id = R.string.keyword_example),
                                             style = MaterialTheme.typography.bodyLarge.copy(
                                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                                             )
@@ -263,7 +263,7 @@ fun AISettingsHeader(
                      .fillMaxWidth()
                      .height(contentHeight)
                      .clip(RoundedCornerShape(topStart = 20.sdp(), topEnd = 20.sdp())),
-                 useCrop = true
+                 useCrop = false
              )
         } else {
             Image(
@@ -295,13 +295,13 @@ fun AISettingsHeader(
                 modifier = Modifier.weight(1f)
             )
             SelectableButton(
-                text = "Foto",
+                text = stringResource(id = R.string.photo),
                 isSelected = selectedSource == AvatarSource.GALLERY,
                 onClick = { onSourceChange(AvatarSource.GALLERY) },
                 modifier = Modifier.weight(1f)
             )
             SelectableButton(
-                text = "Video",
+                text = stringResource(id = R.string.video),
                 isSelected = selectedSource == AvatarSource.VIDEO_GALLERY,
                 onClick = { onSourceChange(AvatarSource.VIDEO_GALLERY) },
                 modifier = Modifier.weight(1f)
@@ -338,7 +338,7 @@ fun SelectableButton(
 fun ClearLanguageToggle(
     isChecked: Boolean,
     onToggle: (Boolean) -> Unit,
-    text: String = "Lenguaje claro",
+    text: String = stringResource(id = R.string.clear_language),
     tooltipText: String? = null
 ) {
     Row(
@@ -501,7 +501,7 @@ fun ResponseStyleSlider(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "Estilo de respuesta",
+                text = stringResource(id = R.string.response_style),
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.ssp(),
                 modifier = Modifier.padding(bottom = 8.sdp())
@@ -591,9 +591,9 @@ fun ResponseStyleSlider(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Conciso", fontSize = 16.ssp(), color = Color.Gray)
-            Text(text = "Estándar", fontSize = 16.ssp(), color = Color.Gray)
-            Text(text = "Extenso", fontSize = 16.ssp(), color = Color.Gray)
+            Text(text = stringResource(id = R.string.style_concise), fontSize = 16.ssp(), color = Color.Gray)
+            Text(text = stringResource(id = R.string.style_standard), fontSize = 16.ssp(), color = Color.Gray)
+            Text(text = stringResource(id = R.string.style_extensive), fontSize = 16.ssp(), color = Color.Gray)
         }
     }
 }
@@ -611,7 +611,7 @@ fun FontSizeSelector(
             .padding(16.sdp())
     ) {
         Text(
-            text = "Tamaño de la letra",
+            text = stringResource(id = R.string.font_size),
             fontWeight = FontWeight.Bold,
             fontSize = 16.ssp(),
             modifier = Modifier.padding(bottom = 12.sdp())
@@ -632,7 +632,7 @@ fun FontSizeSelector(
         }
         
         Text(
-            text = "Esta es una frase de prueba para comprobar cómo se ve el tamaño de la letra en el chat.",
+            text = stringResource(id = R.string.font_size_test_phrase),
             fontSize = when(selectedSize) {
                 0 -> 14.ssp()
                 1 -> 16.ssp() // Estándar app

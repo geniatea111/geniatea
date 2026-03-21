@@ -53,13 +53,13 @@ class LoginViewModel : ViewModel() {
                         _navigationEvent.value = Event(LoginAction.OnLoginError("Login failed"))
 
                 } catch (e: SocketTimeoutException) {
-                    Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.connection_not_available), Toast.LENGTH_SHORT).show()
                 } catch (e: java.net.UnknownHostException) {
-                    Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                 } catch (e: IOException) {
-                   Toast.makeText(context, "Network error", Toast.LENGTH_SHORT).show()
+                   Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
                 } catch (e: HttpException) {
                     Log.e("LoginViewModel", "Server error", e)
                     _state.value = _state.value.copy(error = "Invalid username or password")
@@ -110,11 +110,11 @@ class LoginViewModel : ViewModel() {
 
         // Handle success
         } catch (e: SocketTimeoutException) {
-            Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.connection_not_available), Toast.LENGTH_SHORT).show()
         } catch (e: java.net.UnknownHostException) {
-            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
         } catch (e: ApiException) {
             Log.w("LoginViewModel", "Google sign in failed", e)
             _navigationEvent.value = Event(LoginAction.OnLoginError("Google Sign-In failed"))

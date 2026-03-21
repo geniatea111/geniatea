@@ -50,22 +50,22 @@ class AccountFragment : Fragment() {
                             }
                         }
                         is AccountAction.OnUpdateSuccess -> {
-                            Toast.makeText(requireContext(), "Información actualizada correctamente", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.info_updated_successfully), Toast.LENGTH_SHORT).show()
                         }
                         is AccountAction.OnUpdateError -> {
-                            Toast.makeText(requireContext(), "Error al actualizar la información. Prueba más tarde", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.error_updating_info), Toast.LENGTH_SHORT).show()
                         }
                         is AccountAction.OnDeleteAccountPressed -> {
                             lifecycleScope.launch {
-                                viewModel.deleteAccount(requireContext())
+                                viewModel.onAction(AccountAction.OnDeleteAccountPressed)
                             }
                         }
                         is AccountAction.OnDeleteAccountSuccess -> {
-                            Toast.makeText(requireContext(), "Cuenta eliminada correctamente", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.account_deleted_successfully), Toast.LENGTH_SHORT).show()
                             findNavController().navigate(R.id.nav_prelogin)
                         }
                         is AccountAction.OnDeleteAccountError -> {
-                            Toast.makeText(requireContext(), "Error al eliminar la cuenta. Prueba más tarde", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), getString(R.string.error_deleting_account), Toast.LENGTH_SHORT).show()
                         }
                         is AccountAction.OnRefreshTokenSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {

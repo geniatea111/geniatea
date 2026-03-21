@@ -63,17 +63,17 @@ class PreRegisterViewModel : ViewModel() {
 
 
                 } catch (e: SocketTimeoutException) {
-                    Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.connection_not_available), Toast.LENGTH_SHORT).show()
                 } catch (e: java.net.UnknownHostException) {
                     Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show()
                 } catch (e: IOException) {
                     Log.e("LoginViewModel", "Network error", e)
-                    Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
                 } catch (e: HttpException) {
                     Log.e("LoginViewModel", "Server error", e)
-                    Toast.makeText(context, "Server error", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.server_error), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -115,9 +115,9 @@ class PreRegisterViewModel : ViewModel() {
 
             // Handle success
         } catch (e: SocketTimeoutException) {
-            Toast.makeText(context, "Connection not available right now", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.connection_not_available), Toast.LENGTH_SHORT).show()
         } catch (e: java.net.UnknownHostException) {
-            Toast.makeText(context, "No internet connection", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.no_internet_connection), Toast.LENGTH_SHORT).show()
         } catch (e: ApiException) {
             Log.e("PreRegisterViewModel", "Google sign in failed", e)
             _navigationEvent.value = Event(PreRegisterAction.OnGoogleLoginError("Google Sign-In failed"))
