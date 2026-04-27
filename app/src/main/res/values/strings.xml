@@ -249,4 +249,7 @@
     <string name="error_deleting_account">Error al eliminar la cuenta. Prueba más tarde</string>
     <string name="error_loading_chat_session">Error cargando sesión de chat</string>
     <string name="mic_permission_denied">Permiso de micrófono denegado</string>
+    <string name="untitled_task">Sin título</string>
+    <string name="generate_with_ai">Generar con IA</string>
+    <string name="generating">Generando...</string>
 </resources>

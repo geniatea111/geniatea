@@ -195,7 +195,7 @@ fun title(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) {
                 ) {
                     if (state.taskTitle.isEmpty()) {
                         Text(
-                            text = "Sin título",
+                            text = stringResource(R.string.untitled_task),
                             style = subtitleApp.copy(
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                             )
@@ -314,7 +314,7 @@ fun subtareas(onAction: (TaskListAction) -> Unit = {}, state: BottomsheetState) 
                                 )
 
                                 Text(
-                                    text = if (isGenerating) "Generando..." else "Generar con IA",
+                                    text = if (isGenerating) stringResource(R.string.generating) else stringResource(R.string.generate_with_ai),
                                     style = MaterialTheme.typography.bodyLarge,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     fontWeight = FontWeight.W700

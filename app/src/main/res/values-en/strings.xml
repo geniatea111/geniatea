@@ -201,4 +201,7 @@
     <string name="error_deleting_account">Error deleting account. Try again later</string>
     <string name="error_loading_chat_session">Error loading chat session</string>
     <string name="mic_permission_denied">Microphone permission denied</string>
+    <string name="untitled_task">Untitled</string>
+    <string name="generate_with_ai">Generate with AI</string>
+    <string name="generating">Generating...</string>
 </resources>

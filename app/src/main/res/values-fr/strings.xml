@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ia_settings">Paramètres du chat</string>
+    <string name="untitled_task">Sans titre</string>
+    <string name="generate_with_ai">Générer avec l\'IA</string>
+    <string name="generating">Génération...</string>
+</resources>

@@ -21,6 +21,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.Scope
 import kotlinx.coroutines.launch
+import com.example.compose.geniatea.notifications.FcmTokenManager
 import com.example.compose.geniatea.presentation.settingsSection.settings.SettingsViewModel
 import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
 import androidx.fragment.app.activityViewModels
@@ -71,6 +72,8 @@ class LoginFragment : Fragment() {
                         is LoginAction.OnLoginSuccess -> {
                             viewLifecycleOwner.lifecycleScope.launch {
                                 storeDataUser.saveUser(action.user)
+                                // Token ya está en DataStore: el interceptor lo incluirá en esta petición
+                                FcmTokenManager.refreshAndSendToken(requireContext())
                                 if (action.user.onboardingCompleted) {
                                     findNavController().navigate(R.id.nav_home)
                                 } else {

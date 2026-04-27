@@ -76,6 +76,10 @@ interface ApiService {
         val task: String
     )
 
+    data class FcmTokenRequest(
+        val token: String
+    )
+
     data class AnalyzeIntentRequest(
         val text: String
     )
@@ -281,6 +285,11 @@ interface ApiService {
         @Path("taskId") taskId: String,
         @Body updateTaskRequest: UpdateTaskRequest
     ): Response<ResponseBody>
+
+    @POST("api/users/fcm-token")
+    suspend fun updateFcmToken(
+        @Body request: FcmTokenRequest
+    ): Response<Unit>
 
     data class UserPreferenceDTO(
         val showPictograms: Boolean?,
