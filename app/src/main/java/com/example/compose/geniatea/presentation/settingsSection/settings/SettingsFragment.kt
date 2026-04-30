@@ -52,7 +52,7 @@ class SettingsFragment : Fragment() {
                         is SettingsAction.OnPrivacyPolicyPressed -> {
                             findNavController().navigate(R.id.nav_privacy)
                         }
-                        is SettingsAction.OnLocalizationsPressed -> {
+                        is SettingsAction.OnLocationsPressed -> {
                             findNavController().navigate(R.id.nav_location)
                         }
                         is SettingsAction.OnAISettingsPressed -> {

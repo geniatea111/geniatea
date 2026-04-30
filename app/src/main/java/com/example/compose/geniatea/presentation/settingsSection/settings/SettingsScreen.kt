@@ -249,10 +249,17 @@ fun generalSection(onAction: (SettingsAction) -> Unit = {}) {
         shape = RoundedCornerShape(0)
     )
     ButtonConfig(
+        icon = R.drawable.svg_map_pin,
+        text = stringResource(id = R.string.locations),
+        onClick = { onAction(SettingsAction.OnLocationsPressed) },
+        offsetValue = (-2),
+        shape = RoundedCornerShape(0)
+    )
+    ButtonConfig(
         icon = R.drawable.svg_language,
         text = stringResource(id = R.string.language),
         onClick = { showDialogLanguage = true },
-        offsetValue = (-2),
+        offsetValue = (-3),
         shape = RoundedCornerShape(topEndPercent = 0, topStartPercent = 0, bottomEndPercent = 30, bottomStartPercent = 30)
     )
 

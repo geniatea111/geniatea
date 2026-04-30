@@ -204,4 +204,15 @@
     <string name="untitled_task">Untitled</string>
     <string name="generate_with_ai">Generate with AI</string>
     <string name="generating">Generating...</string>
+    <string name="locations">My Locations</string>
+    <string name="locations_title">My Locations</string>
+    <string name="locations_empty">You have no saved locations.</string>
+    <string name="locations_delete_title">Delete Location</string>
+    <string name="locations_delete_message">Are you sure you want to delete \'%s\'?</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="locations_edit_title">Edit Location</string>
+    <string name="locations_new_title">New Location</string>
+    <string name="locations_name_label">Location name (E.g. Home)</string>
+    <string name="locations_save">Save Location</string>
 </resources>

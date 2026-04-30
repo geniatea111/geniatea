@@ -131,7 +131,7 @@ dependencies {
     implementation(libs.androidx.glance.material3)
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.google.maps.compose)
+    implementation(libs.play.services.location)
 
     implementation(libs.androidx.activity.compose)
 

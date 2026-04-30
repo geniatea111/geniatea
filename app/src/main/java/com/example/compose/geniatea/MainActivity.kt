@@ -115,6 +115,45 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            // Limpiar cache de osmdroid completo SOLO UNA VEZ para solucionar el problema de las imágenes "Access Blocked"
+            try {
+                val prefs = getSharedPreferences("osmdroid_fix", android.content.Context.MODE_PRIVATE)
+                val isFixed = prefs.getBoolean("cache_cleared_v3", false)
+                
+                Log.d("OSMDroidConfig", "Estado de cache_cleared_v3: $isFixed")
+                
+                if (!isFixed) {
+                    Log.d("OSMDroidConfig", "Procediendo a borrar la carpeta osmdroid para forzar limpieza...")
+                    // 1. Borramos toda la carpeta de osmdroid (incluye base de datos SQLite de caché)
+                    val osmdroidBasePath = java.io.File(filesDir, "osmdroid")
+                    if (osmdroidBasePath.exists()) {
+                        val deleted = osmdroidBasePath.deleteRecursively()
+                        Log.d("OSMDroidConfig", "Resultado de borrar osmdroidBasePath: $deleted")
+                    } else {
+                        Log.d("OSMDroidConfig", "La carpeta osmdroid no existía.")
+                    }
+                    prefs.edit().putBoolean("cache_cleared_v3", true).apply()
+                    Log.d("OSMDroidConfig", "Se marcó cache_cleared_v3 como true")
+                }
+                
+                // 2. Configuramos OSMDroid con un User-Agent válido según las políticas de OSM
+                Log.d("OSMDroidConfig", "Aplicando configuración global de OSMDroid...")
+                org.osmdroid.config.Configuration.getInstance().apply {
+                    load(applicationContext, getSharedPreferences("osmdroid", android.content.Context.MODE_PRIVATE))
+                    // IMPORTANTE: OpenStreetMap bloquea los user-agents que empiezan por "com.example"
+                    val newUserAgent = "GenIATEA_App/1.0 (contact@geniatea.com) Android"
+                    userAgentValue = newUserAgent
+                    
+                    // Habilitar logs internos de OSMDroid para ver peticiones HTTP
+                    isDebugMode = true
+                    isDebugMapTileDownloader = true
+                    isDebugTileProviders = true
+                    
+                    Log.d("OSMDroidConfig", "User-Agent configurado exitosamente a: $newUserAgent")
+                }
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error clearing OSMDroid cache", e)
+            }
 
             setContent {
                 val isDark by settingsViewModel.darkMode.collectAsState()
@@ -129,8 +168,37 @@ class MainActivity : AppCompatActivity() {
 
                 var isCheckingToken by remember { mutableStateOf(isUserLoggedIn) }
 
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val locationPermissionLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+                    contract = androidx.activity.result.contract.ActivityResultContracts.RequestMultiplePermissions(),
+                    onResult = { permissions ->
+                        val fineLocationGranted = permissions[android.Manifest.permission.ACCESS_FINE_LOCATION] ?: false
+                        val coarseLocationGranted = permissions[android.Manifest.permission.ACCESS_COARSE_LOCATION] ?: false
+                        if (fineLocationGranted || coarseLocationGranted) {
+                            lifecycleScope.launch {
+                                val token = dataStore.getToken()
+                                if (!token.isNullOrBlank()) {
+                                    val tracker = com.example.compose.geniatea.utils.LocationTracker(context)
+                                    val location = tracker.getCurrentLocation()
+                                    if (location != null) {
+                                        val repo = com.example.compose.geniatea.data.repository.LocationRepository()
+                                        repo.updateCurrentLocation(token, location.latitude, location.longitude)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+
                 LaunchedEffect(Unit) {
                     if (isUserLoggedIn) {
+                        locationPermissionLauncher.launch(
+                            arrayOf(
+                                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                            )
+                        )
+
                         val token = dataStore.getToken()
                         if (!token.isNullOrBlank()) {
                             try {

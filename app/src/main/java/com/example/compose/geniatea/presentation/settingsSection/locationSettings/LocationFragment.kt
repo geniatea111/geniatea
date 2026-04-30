@@ -1,6 +1,5 @@
 package com.example.compose.geniatea.presentation.settingsSection.locationSettings
 
-import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +13,14 @@ import com.example.compose.geniatea.presentation.settingsSection.settings.Settin
 import com.example.compose.geniatea.presentation.settingsSection.appColor.AppColorViewModel
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.activity.compose.BackHandler
+import com.example.compose.geniatea.data.backendConection.ApiService.LocationDTO
+import com.example.compose.geniatea.presentation.settingsSection.locations.LocationViewModel
+import com.example.compose.geniatea.presentation.settingsSection.locations.LocationsScreen
+import com.example.compose.geniatea.presentation.settingsSection.locations.MapSelectionScreen
 
 class LocationFragment : Fragment() {
     private val viewModel: LocationViewModel by activityViewModels()
@@ -22,22 +29,6 @@ class LocationFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val rootView: View = inflater.inflate(R.layout.fragment_profile, container, false)
-
-        org.osmdroid.config.Configuration.getInstance().load(
-            requireContext(),
-            requireActivity().getSharedPreferences("osmdroid", MODE_PRIVATE)
-        )
-
-
-        rootView.findViewById<ComposeView>(R.id.toolbar_compose_view).apply {
-
-            viewModel.actionEvent.observe(viewLifecycleOwner) { event ->
-                event.getContentIfNotHandled()?.let { action ->
-                    activity?.onBackPressedDispatcher?.onBackPressed()
-                }
-            }
-
-        }
 
         rootView.findViewById<ComposeView>(R.id.compose_view).apply {
             setContent {
@@ -56,16 +47,37 @@ class LocationFragment : Fragment() {
                     isDarkTheme = isDark,
                     fontScale = fontScale
                 ) {
-                    LocationRoot(
-                        viewModel = viewModel,
-                        onBackPressed = {
-                            activity?.onBackPressedDispatcher?.onBackPressed()
+                    var showMap by remember { mutableStateOf(false) }
+                    var locationToEdit by remember { mutableStateOf<LocationDTO?>(null) }
+
+                    if (showMap) {
+                        BackHandler {
+                            showMap = false
+                            locationToEdit = null
                         }
-                    )
+                        MapSelectionScreen(
+                            locationToEdit = locationToEdit,
+                            viewModel = viewModel,
+                            onBackPressed = {
+                                showMap = false
+                                locationToEdit = null
+                            }
+                        )
+                    } else {
+                        LocationsScreen(
+                            viewModel = viewModel,
+                            onBackPressed = {
+                                activity?.onBackPressedDispatcher?.onBackPressed()
+                            },
+                            onNavigateToMap = { location ->
+                                locationToEdit = location
+                                showMap = true
+                            }
+                        )
+                    }
                 }
             }
         }
         return rootView
     }
-
 }

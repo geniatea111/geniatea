@@ -324,4 +324,51 @@ interface ApiService {
         @Body preferences: UserPreferenceDTO
     ): Response<ResponseBody>
 
+    data class LocationDTO(
+        val id: Long,
+        val name: String,
+        val latitude: Double,
+        val longitude: Double
+    )
+
+    data class LocationRequestDTO(
+        val name: String,
+        val latitude: Double,
+        val longitude: Double
+    )
+
+    data class UpdateUserLocationDTO(
+        val latitude: Double,
+        val longitude: Double
+    )
+
+    @GET("locations")
+    suspend fun getLocations(
+        @Header("Authorization") token: String
+    ): Response<List<LocationDTO>>
+
+    @POST("locations")
+    suspend fun createLocation(
+        @Header("Authorization") token: String,
+        @Body req: LocationRequestDTO
+    ): Response<LocationDTO>
+
+    @PUT("locations/{id}")
+    suspend fun updateLocation(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long,
+        @Body req: LocationRequestDTO
+    ): Response<LocationDTO>
+
+    @DELETE("locations/{id}")
+    suspend fun deleteLocation(
+        @Header("Authorization") token: String,
+        @Path("id") id: Long
+    ): Response<Unit>
+
+    @PUT("users/location")
+    suspend fun updateCurrentLocation(
+        @Header("Authorization") token: String,
+        @Body req: UpdateUserLocationDTO
+    ): Response<Unit>
 }

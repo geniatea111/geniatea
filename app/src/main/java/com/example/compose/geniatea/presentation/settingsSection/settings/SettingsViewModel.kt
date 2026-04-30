@@ -59,6 +59,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             is SettingsAction.OnAboutPressed -> _actionEvent.value = Event(SettingsAction.OnAboutPressed)
             is SettingsAction.OnPrivacyPolicyPressed -> _actionEvent.value = Event(SettingsAction.OnPrivacyPolicyPressed)
             is SettingsAction.OnLocalizationsPressed -> _actionEvent.value = Event(SettingsAction.OnLocalizationsPressed)
+            is SettingsAction.OnLocationsPressed -> _actionEvent.value = Event(SettingsAction.OnLocationsPressed)
             is SettingsAction.OnAISettingsPressed -> _actionEvent.value = Event(SettingsAction.OnAISettingsPressed)
 
             // --- Lógica de Toggles corregida para guardar datos ---

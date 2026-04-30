@@ -252,4 +252,15 @@
     <string name="untitled_task">Sin título</string>
     <string name="generate_with_ai">Generar con IA</string>
     <string name="generating">Generando...</string>
+    <string name="locations">Mis Ubicaciones</string>
+    <string name="locations_title">Mis Ubicaciones</string>
+    <string name="locations_empty">No tienes ubicaciones guardadas.</string>
+    <string name="locations_delete_title">Eliminar Ubicación</string>
+    <string name="locations_delete_message">¿Estás seguro de que quieres eliminar \'%s\'?</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="locations_edit_title">Editar Ubicación</string>
+    <string name="locations_new_title">Nueva Ubicación</string>
+    <string name="locations_name_label">Nombre de la ubicación (Ej: Casa)</string>
+    <string name="locations_save">Guardar Ubicación</string>
 </resources>
